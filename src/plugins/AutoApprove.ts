@@ -13,6 +13,8 @@ export const AutoApprove = (app: Application) => {
 
       message += `combined.state: ${combined.state}\n\n`
 
+      console.log(`combined.state: ${combined.state}\n\n`)
+
     if (combined.state !== "pending") {
         await context.github.issues.createComment(
         context.issue({ body: message }))
