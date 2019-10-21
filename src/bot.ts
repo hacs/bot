@@ -1,5 +1,4 @@
 import { Application } from 'probot'
-import { AutoApprove } from "./plugins/AutoApprove"
 import { Greeter } from "./plugins/Greeter"
 import { Hacktoberfest } from "./plugins/Hacktoberfest"
 import { ClearTempLabels } from "./plugins/ClearTempLabels"
