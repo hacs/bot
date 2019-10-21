@@ -1,5 +1,5 @@
 import { Context } from 'probot'
-import { StatusIconDescription } from './StatusIconDescription'
+import { StatusIconDescription, StatusFailed, StatusNeutral, StatusSuccess } from './StatusIconDescription'
 
 export async function CommonCheck(context: Context, owner: string, repo: string) {
     const {data: PR} = await context.github.pullRequests.get(context.issue())
@@ -24,10 +24,10 @@ export async function CommonCheck(context: Context, owner: string, repo: string)
 
     try {
         await context.github.repos.get({owner: owner, repo: repo})
-        Summary.summary += "\n\n✅  Repository exist";
+        Summary.summary += `\n\n${StatusSuccess}  Repository exist`;
 
     } catch(error) {
-        Summary.summary += "\n\n❌  Repository does not exist";
+        Summary.summary += `\n\n${StatusFailed}  Repository does not exist`;
         conclusion = "failure"
         await context.github.checks.update(
             context.issue({head_sha: PRSHA, check_run_id: CheckRun.id, output: Summary, conclusion: conclusion}))
@@ -38,9 +38,9 @@ export async function CommonCheck(context: Context, owner: string, repo: string)
 
     // Check if the reopsitory is a fork
     if (!Repository.fork) {
-        Summary.summary += "\n✅  Repository is not a fork";
+        Summary.summary += `\n${StatusSuccess}  Repository is not a fork`;
     } else {
-        Summary.summary += "\n⚪️  Repository is a fork";
+        Summary.summary += `\n${StatusNeutral}  Repository is a fork`;
         conclusion = "neutral"
     }
 
@@ -50,9 +50,9 @@ export async function CommonCheck(context: Context, owner: string, repo: string)
 
     // Check if the author of the PR is the owner of the repo
     if (PRAuthor === owner) {
-        Summary.summary += `\n✅  ${PRAuthor} is the owner of ${owner}/${repo}`;
+        Summary.summary += `\n${StatusSuccess}  ${PRAuthor} is the owner of ${owner}/${repo}`;
     } else {
-        Summary.summary += `\n⚪️  [${PRAuthor} is not the owner of ${owner}/${repo}](https://hacs.xyz/docs/publish/include)`;
+        Summary.summary += `\n${StatusNeutral}  [${PRAuthor} is not the owner of ${owner}/${repo}](https://hacs.xyz/docs/publish/include)`;
         conclusion = "neutral"
     }
 
@@ -63,9 +63,9 @@ export async function CommonCheck(context: Context, owner: string, repo: string)
 
     // Check if the reopsitory is archived
     if (!Repository.archived) {
-        Summary.summary += "\n✅  Repository is not archived";
+        Summary.summary += `\n${StatusSuccess}  Repository is not archived`;
     } else {
-        Summary.summary += "\n❌  Repository is archived";
+        Summary.summary += `\n${StatusFailed}  Repository is archived`;
         conclusion = "failure"
     }
 
@@ -76,9 +76,9 @@ export async function CommonCheck(context: Context, owner: string, repo: string)
 
     // Check if the reopsitory has a description
     if (Repository.description !== null) {
-        Summary.summary += "\n✅  Repository has a description";
+        Summary.summary += `\n${StatusSuccess}  Repository has a description`;
     } else {
-        Summary.summary += "\n❌  [Repository does not have a description](https://hacs.xyz/docs/publish/start#description)";
+        Summary.summary += `\n${StatusFailed}  [Repository does not have a description](https://hacs.xyz/docs/publish/start#description)`;
         conclusion = "failure"
     }
 
@@ -99,9 +99,9 @@ export async function CommonCheck(context: Context, owner: string, repo: string)
         });
 
         if (!ReadmeExist) throw "README does not exist";
-        Summary.summary += "\n✅  README file exist in the repository.";
+        Summary.summary += `\n${StatusSuccess}  README file exist in the repository.`;
     } catch(error) {
-        Summary.summary += "\n❌  [README file does not exist in the repository.]"
+        Summary.summary += `\n${StatusFailed}  [README file does not exist in the repository.]`
         Summary.summary += "(https://hacs.xyz/docs/publish/start#readme)";
         conclusion = "failure"
     }
@@ -120,9 +120,9 @@ export async function CommonCheck(context: Context, owner: string, repo: string)
 
         if (!hacsManifestDecoded.name) throw "Data not correct";
 
-        Summary.summary += "\n✅  hacs.json file exist in the repository.";
+        Summary.summary += `\n${StatusSuccess}  hacs.json file exist in the repository.`;
     } catch(error) {
-        Summary.summary += "\n❌  [hacs.json file does not exist in the repository, or is not correctly formated.]"
+        Summary.summary += `\n${StatusFailed}  [hacs.json file does not exist in the repository, or is not correctly formated]`
         Summary.summary += "(https://hacs.xyz/docs/publish/start#hacsjson)";
         conclusion = "failure"
     }
@@ -145,9 +145,9 @@ export async function CommonCheck(context: Context, owner: string, repo: string)
             });
     
             if (!InfoExist) throw "INFO does not exist";
-            Summary.summary += "\n✅  INFO file exist in the repository.";
+            Summary.summary += `\n${StatusSuccess}  INFO file exist in the repository.`;
         } catch(error) {
-            Summary.summary += "\n❌  [INFO file does not exist in the repository.]"
+            Summary.summary += `\n${StatusFailed}  [INFO file does not exist in the repository.]`
             Summary.summary += "(https://hacs.xyz/docs/publish/start#infomd)";
             conclusion = "failure"
         }
