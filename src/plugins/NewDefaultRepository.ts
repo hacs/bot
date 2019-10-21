@@ -7,11 +7,6 @@ import { ThemeCheck } from './checks/ThemeCheck'
 import { AppdaemonCheck } from './checks/AppdaemonCheck'
 import { PythonScriptCheck } from './checks/PythonScriptCheck'
 
-const Repos: string[] = [
-  "action",
-  "default",
-  "test"
-]
 
 export const NewDefaultRepository = (app: Application) => {
       app.on([
@@ -22,7 +17,7 @@ export const NewDefaultRepository = (app: Application) => {
         "check_run.rerequested"
       ], async context => {
         if (context.isBot) return;
-        if (context.repo().owner !== "hacs" && !Repos.includes(context.repo().owner)) return;
+        if (context.repo().owner !== "hacs" && context.repo().owner !== "default") return;
 
         var changedFiles = await getChangedFiles(context)
 
