@@ -1,5 +1,5 @@
 import { Context } from 'probot'
-import { StatusIconDescription } from './StatusIconDescription'
+import { StatusIconDescription, StatusFailed, StatusSuccess } from './StatusIconDescription'
 
 export async function ThemeCheck(context: Context, owner: string, repo: string) {
     const {data: PR} = await context.github.pullRequests.get(context.issue())
@@ -23,10 +23,10 @@ export async function ThemeCheck(context: Context, owner: string, repo: string) 
 
     try {
         await context.github.repos.get({owner: owner, repo: repo})
-        Summary.summary += "\n\n✅  Repository exist";
+        Summary.summary += `\n\n${StatusSuccess}  Repository exist`;
 
     } catch(error) {
-        Summary.summary += "\n\n❌  Repository does not exist";
+        Summary.summary += `\n\n${StatusFailed}  Repository does not exist`;
         conclusion = "failure"
         await context.github.checks.update(
             context.issue({head_sha: PRSHA, check_run_id: CheckRun.id, output: Summary, conclusion: conclusion}))
@@ -36,9 +36,9 @@ export async function ThemeCheck(context: Context, owner: string, repo: string) 
     // Check if the themes directory exsist in the reopsitory
     try {
         await context.github.repos.getContents({owner: owner, repo: repo, path: "themes"});
-        Summary.summary += "\n✅  'themes' directory exist in the repository.";
+        Summary.summary += `\n${StatusSuccess}  'themes' directory exist in the repository.`;
     } catch(error) {
-        Summary.summary += "\n❌  ['themes' directory does not exist in the repository.]"
+        Summary.summary += `\n${StatusFailed}  ['themes' directory does not exist in the repository.]`
         Summary.summary += "(https://hacs.xyz/docs/publish/theme#repository-structure)";
         conclusion = "failure"
     }
