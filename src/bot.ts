@@ -4,6 +4,7 @@ import { Hacktoberfest } from "./plugins/Hacktoberfest"
 import { ClearTempLabels } from "./plugins/ClearTempLabels"
 import { NewDefaultRepository } from "./plugins/NewDefaultRepository"
 import { ClosedIssue } from "./plugins/ClosedIssue"
+import { AutoApprove } from "./plugins/AutoApprove"
 
 
 export = (app: Application) => {
@@ -14,4 +15,5 @@ export = (app: Application) => {
 
     ClosedIssue(app)
     ClearTempLabels(app)
+    AutoApprove(app)
 }
