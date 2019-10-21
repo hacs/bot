@@ -6,6 +6,7 @@ import { PluginCheck } from './checks/PluginCheck'
 import { ThemeCheck } from './checks/ThemeCheck'
 import { AppdaemonCheck } from './checks/AppdaemonCheck'
 import { PythonScriptCheck } from './checks/PythonScriptCheck'
+import { AutoApprove } from './AutoApprove';
 
 
 export const NewDefaultRepository = (app: Application) => {
@@ -35,6 +36,7 @@ export const NewDefaultRepository = (app: Application) => {
 
           await CommonCheck(context, owner, repo)
           await CategoryChecks(category, owner, repo, context)
+          AutoApprove(app)
         });
     });
 };

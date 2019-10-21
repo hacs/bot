@@ -15,5 +15,4 @@ export = (app: Application) => {
 
     ClosedIssue(app)
     ClearTempLabels(app)
-    AutoApprove(app)
 }
