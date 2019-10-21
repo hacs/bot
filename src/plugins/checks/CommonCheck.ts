@@ -41,7 +41,7 @@ export async function CommonCheck(context: Context, owner: string, repo: string)
         Summary.summary += `\n${StatusSuccess}  Repository is not a fork`;
     } else {
         Summary.summary += `\n${StatusNeutral}  Repository is a fork`;
-        conclusion = "neutral"
+        conclusion = "failure"
     }
 
     await context.github.checks.update(
@@ -53,7 +53,7 @@ export async function CommonCheck(context: Context, owner: string, repo: string)
         Summary.summary += `\n${StatusSuccess}  ${PRAuthor} is the owner of ${owner}/${repo}`;
     } else {
         Summary.summary += `\n${StatusNeutral}  [${PRAuthor} is not the owner of ${owner}/${repo}](https://hacs.xyz/docs/publish/include)`;
-        conclusion = "neutral"
+        conclusion = "failure"
     }
 
     await context.github.checks.update(
