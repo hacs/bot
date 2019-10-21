@@ -11,9 +11,14 @@ export const AutoApprove = (app: Application) => {
     var { data: combined } = await context.github.repos.getCombinedStatusForRef(
       context.issue({ref: Pull.head.sha}))
 
+
+    var { data: List } = await context.github.repos.listStatusesForRef(
+        context.issue({ref: Pull.head.sha}))
+
       message += `combined.state: ${combined.state}\n\n`
 
-      console.log(`combined.state: ${combined.state}\n\n`)
+      console.log(`getCombinedStatusForRef: ${combined.state}\n\n`)
+      console.log(`listStatusesForRef: ${String(List)}\n\n`)
 
     if (combined.state !== "pending") {
         await context.github.issues.createComment(
