@@ -1,0 +1,17 @@
+// For format details, see https://aka.ms/vscode-remote/devcontainer.json or the definition README at
+{
+	"name": "hacs-bot",
+	"dockerFile": "Dockerfile",
+	"context": "..",
+	"settings": { 
+		"terminal.integrated.shell.linux": "/bin/bash"
+	},
+	"runArgs": [
+		"-v",
+		"${env:HOME}${env:USERPROFILE}/.ssh:/tmp/.ssh" // This is added so you can push from inside the container
+	],
+	"postCreateCommand": "npm install",
+	"extensions": [
+		"ms-vscode.vscode-typescript-tslint-plugin"
+	]
+}
