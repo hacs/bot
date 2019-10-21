@@ -30,7 +30,7 @@ export const NewDefaultRepository = (app: Application) => {
             context.issue({labels: ["New default repository"]}))
 
             await context.github.issues.update(context.issue({
-              title: `Adds new ${category} [${owner}/${owner}]`
+              title: `Adds new ${category} [${owner}/${repo}]`
             }))
 
           await CommonCheck(context, owner, repo)
