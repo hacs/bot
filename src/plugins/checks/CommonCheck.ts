@@ -133,27 +133,29 @@ export async function CommonCheck(context: Context, owner: string, repo: string)
 
 
     // Check if the reopsitory has a INFO file
-    if (!hacsManifestDecoded.render_readme) {
-        try {
-            var InfoExist = false;
-            var { data: BaseFiles } = await context.github.repos.getContents(
-                {owner: owner, repo: repo, path: ""});
-    
-            (BaseFiles as [any]).forEach(element => {
-                if (String(element.name).toLowerCase() === "info") InfoExist = true;
-                if (String(element.name).toLowerCase() === "info.md") InfoExist = true;
-            });
-    
-            if (!InfoExist) throw "INFO does not exist";
-            Summary.summary += `\n${StatusSuccess}  INFO file exist in the repository.`;
-        } catch(error) {
-            Summary.summary += `\n${StatusFailed}  [INFO file does not exist in the repository.]`
-            Summary.summary += "(https://hacs.xyz/docs/publish/start#infomd)";
-            conclusion = "failure"
+    if (hacsManifestDecoded !== undefined) {
+        if (!hacsManifestDecoded.render_readme) {
+            try {
+                var InfoExist = false;
+                var { data: BaseFiles } = await context.github.repos.getContents(
+                    {owner: owner, repo: repo, path: ""});
+        
+                (BaseFiles as [any]).forEach(element => {
+                    if (String(element.name).toLowerCase() === "info") InfoExist = true;
+                    if (String(element.name).toLowerCase() === "info.md") InfoExist = true;
+                });
+        
+                if (!InfoExist) throw "INFO does not exist";
+                Summary.summary += `\n${StatusSuccess}  INFO file exist in the repository.`;
+            } catch(error) {
+                Summary.summary += `\n${StatusFailed}  [INFO file does not exist in the repository.]`
+                Summary.summary += "(https://hacs.xyz/docs/publish/start#infomd)";
+                conclusion = "failure"
+            }
+        
+            await context.github.checks.update(
+                context.issue({head_sha: PRSHA, check_run_id: CheckRun.id, output: Summary}))
         }
-    
-        await context.github.checks.update(
-            context.issue({head_sha: PRSHA, check_run_id: CheckRun.id, output: Summary}))
     }
     // --------------------------------------------------------------------------------
 
