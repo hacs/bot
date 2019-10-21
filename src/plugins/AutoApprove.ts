@@ -4,7 +4,7 @@ import { Application } from 'probot'
 export const AutoApprove = (app: Application) => {
   app.on("check_run.completed", async context => {
     var message = "## TEST MESSAGE\n";
-    const PullNumber = context.payload.check_run.check_suite.pull_request[0].number
+    const PullNumber = context.payload.check_run.check_suite.pull_requests[0].number
     const { data: Pull } = await context.github.pullRequests.get(
         context.issue({number: PullNumber}))
 
