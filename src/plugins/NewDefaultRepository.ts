@@ -25,8 +25,14 @@ export const NewDefaultRepository = (app: Application) => {
           var changed = await getFileDiff(context, category)
           var owner = changed[0].split("/")[0]
           var repo = changed[0].split("/")[1]
+
           await context.github.issues.addLabels(
             context.issue({labels: ["New default repository"]}))
+
+            await context.github.issues.update(context.issue({
+              title: `Adds new ${category} [${owner}/${owner}]`
+            }))
+
           await CommonCheck(context, owner, repo)
           await CategoryChecks(category, owner, repo, context)
         });
