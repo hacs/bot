@@ -18,6 +18,9 @@ export const ClosedIssue = (app: Application) => {
     if (Issue.state === "closed") {
       await context.github.issues.createComment(
         context.issue({ body: ClosedMessage }))
+
+      // If things get to bad, implement this:
+      //await context.github.issues.lock(context.issue())
     }
   });
 }
