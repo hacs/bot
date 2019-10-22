@@ -12,17 +12,16 @@ export = (app: Application) => {
 
 const Init = (app: Application) => {
     app.on("*", async context => {
-        if (context.payload.repository.name !== "hacs" || context.payload.organization.login !== "hacs") {
+        if (context.payload.repository.name === "hacs" || context.payload.organization.login === "hacs") {
+            Greeter(app)
+            Hacktoberfest(app)
+        
+            NewDefaultRepository(app)
+        
+            ClosedIssue(app)
+            ClearTempLabels(app)
+        } else {
             console.log(`${context.payload.organization.login}/${context.payload.repository.name} is not allowed to use this bot.`)
-            return;
         }
-
-        Greeter(app)
-        Hacktoberfest(app)
-    
-        NewDefaultRepository(app)
-    
-        ClosedIssue(app)
-        ClearTempLabels(app)
     });
 }
