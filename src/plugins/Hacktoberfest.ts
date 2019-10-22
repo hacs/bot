@@ -1,4 +1,5 @@
 import { Application, Context } from 'probot'
+import { ExecutionFilter } from './ExecutionFilter'
 
 const isHacktoberfestLive = () => new Date().getMonth() == 9;
 
@@ -11,11 +12,11 @@ Make sure that you have signed up at https://hacktoberfest.digitalocean.com/
 export const Hacktoberfest = (app: Application) => {
   if (!isHacktoberfestLive) return;
   app.on("pull_request.opened", async context => {
-    if (context.isBot) return;
+    if (!ExecutionFilter(context)) return;
     await OpenAction(context)
   })
   app.on("pull_request.closed", async context => {
-    if (context.isBot) return;
+    if (!ExecutionFilter(context)) return;
     await CloseAction(context)
   })
 };

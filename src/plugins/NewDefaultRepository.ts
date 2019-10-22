@@ -6,6 +6,7 @@ import { PluginCheck } from './checks/PluginCheck'
 import { ThemeCheck } from './checks/ThemeCheck'
 import { AppdaemonCheck } from './checks/AppdaemonCheck'
 import { PythonScriptCheck } from './checks/PythonScriptCheck'
+import { ExecutionFilter } from './ExecutionFilter'
 
 
 export const NewDefaultRepository = (app: Application) => {
@@ -16,7 +17,7 @@ export const NewDefaultRepository = (app: Application) => {
         "pull_request.synchronize",
         "check_run.rerequested"
       ], async context => {
-        if (context.isBot) return;
+        if (!ExecutionFilter(context)) return;
         if (context.repo().owner !== "hacs" && context.repo().owner !== "default") return;
 
         var changedFiles = await getChangedFiles(context)

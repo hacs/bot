@@ -1,15 +1,16 @@
 import { Application } from 'probot'
+import { ExecutionFilter } from './ExecutionFilter'
 
 export const Greeter = (app: Application) => {
   app.on("issues.opened", async context => {
-    if (context.isBot) return;
+    if (!ExecutionFilter(context)) return;
 
     await context.github.issues.createComment(
       context.issue({ body: NewIssue }))
   });
 
   app.on("pull_request.opened", async context => {
-    if (context.isBot) return;
+    if (!ExecutionFilter(context)) return;
 
     await context.github.issues.createComment(
       context.issue({ body: NewPull }))
