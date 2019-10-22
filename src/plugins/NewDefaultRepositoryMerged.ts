@@ -1,4 +1,5 @@
 import { Application } from 'probot'
+import axios from 'axios';
 import { ExecutionFilter } from './ExecutionFilter'
 
 
@@ -27,5 +28,33 @@ export const NewDefaultRepositoryMerged = (app: Application) => {
       console.log(`Title split[2]: ${Split[2]}`)
       console.log(`Title split[3]: ${Split[3]}`)
       console.log(`Title split[4]: ${Split[4]}`)
+
+      const DiscordWebHook = (process.env.DiscordWebHook as string);
+
+      const EmbedForDiscord = {
+        "embeds": [
+          {
+            "title": "New repository added to HACS :tada:",
+            "color": "3066993",
+            "fields":
+              [
+                {
+                  "name": "Repository link",
+                  "value": "https: //github.com/hacs"
+                },
+                {
+                  "name": "Category",
+                  "value": "Integration"
+                },
+                {
+                  "name": "Description",
+                  "value": "Something Something Something"
+                }
+              ]
+            }
+          ]
+        }
+
+        axios.post(DiscordWebHook, EmbedForDiscord)
     });
 };
