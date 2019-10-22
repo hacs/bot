@@ -4,16 +4,25 @@ import { Hacktoberfest } from "./plugins/Hacktoberfest"
 import { ClearTempLabels } from "./plugins/ClearTempLabels"
 import { NewDefaultRepository } from "./plugins/NewDefaultRepository"
 import { ClosedIssue } from "./plugins/ClosedIssue"
-import { AutoApprove } from "./plugins/AutoApprove"
 
 
 export = (app: Application) => {
-    Greeter(app)
-    Hacktoberfest(app)
+    Init(app)
+}
 
-    NewDefaultRepository(app)
+const Init = (app: Application) => {
+    app.on("*", async context => {
+        if (context.payload.repository.name !== "hacs" || context.payload.organization.login !== "hacs") {
+            console.log(`${context.payload.organization.login}/${context.payload.repository.name} is not allowed to use this bot.`)
+            return;
+        }
 
-    ClosedIssue(app)
-    ClearTempLabels(app)
-    AutoApprove(app)
+        Greeter(app)
+        Hacktoberfest(app)
+    
+        NewDefaultRepository(app)
+    
+        ClosedIssue(app)
+        ClearTempLabels(app)
+    });
 }
