@@ -7,29 +7,21 @@ export const NewDefaultRepositoryMerged = (app: Application) => {
       app.on("pull_request.closed", async context => {
         if (!ExecutionFilter(context)) return;
         if (context.repo().owner !== "hacs" && context.repo().owner !== "default") return;
-
         const {data: Pull} = await context.github.pullRequests.get(context.issue())
+        const titleElements = Pull.title.split(" ")
+        const owner_repo = titleElements[3].replace("[", "").replace("]", "")
+        const Category = titleElements[2]
 
-        console.log(`DEBUG
-        
-        
-        
-        
-        
-        -----------------------------------------------`)
+        if (!Pull.merged) return;
 
-      console.log(`Title: ${Pull.title}`)
-      console.log(`Merged: ${Pull.merged}`)
-      console.log(`Labels: ${Pull.labels}`)
-      const Split = Pull.title.split(" ")
-      console.log(`Title split: ${Split}`)
-      console.log(`Title split[0]: ${Split[0]}`)
-      console.log(`Title split[1]: ${Split[1]}`)
-      console.log(`Title split[2]: ${Split[2]}`)
-      console.log(`Title split[3]: ${Split[3]}`)
-      console.log(`Title split[4]: ${Split[4]}`)
 
-      const DiscordWebHook = (process.env.DiscordWebHook as string);
+        const { data: Repo } = await context.github.repos.get(
+          {
+            owner: owner_repo.split("/")[0],
+            repo: owner_repo.split("/")[1]
+          })
+
+          const DiscordWebHook = (process.env.DiscordWebHook as string);
 
       const EmbedForDiscord = {
         "embeds": [
@@ -40,15 +32,15 @@ export const NewDefaultRepositoryMerged = (app: Application) => {
               [
                 {
                   "name": "Repository link",
-                  "value": "https: //github.com/hacs"
+                  "value": Repo.html_url
                 },
                 {
                   "name": "Category",
-                  "value": "Integration"
+                  "value": Category
                 },
                 {
                   "name": "Description",
-                  "value": "Something Something Something"
+                  "value": Repo.description
                 }
               ]
             }
