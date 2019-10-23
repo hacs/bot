@@ -4,7 +4,7 @@ import { ExecutionFilter } from './ExecutionFilter'
 
 
 export const NewDefaultRepositoryMerged = (app: Application) => {
-      app.on("pull_request.merged", async context => {
+      app.on("pull_request.closed", async context => {
         if (!ExecutionFilter(context)) return;
         if (context.repo().owner !== "hacs" && context.repo().owner !== "default") return;
 
