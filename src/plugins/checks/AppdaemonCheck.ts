@@ -33,7 +33,7 @@ export async function AppdaemonCheck(context: Context, owner: string, repo: stri
         return
     }
 
-    // Check if the apps directory exsist in the reopsitory
+    // Check if the apps directory exist in the repository
     try {
         await context.github.repos.getContents({owner: owner, repo: repo, path: "apps"});
         Summary.summary += "\n✅  'apps' directory exist in the repository.";

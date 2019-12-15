@@ -33,7 +33,7 @@ export async function IntegrationCheck(context: Context, owner: string, repo: st
         return
     }
 
-    // Check if the custom_components directory exsist in the reopsitory
+    // Check if the custom_components directory exist in the repository
     try {
         var Integration = await context.github.repos.getContents({owner: owner, repo: repo, path: "custom_components"});
         Summary.summary += "\n✅  'custom_components' directory exist in the repository.";
@@ -48,7 +48,7 @@ export async function IntegrationCheck(context: Context, owner: string, repo: st
     // --------------------------------------------------------------------------------
 
 
-    // Check if the integration manifest exsist in the reopsitory
+    // Check if the integration manifest exist in the repository
     try {
         var Integration = await context.github.repos.getContents({owner: owner, repo: repo, path: "custom_components"});
         var IntegrationManifest = await context.github.repos.getContents(

@@ -36,7 +36,7 @@ export async function CommonCheck(context: Context, owner: string, repo: string)
 
     const { data: Repository } = await context.github.repos.get({owner: owner, repo: repo})
 
-    // Check if the reopsitory is a fork
+    // Check if the repository is a fork
     if (!Repository.fork) {
         Summary.summary += `\n${StatusSuccess}  Repository is not a fork`;
     } else {
@@ -61,7 +61,7 @@ export async function CommonCheck(context: Context, owner: string, repo: string)
     // --------------------------------------------------------------------------------
 
 
-    // Check if the reopsitory is archived
+    // Check if the repository is archived
     if (!Repository.archived) {
         Summary.summary += `\n${StatusSuccess}  Repository is not archived`;
     } else {
@@ -74,7 +74,7 @@ export async function CommonCheck(context: Context, owner: string, repo: string)
     // --------------------------------------------------------------------------------
 
 
-    // Check if the reopsitory has a description
+    // Check if the repository has a description
     if (Repository.description !== null) {
         Summary.summary += `\n${StatusSuccess}  Repository has a description`;
     } else {
@@ -87,7 +87,7 @@ export async function CommonCheck(context: Context, owner: string, repo: string)
     // --------------------------------------------------------------------------------
 
 
-    // Check if the reopsitory has a README file
+    // Check if the repository has a README file
     try {
         var ReadmeExist = false;
         var { data: BaseFiles } = await context.github.repos.getContents(
@@ -111,7 +111,7 @@ export async function CommonCheck(context: Context, owner: string, repo: string)
     // --------------------------------------------------------------------------------
 
 
-    // Check if the reopsitory has a hacs.json file
+    // Check if the repository has a hacs.json file
     try {
         var { data: hacsManifest } = await context.github.repos.getContents(
             {owner: owner, repo: repo, path: "hacs.json"});
@@ -132,7 +132,7 @@ export async function CommonCheck(context: Context, owner: string, repo: string)
     // --------------------------------------------------------------------------------
 
 
-    // Check if the reopsitory has a INFO file
+    // Check if the repository has a INFO file
     if (hacsManifestDecoded !== undefined) {
         if (!hacsManifestDecoded.render_readme) {
             try {
