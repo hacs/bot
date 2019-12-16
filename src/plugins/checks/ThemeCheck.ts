@@ -33,7 +33,7 @@ export async function ThemeCheck(context: Context, owner: string, repo: string) 
         return
     }
 
-    // Check if the themes directory exsist in the reopsitory
+    // Check if the themes directory exist in the repository
     try {
         await context.github.repos.getContents({owner: owner, repo: repo, path: "themes"});
         Summary.summary += `\n${StatusSuccess}  'themes' directory exist in the repository.`;

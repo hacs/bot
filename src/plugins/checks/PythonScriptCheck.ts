@@ -33,7 +33,7 @@ export async function PythonScriptCheck(context: Context, owner: string, repo: s
         return
     }
 
-    // Check if the python_script directory exsist in the reopsitory
+    // Check if the python_script directory exist in the repository
     try {
         await context.github.repos.getContents({owner: owner, repo: repo, path: "python_script"});
         Summary.summary += "\n✅  'python_script' directory exist in the repository.";
