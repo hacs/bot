@@ -1,4 +1,6 @@
 # HACS Bot
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fhacs%2Fbot.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fhacs%2Fbot?ref=badge_shield)
+
 
 > A GitHub App built with [Probot](https://github.com/probot/probot) that Bot for the HACS org on GitHub
 
@@ -23,3 +25,6 @@ If you have suggestions for how hacs-bot could be improved, or want to report a 
 ## License
 
 [ISC](LICENSE) © 2019 ludeeus <hi@ludeeus.dev>
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fhacs%2Fbot.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fhacs%2Fbot?ref=badge_large)
