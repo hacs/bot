@@ -5,8 +5,6 @@ import { IsAdmin } from "./ExecutionFilter";
 export const ReleaseHelper = (app: Application) => {
   app.on("issue_comment.created", async context => {
     if (!ExecutionFilter(context)) return;
-    if (!context.payload.issue.title.toLowerCase().includes("Create release"))
-      return;
     if (!context.payload.comment.body.startsWith("@hacs-bot ")) return;
 
     const commentid: number = context.payload.comment.id;
@@ -15,6 +13,8 @@ export const ReleaseHelper = (app: Application) => {
     console.log(
       `Command ${command} requested by ${context.payload.sender.login}`
     );
+
+    console.log(context.payload.issue);
 
     if (!IsAdmin(context)) {
       await context.github.reactions.createForIssueComment(
