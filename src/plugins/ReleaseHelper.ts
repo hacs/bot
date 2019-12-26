@@ -8,13 +8,20 @@ export const ReleaseHelper = (app: Application) => {
     if (!context.payload.comment.body.startsWith("@hacs-bot ")) return;
 
     const commentid: number = context.payload.comment.id;
-    const command: string = context.payload.comment.body.toLowerCase();
+    const command: string = (context.payload.comment.body as string).replace(
+      "@hacs-bot ",
+      ""
+    );
 
     console.log(
       `Command ${command} requested by ${context.payload.sender.login}`
     );
 
-    console.log(context.payload.issue);
+    const title: string = context.payload.issue.title;
+
+    console.log(title);
+    console.log(title.startsWith("Create release "));
+    console.log(title.replace("Create release ", "").replace("?", ""));
 
     if (!IsAdmin(context)) {
       await context.github.reactions.createForIssueComment(
@@ -22,7 +29,7 @@ export const ReleaseHelper = (app: Application) => {
       );
     }
 
-    if (["@hacs-bot no", "@hacs-bot close"].includes(command)) {
+    if (["no", "close"].includes(command.toLowerCase())) {
       await context.github.reactions.createForIssueComment(
         context.issue({ comment_id: commentid, content: "+1" })
       );
