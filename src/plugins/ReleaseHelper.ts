@@ -5,12 +5,12 @@ import { IsAdmin } from "./ExecutionFilter";
 export const ReleaseHelper = (app: Application) => {
   app.on("issue_comment.created", async context => {
     if (!ExecutionFilter(context)) return;
+    if (!context.payload.issue.title.toLowerCase().includes("Create release"))
+      return;
     if (!context.payload.comment.body.startsWith("@hacs-bot ")) return;
 
     const commentid: number = context.payload.comment.id;
-    const command: string = context.payload.comment.body
-      .toLowerCase()
-      .split("@hacs-bot ")[0];
+    const command: string = context.payload.comment.body.toLowerCase();
 
     console.log(
       `Command ${command} requested by ${context.payload.sender.login}`
@@ -22,7 +22,7 @@ export const ReleaseHelper = (app: Application) => {
       );
     }
 
-    if (["no", "close"].includes(command)) {
+    if (["@hacs-bot no", "@hacs-bot close"].includes(command)) {
       await context.github.reactions.createForIssueComment(
         context.issue({ comment_id: commentid, content: "+1" })
       );
