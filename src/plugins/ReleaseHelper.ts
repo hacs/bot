@@ -24,6 +24,7 @@ export const ReleaseHelper = (app: Application) => {
       await context.github.reactions.createForIssueComment(
         context.issue({ comment_id: commentid, content: "confused" })
       );
+      return;
     }
 
     if (["no", "close"].includes(command.toLowerCase())) {
