@@ -12,6 +12,10 @@ export const ReleaseHelper = (app: Application) => {
       .split("@hacs-bot ")[0]
       .toLowerCase();
 
+    console.log(
+      `Command ${command} requested by ${context.payload.sender.login}`
+    );
+
     if (!IsAdmin(context)) {
       await context.github.reactions.createForIssueComment(
         context.issue({ comment_id: commentid, content: "confused" })
