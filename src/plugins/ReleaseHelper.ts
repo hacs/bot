@@ -56,6 +56,7 @@ export const ReleaseHelper = (app: Application) => {
           body: `The new release is published here ${release.data.html_url}`
         })
       );
+      await context.github.issues.update(context.issue({ state: "closed" }));
     }
 
     if (command.toLowerCase().startsWith("release")) {
@@ -80,6 +81,7 @@ export const ReleaseHelper = (app: Application) => {
           body: `The new release is published here ${release.data.html_url}`
         })
       );
+      await context.github.issues.update(context.issue({ state: "closed" }));
     }
   });
 };
