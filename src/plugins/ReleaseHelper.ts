@@ -9,8 +9,8 @@ export const ReleaseHelper = (app: Application) => {
 
     const commentid: number = context.payload.comment.id;
     const command: string = context.payload.comment.body
-      .split("@hacs-bot ")[0]
-      .toLowerCase();
+      .toLowerCase()
+      .split("@hacs-bot ")[0];
 
     console.log(
       `Command ${command} requested by ${context.payload.sender.login}`
