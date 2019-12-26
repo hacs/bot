@@ -5,6 +5,7 @@ import { ClearTempLabels } from "./plugins/ClearTempLabels"
 import { NewDefaultRepository } from "./plugins/NewDefaultRepository"
 import { NewDefaultRepositoryMerged } from "./plugins/NewDefaultRepositoryMerged"
 import { ClosedIssue } from "./plugins/ClosedIssue"
+import {ReleaseHelper} from "./plugins/ReleaseHelper"
 
 
 export = (app: Application) => {
@@ -16,4 +17,5 @@ export = (app: Application) => {
     ClosedIssue(app)
     ClearTempLabels(app)
     NewDefaultRepositoryMerged(app)
+    ReleaseHelper(app)
 }
