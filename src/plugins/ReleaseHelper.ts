@@ -13,16 +13,16 @@ export const ReleaseHelper = (app: Application) => {
       .toLowerCase();
 
     if (!IsAdmin(context)) {
-      context.github.reactions.createForIssueComment(
+      await context.github.reactions.createForIssueComment(
         context.issue({ comment_id: commentid, content: "confused" })
       );
     }
 
     if (["no", "close"].includes(command)) {
-      context.github.reactions.createForIssueComment(
+      await context.github.reactions.createForIssueComment(
         context.issue({ comment_id: commentid, content: "+1" })
       );
-      context.github.issues.update(context.issue({ state: "closed" }));
+      await context.github.issues.update(context.issue({ state: "closed" }));
     }
   });
 };
