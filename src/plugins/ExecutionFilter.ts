@@ -6,3 +6,9 @@ export function ExecutionFilter(context: Context) {
         || context.payload.organization.login === "hacs") return true;
     return false
 }
+
+export function IsAdmin(context: Context) {
+    const admins = ["ludeeus"]
+    if (admins.includes(context.payload.sender.login)) return true
+    return false
+}
