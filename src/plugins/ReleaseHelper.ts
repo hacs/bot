@@ -42,16 +42,41 @@ export const ReleaseHelper = (app: Application) => {
           body: `Creating release with release number ${version}`
         })
       );
+      await context.github.repos.createRelease(
+        context.repo({ tag_name: version })
+      );
+
+      const release = await context.github.repos.getLatestRelease(
+        context.repo()
+      );
+
+      await context.github.issues.createComment(
+        context.issue({
+          body: `The new release is published here ${release.data.html_url}`
+        })
+      );
     }
 
     if (command.toLowerCase().startsWith("release")) {
-      version = command.split("release ")[0];
+      version = command.replace("release ", "");
       await context.github.reactions.createForIssueComment(
         context.issue({ comment_id: commentid, content: "+1" })
       );
       await context.github.issues.createComment(
         context.issue({
           body: `Creating release with release number ${version}`
+        })
+      );
+      await context.github.repos.createRelease(
+        context.repo({ tag_name: version })
+      );
+      const release = await context.github.repos.getLatestRelease(
+        context.repo()
+      );
+
+      await context.github.issues.createComment(
+        context.issue({
+          body: `The new release is published here ${release.data.html_url}`
         })
       );
     }
