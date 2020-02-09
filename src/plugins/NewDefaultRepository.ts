@@ -22,30 +22,54 @@ export const NewDefaultRepository = (app: Application) => {
       if (context.repo().owner !== "hacs" && context.repo().owner !== "default")
         return;
 
-      var changedFiles = await getChangedFiles(context);
+      const changedFiles = await getChangedFiles(context);
+      const newRepo: string[] = [];
+      let repoCategory: string | undefined = undefined;
 
       changedFiles.forEach(async category => {
-        var changed = await getFileDiff(context, category);
-        context.log("---------------------------------");
-        context.log(changed);
-        context.log(changed.length);
-        context.log("---------------------------------");
-        var owner = changed[0].split("/")[0];
-        var repo = changed[0].split("/")[1];
+        if (category !== "blacklist") {
+          repoCategory = category;
+          const repo = await getFileDiff(context, category);
+          newRepo.concat(repo);
+          return;
+        }
+      });
+
+      if (newRepo.length === 0) {
+        await context.github.issues.createComment(
+          context.issue({
+            body: "Could not determine the change, try to rebase your branch."
+          })
+        );
+      } else if (newRepo.length > 1) {
+        await context.github.issues.createComment(
+          context.issue({
+            body: "Only a single repository change is allowed."
+          })
+        );
+      } else {
+        const owner = newRepo[0].split("/")[0];
+        const repo = newRepo[0].split("/")[1];
 
         await context.github.issues.addLabels(
           context.issue({ labels: ["New default repository"] })
         );
 
-        await context.github.issues.update(
-          context.issue({
-            title: `Adds new ${category} [${owner}/${repo}]`
-          })
-        );
-
-        await CommonCheck(context, owner, repo);
-        await CategoryChecks(category, owner, repo, context);
-      });
+        if (repoCategory) {
+          await context.github.issues.update(
+            context.issue({
+              title: `Adds new ${repoCategory} [${owner}/${repo}]`
+            })
+          );
+          await context.github.issues.createComment(
+            context.issue({
+              body: `Running checks on [${owner}/${repo}](https://github.com/${owner}/${repo})`
+            })
+          );
+          await CommonCheck(context, owner, repo);
+          await CategoryChecks(repoCategory, owner, repo, context);
+        }
+      }
     }
   );
 };
