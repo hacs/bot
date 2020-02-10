@@ -31,7 +31,6 @@ export const NewDefaultRepository = (app: Application) => {
           repoCategory = category;
           const repo = await getFileDiff(context, category);
           newRepo.concat(repo);
-          return;
         }
       });
 
