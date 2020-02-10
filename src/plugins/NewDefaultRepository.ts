@@ -22,56 +22,62 @@ export const NewDefaultRepository = (app: Application) => {
       if (context.repo().owner !== "hacs" && context.repo().owner !== "default")
         return;
 
-      const changedFiles = await getChangedFiles(context);
-      context.log("changedFiles: ", changedFiles);
-      let newRepo: string[] = [];
-      let repoCategory: string | undefined = undefined;
-
-      changedFiles.forEach(async category => {
-        if (category !== "blacklist") {
-          repoCategory = category;
-          const repos = await getFileDiff(context, category);
-          repos.forEach(repo => {
-            newRepo.push(repo);
-          });
-        }
+      let changedFiles = await getChangedFiles(context);
+      changedFiles = changedFiles.filter(filen => {
+        if (filen === "blacklist") return false;
+        return true;
       });
-      context.log("newRepo: ", newRepo);
+      context.log("changedFiles: ", changedFiles);
 
-      if (newRepo.length === 0) {
+      if (changedFiles.length > 1) {
         await context.github.issues.createComment(
           context.issue({
-            body: "Could not determine the change, try to rebase your branch."
+            body: "Only a single file change is allowed."
           })
         );
-      } else if (newRepo.length > 1) {
+      }
+
+      let repoCategory = changedFiles.pop();
+      const ChangedRepos = await getFileDiff(context, repoCategory || "");
+
+      if (ChangedRepos.length > 1) {
         await context.github.issues.createComment(
           context.issue({
             body: "Only a single repository change is allowed."
           })
         );
-      } else {
-        const owner = newRepo[0].split("/")[0];
-        const repo = newRepo[0].split("/")[1];
-
-        await context.github.issues.addLabels(
-          context.issue({ labels: ["New default repository"] })
+      } else if (ChangedRepos.length === 1) {
+        await context.github.issues.createComment(
+          context.issue({
+            body: "Could not determine the change, try to rebase your branch."
+          })
         );
+      }
+      context.log("ChangedRepos: ", ChangedRepos);
 
-        if (repoCategory) {
-          await context.github.issues.update(
-            context.issue({
-              title: `Adds new ${repoCategory} [${owner}/${repo}]`
-            })
-          );
-          await context.github.issues.createComment(
-            context.issue({
-              body: `Running checks on [${owner}/${repo}](https://github.com/${owner}/${repo})`
-            })
-          );
-          await CommonCheck(context, owner, repo);
-          await CategoryChecks(repoCategory, owner, repo, context);
-        }
+      const newRepo = ChangedRepos.pop();
+      if (newRepo === undefined) return;
+
+      const owner = newRepo.split("/")[0];
+      const repo = newRepo.split("/")[1];
+
+      await context.github.issues.addLabels(
+        context.issue({ labels: ["New default repository"] })
+      );
+
+      if (repoCategory) {
+        await context.github.issues.update(
+          context.issue({
+            title: `Adds new ${repoCategory} [${owner}/${repo}]`
+          })
+        );
+        await context.github.issues.createComment(
+          context.issue({
+            body: `Running checks on [${owner}/${repo}](https://github.com/${owner}/${repo})`
+          })
+        );
+        await CommonCheck(context, owner, repo);
+        await CategoryChecks(repoCategory, owner, repo, context);
       }
     }
   );
