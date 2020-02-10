@@ -35,6 +35,7 @@ export const NewDefaultRepository = (app: Application) => {
             body: "Only a single file change is allowed."
           })
         );
+        return;
       }
 
       let repoCategory = changedFiles.pop();
@@ -46,12 +47,14 @@ export const NewDefaultRepository = (app: Application) => {
             body: "Only a single repository change is allowed."
           })
         );
-      } else if (ChangedRepos.length === 1) {
+        return;
+      } else if (ChangedRepos.length !== 1) {
         await context.github.issues.createComment(
           context.issue({
             body: "Could not determine the change, try to rebase your branch."
           })
         );
+        return;
       }
       context.log("ChangedRepos: ", ChangedRepos);
 
