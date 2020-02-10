@@ -33,6 +33,7 @@ export const NewDefaultRepository = (app: Application) => {
           newRepo.concat(repo);
         }
       });
+      context.log(newRepo);
 
       if (newRepo.length === 0) {
         await context.github.issues.createComment(
@@ -127,6 +128,8 @@ async function getFileDiff(context: Context, file: string) {
   ChangedDecoded.forEach(element => {
     if (!Decoded.includes(element)) NewItems.push(element);
   });
+
+  context.log(NewItems);
 
   return NewItems;
 }
