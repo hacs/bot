@@ -23,6 +23,7 @@ export const NewDefaultRepository = (app: Application) => {
         return;
 
       const changedFiles = await getChangedFiles(context);
+      context.log("changedFiles: ", changedFiles);
       const newRepo: string[] = [];
       let repoCategory: string | undefined = undefined;
 
@@ -33,7 +34,7 @@ export const NewDefaultRepository = (app: Application) => {
           newRepo.concat(repo);
         }
       });
-      context.log(newRepo);
+      context.log("newRepo: ", newRepo);
 
       if (newRepo.length === 0) {
         await context.github.issues.createComment(
@@ -129,7 +130,7 @@ async function getFileDiff(context: Context, file: string) {
     if (!Decoded.includes(element)) NewItems.push(element);
   });
 
-  context.log(NewItems);
+  context.log("NewItems: ", NewItems);
 
   return NewItems;
 }
