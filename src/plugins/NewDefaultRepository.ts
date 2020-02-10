@@ -24,14 +24,16 @@ export const NewDefaultRepository = (app: Application) => {
 
       const changedFiles = await getChangedFiles(context);
       context.log("changedFiles: ", changedFiles);
-      const newRepo: string[] = [];
+      let newRepo: string[] = [];
       let repoCategory: string | undefined = undefined;
 
       changedFiles.forEach(async category => {
         if (category !== "blacklist") {
           repoCategory = category;
-          const repo = await getFileDiff(context, category);
-          newRepo.concat(repo);
+          const repos = await getFileDiff(context, category);
+          repos.forEach(repo => {
+            newRepo.push(repo);
+          });
         }
       });
       context.log("newRepo: ", newRepo);
