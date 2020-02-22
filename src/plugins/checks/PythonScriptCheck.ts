@@ -35,10 +35,10 @@ export async function PythonScriptCheck(context: Context, owner: string, repo: s
 
     // Check if the python_script directory exist in the repository
     try {
-        await context.github.repos.getContents({owner: owner, repo: repo, path: "python_script"});
-        Summary.summary += "\n✅  'python_script' directory exist in the repository.";
+        await context.github.repos.getContents({owner: owner, repo: repo, path: "python_scripts"});
+        Summary.summary += "\n✅  'python_scripts' directory exist in the repository.";
     } catch(error) {
-        Summary.summary += "\n❌  ['python_script' directory does not exist in the repository.]"
+        Summary.summary += "\n❌  ['python_scripts' directory does not exist in the repository.]"
         Summary.summary += "(https://hacs.xyz/docs/publish/python_script#repository-structure)";
         conclusion = "failure"
     }
