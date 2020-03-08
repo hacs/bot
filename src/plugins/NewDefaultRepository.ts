@@ -98,7 +98,7 @@ async function CategoryChecks(
     "plugin",
     "theme",
     "appdaemon",
-    "netdeamon",
+    "netdaemon",
     "python_script"
   ];
   if (!validCategories.includes(category)) return;
