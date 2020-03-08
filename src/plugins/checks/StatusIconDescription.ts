@@ -12,4 +12,4 @@ ${StatusNeutral} | An optional check failed, this will require a manual review
 ${StatusFailed} | Check failed, this needs to be corrected before the PR can be merged
 
 ## Checks
-`
+`;

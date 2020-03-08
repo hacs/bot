@@ -1,11 +1,7 @@
 import { Context } from "probot";
-import {
-  StatusIconDescription,
-  StatusFailed,
-  StatusSuccess
-} from "./StatusIconDescription";
+import { StatusIconDescription } from "./StatusIconDescription";
 
-export async function ThemeCheck(
+export async function NetdaemonCheck(
   context: Context,
   owner: string,
   repo: string
@@ -14,7 +10,7 @@ export async function ThemeCheck(
   const PRSHA = PR.head.sha;
   var conclusion: "success" | "failure" | "neutral" = "success";
   let Summary = {
-    title: "Theme repository checks",
+    title: "NetDaemon repository checks",
     summary: `Running tests for [${owner}/${repo}](https://github.com/${owner}/${repo})`
   };
 
@@ -24,7 +20,7 @@ export async function ThemeCheck(
     context.issue({
       head_sha: PRSHA,
       status: "in_progress",
-      name: "Theme repository checks",
+      name: "NetDaemon repository checks",
       output: Summary,
       details_url: "https://hacs.xyz/docs/publish/start"
     })
@@ -32,9 +28,9 @@ export async function ThemeCheck(
 
   try {
     await context.github.repos.get({ owner: owner, repo: repo });
-    Summary.summary += `\n\n${StatusSuccess}  Repository exist`;
+    Summary.summary += "\n\n✅  Repository exist";
   } catch (error) {
-    Summary.summary += `\n\n${StatusFailed}  Repository does not exist`;
+    Summary.summary += "\n\n❌  Repository does not exist";
     conclusion = "failure";
     await context.github.checks.update(
       context.issue({
@@ -47,18 +43,19 @@ export async function ThemeCheck(
     return;
   }
 
-  // Check if the themes directory exist in the repository
+  // Check if the apps directory exist in the repository
   try {
     await context.github.repos.getContents({
       owner: owner,
       repo: repo,
-      path: "themes"
+      path: "apps"
     });
-    Summary.summary += `\n${StatusSuccess}  'themes' directory exist in the repository.`;
+    Summary.summary += "\n✅  'apps' directory exist in the repository.";
   } catch (error) {
-    Summary.summary += `\n${StatusFailed}  ['themes' directory does not exist in the repository.]`;
     Summary.summary +=
-      "(https://hacs.xyz/docs/publish/theme#repository-structure)";
+      "\n❌  ['apps' directory does not exist in the repository.]";
+    Summary.summary +=
+      "(https://hacs.xyz/docs/publish/netdaemon#repository-structure)";
     conclusion = "failure";
   }
 

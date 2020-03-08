@@ -5,6 +5,7 @@ import { IntegrationCheck } from "./checks/IntegrationCheck";
 import { PluginCheck } from "./checks/PluginCheck";
 import { ThemeCheck } from "./checks/ThemeCheck";
 import { AppdaemonCheck } from "./checks/AppdaemonCheck";
+import { NetdaemonCheck } from "./checks/NetdaemonCheck";
 import { PythonScriptCheck } from "./checks/PythonScriptCheck";
 import { ExecutionFilter } from "./ExecutionFilter";
 
@@ -97,6 +98,7 @@ async function CategoryChecks(
     "plugin",
     "theme",
     "appdaemon",
+    "netdeamon",
     "python_script"
   ];
   if (!validCategories.includes(category)) return;
@@ -104,6 +106,7 @@ async function CategoryChecks(
   if (category == "plugin") await PluginCheck(context, owner, repo);
   if (category == "theme") await ThemeCheck(context, owner, repo);
   if (category == "appdaemon") await AppdaemonCheck(context, owner, repo);
+  if (category == "netdaemon") await NetdaemonCheck(context, owner, repo);
   if (category == "python_script")
     await PythonScriptCheck(context, owner, repo);
 }
