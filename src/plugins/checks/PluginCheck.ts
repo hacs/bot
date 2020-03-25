@@ -69,52 +69,6 @@ export async function PluginCheck(
   );
   // --------------------------------------------------------------------------------
 
-  // Check import type.
-  try {
-    var BaseFiles = await context.github.repos.getContents({
-      owner: owner,
-      repo: repo,
-      path: ""
-    });
-
-    var readme: any = undefined;
-    (BaseFiles.data as [any]).forEach(element => {
-      if (String(element.name).toLowerCase() === "readme") readme = element;
-      if (String(element.name).toLowerCase() === "readme.md") readme = element;
-    });
-
-    if (readme === undefined || readme === null) throw "error";
-
-    var EncodedReadme = await context.github.repos.getContents({
-      owner: owner,
-      repo: repo,
-      path: readme.path
-    });
-
-    readme = Base64.decode(EncodedReadme.data["content"]);
-
-    if (readme === undefined || readme === null) throw "error";
-
-    if (readme.includes("type: module") || readme.includes("type: js")) {
-      Summary.summary += "\n✅  Javascript import type is defined";
-    } else {
-      throw "error";
-    }
-  } catch (error) {
-    Summary.summary += "\n❌  [Javascript import type is not defined]";
-    Summary.summary += "(https://hacs.xyz/docs/publish/plugin#import-type)";
-    conclusion = "failure";
-  }
-
-  await context.github.checks.update(
-    context.issue({
-      head_sha: PRSHA,
-      check_run_id: CheckRun.id,
-      output: Summary
-    })
-  );
-  // --------------------------------------------------------------------------------
-
   // Final CheckRun update
   await context.github.checks.update(
     context.issue({
