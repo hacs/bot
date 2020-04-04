@@ -14,7 +14,7 @@ export async function ThemeCheck(
   const PRSHA = PR.head.sha;
   var conclusion: "success" | "failure" | "neutral" = "success";
   let Summary = {
-    title: "Theme repository checks",
+    title: "HACS Category checks",
     summary: `Running tests for [${owner}/${repo}](https://github.com/${owner}/${repo})`
   };
 
@@ -24,7 +24,7 @@ export async function ThemeCheck(
     context.issue({
       head_sha: PRSHA,
       status: "in_progress",
-      name: "Theme repository checks",
+      name: "HACS Category checks",
       output: Summary,
       details_url: "https://hacs.xyz/docs/publish/start"
     })

@@ -10,7 +10,7 @@ export async function NetdaemonCheck(
   const PRSHA = PR.head.sha;
   var conclusion: "success" | "failure" | "neutral" = "success";
   let Summary = {
-    title: "NetDaemon repository checks",
+    title: "HACS Category checks",
     summary: `Running tests for [${owner}/${repo}](https://github.com/${owner}/${repo})`
   };
 
@@ -20,7 +20,7 @@ export async function NetdaemonCheck(
     context.issue({
       head_sha: PRSHA,
       status: "in_progress",
-      name: "NetDaemon repository checks",
+      name: "HACS Category checks",
       output: Summary,
       details_url: "https://hacs.xyz/docs/publish/start"
     })
