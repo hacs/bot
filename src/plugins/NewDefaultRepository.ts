@@ -20,8 +20,8 @@ export const NewDefaultRepository = (app: Application) => {
     ],
     async context => {
       if (!ExecutionFilter(context)) return;
-      if (context.repo().owner !== "hacs" && context.repo().repo !== "default")
-        return;
+      if (context.repo().owner !== "hacs") return;
+      if (context.repo().repo !== "default") return;
 
       let changedFiles = await getChangedFiles(context);
       changedFiles = changedFiles.filter(filen => {
