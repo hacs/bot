@@ -3,7 +3,7 @@ import {
   StatusIconDescription,
   StatusFailed,
   StatusNeutral,
-  StatusSuccess
+  StatusSuccess,
 } from "./StatusIconDescription";
 
 export async function CommonCheck(
@@ -11,13 +11,13 @@ export async function CommonCheck(
   owner: string,
   repo: string
 ) {
-  const { data: PR } = await context.github.pullRequests.get(context.issue());
+  const { data: PR } = await context.github.pulls.get(context.issue());
   const PRAuthor = PR.user.login;
   const PRSHA = PR.head.sha;
   var conclusion: "success" | "failure" | "neutral" = "success";
   let Summary = {
     title: "Common repository checks",
-    summary: `Running tests for [${owner}/${repo}](https://github.com/${owner}/${repo})`
+    summary: `Running tests for [${owner}/${repo}](https://github.com/${owner}/${repo})`,
   };
 
   Summary.summary += StatusIconDescription;
@@ -28,7 +28,7 @@ export async function CommonCheck(
       status: "in_progress",
       name: "Common repository checks",
       output: Summary,
-      details_url: "https://hacs.xyz/docs/publish/start"
+      details_url: "https://hacs.xyz/docs/publish/start",
     })
   );
 
@@ -43,7 +43,7 @@ export async function CommonCheck(
         head_sha: PRSHA,
         check_run_id: CheckRun.id,
         output: Summary,
-        conclusion: conclusion
+        conclusion: conclusion,
       })
     );
     return;
@@ -51,7 +51,7 @@ export async function CommonCheck(
 
   const { data: Repository } = await context.github.repos.get({
     owner: owner,
-    repo: repo
+    repo: repo,
   });
 
   // Check if the repository is a fork
@@ -66,7 +66,7 @@ export async function CommonCheck(
     context.issue({
       head_sha: PRSHA,
       check_run_id: CheckRun.id,
-      output: Summary
+      output: Summary,
     })
   );
   // --------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ export async function CommonCheck(
     context.issue({
       head_sha: PRSHA,
       check_run_id: CheckRun.id,
-      output: Summary
+      output: Summary,
     })
   );
   // --------------------------------------------------------------------------------
@@ -100,7 +100,7 @@ export async function CommonCheck(
     context.issue({
       head_sha: PRSHA,
       check_run_id: CheckRun.id,
-      output: Summary
+      output: Summary,
     })
   );
   // --------------------------------------------------------------------------------
@@ -117,7 +117,7 @@ export async function CommonCheck(
     context.issue({
       head_sha: PRSHA,
       check_run_id: CheckRun.id,
-      output: Summary
+      output: Summary,
     })
   );
   // --------------------------------------------------------------------------------
@@ -128,10 +128,10 @@ export async function CommonCheck(
     var { data: BaseFiles } = await context.github.repos.getContents({
       owner: owner,
       repo: repo,
-      path: ""
+      path: "",
     });
 
-    (BaseFiles as [any]).forEach(element => {
+    (BaseFiles as [any]).forEach((element) => {
       if (String(element.name).toLowerCase() === "readme") ReadmeExist = true;
       if (String(element.name).toLowerCase() === "readme.md")
         ReadmeExist = true;
@@ -149,7 +149,7 @@ export async function CommonCheck(
     context.issue({
       head_sha: PRSHA,
       check_run_id: CheckRun.id,
-      output: Summary
+      output: Summary,
     })
   );
   // --------------------------------------------------------------------------------
@@ -159,7 +159,7 @@ export async function CommonCheck(
     var { data: hacsManifest } = await context.github.repos.getContents({
       owner: owner,
       repo: repo,
-      path: "hacs.json"
+      path: "hacs.json",
     });
 
     var hacsManifestDecoded = JSON.parse(Base64.decode(hacsManifest.content));
@@ -177,7 +177,7 @@ export async function CommonCheck(
     context.issue({
       head_sha: PRSHA,
       check_run_id: CheckRun.id,
-      output: Summary
+      output: Summary,
     })
   );
   // --------------------------------------------------------------------------------
@@ -190,10 +190,10 @@ export async function CommonCheck(
         var { data: BaseFiles } = await context.github.repos.getContents({
           owner: owner,
           repo: repo,
-          path: ""
+          path: "",
         });
 
-        (BaseFiles as [any]).forEach(element => {
+        (BaseFiles as [any]).forEach((element) => {
           if (String(element.name).toLowerCase() === "info") InfoExist = true;
           if (String(element.name).toLowerCase() === "info.md")
             InfoExist = true;
@@ -211,7 +211,7 @@ export async function CommonCheck(
         context.issue({
           head_sha: PRSHA,
           check_run_id: CheckRun.id,
-          output: Summary
+          output: Summary,
         })
       );
     }
@@ -224,7 +224,7 @@ export async function CommonCheck(
       head_sha: PRSHA,
       check_run_id: CheckRun.id,
       output: Summary,
-      conclusion: conclusion
+      conclusion: conclusion,
     })
   );
 }

@@ -7,7 +7,6 @@ import { ThemeCheck } from "./checks/ThemeCheck";
 import { AppdaemonCheck } from "./checks/AppdaemonCheck";
 import { NetdaemonCheck } from "./checks/NetdaemonCheck";
 import { PythonScriptCheck } from "./checks/PythonScriptCheck";
-import { ExecutionFilter } from "./ExecutionFilter";
 
 export const NewDefaultRepository = (app: Application) => {
   app.on(
@@ -16,15 +15,14 @@ export const NewDefaultRepository = (app: Application) => {
       "pull_request.reopened",
       "pull_request.labeled",
       "pull_request.synchronize",
-      "check_run.rerequested"
+      "check_run.rerequested",
     ],
-    async context => {
-      if (!ExecutionFilter(context)) return;
+    async (context) => {
       if (context.repo().owner !== "hacs") return;
       if (context.repo().repo !== "default") return;
 
       let changedFiles = await getChangedFiles(context);
-      changedFiles = changedFiles.filter(filen => {
+      changedFiles = changedFiles.filter((filen: string) => {
         if (filen === "blacklist") return false;
         return true;
       });
@@ -33,7 +31,7 @@ export const NewDefaultRepository = (app: Application) => {
       if (changedFiles.length > 1) {
         await context.github.issues.createComment(
           context.issue({
-            body: "Only a single file change is allowed."
+            body: "Only a single file change is allowed.",
           })
         );
         return;
@@ -45,14 +43,14 @@ export const NewDefaultRepository = (app: Application) => {
       if (ChangedRepos.length > 1) {
         await context.github.issues.createComment(
           context.issue({
-            body: "Only a single repository change is allowed."
+            body: "Only a single repository change is allowed.",
           })
         );
         return;
       } else if (ChangedRepos.length !== 1) {
         await context.github.issues.createComment(
           context.issue({
-            body: "Could not determine the change, try to rebase your branch."
+            body: "Could not determine the change, try to rebase your branch.",
           })
         );
         return;
@@ -72,12 +70,12 @@ export const NewDefaultRepository = (app: Application) => {
       if (repoCategory) {
         await context.github.issues.update(
           context.issue({
-            title: `Adds new ${repoCategory} [${owner}/${repo}]`
+            title: `Adds new ${repoCategory} [${owner}/${repo}]`,
           })
         );
         await context.github.issues.createComment(
           context.issue({
-            body: `Running checks on [${owner}/${repo}](https://github.com/${owner}/${repo})`
+            body: `Running checks on [${owner}/${repo}](https://github.com/${owner}/${repo})`,
           })
         );
         await CommonCheck(context, owner, repo);
@@ -99,7 +97,7 @@ async function CategoryChecks(
     "theme",
     "appdaemon",
     "netdaemon",
-    "python_script"
+    "python_script",
   ];
   if (!validCategories.includes(category)) return;
   if (category == "integration") await IntegrationCheck(context, owner, repo);
@@ -115,7 +113,7 @@ async function getChangedFiles(context: Context) {
   const listFilesResponse = await context.github.pullRequests.listFiles(
     context.issue()
   );
-  const changedFiles = listFilesResponse.data.map(f => f.filename);
+  const changedFiles = listFilesResponse.data.map((f) => f.filename);
   return changedFiles;
 }
 
@@ -140,7 +138,7 @@ async function getFileDiff(context: Context, file: string) {
 
   var NewItems: string[] = [];
 
-  ChangedDecoded.forEach(element => {
+  ChangedDecoded.forEach((element) => {
     if (!Decoded.includes(element)) NewItems.push(element);
   });
 

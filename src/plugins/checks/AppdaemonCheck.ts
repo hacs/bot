@@ -6,12 +6,12 @@ export async function AppdaemonCheck(
   owner: string,
   repo: string
 ) {
-  const { data: PR } = await context.github.pullRequests.get(context.issue());
+  const { data: PR } = await context.github.pulls.get(context.issue());
   const PRSHA = PR.head.sha;
   var conclusion: "success" | "failure" | "neutral" = "success";
   let Summary = {
     title: "HACS Category checks",
-    summary: `Running tests for [${owner}/${repo}](https://github.com/${owner}/${repo})`
+    summary: `Running tests for [${owner}/${repo}](https://github.com/${owner}/${repo})`,
   };
 
   Summary.summary += StatusIconDescription;
@@ -22,7 +22,7 @@ export async function AppdaemonCheck(
       status: "in_progress",
       name: "HACS Category checks",
       output: Summary,
-      details_url: "https://hacs.xyz/docs/publish/start"
+      details_url: "https://hacs.xyz/docs/publish/start",
     })
   );
 
@@ -37,7 +37,7 @@ export async function AppdaemonCheck(
         head_sha: PRSHA,
         check_run_id: CheckRun.id,
         output: Summary,
-        conclusion: conclusion
+        conclusion: conclusion,
       })
     );
     return;
@@ -48,7 +48,7 @@ export async function AppdaemonCheck(
     await context.github.repos.getContents({
       owner: owner,
       repo: repo,
-      path: "apps"
+      path: "apps",
     });
     Summary.summary += "\n✅  'apps' directory exist in the repository.";
   } catch (error) {
@@ -63,7 +63,7 @@ export async function AppdaemonCheck(
     context.issue({
       head_sha: PRSHA,
       check_run_id: CheckRun.id,
-      output: Summary
+      output: Summary,
     })
   );
   // --------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ export async function AppdaemonCheck(
       head_sha: PRSHA,
       check_run_id: CheckRun.id,
       output: Summary,
-      conclusion: conclusion
+      conclusion: conclusion,
     })
   );
 }

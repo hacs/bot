@@ -1,36 +1,24 @@
-import { Application } from "probot";
-import { ExecutionFilter } from "./ExecutionFilter";
+import { Application, Context } from "probot";
+import { messageNewIssue } from "../messages";
+import { extractLabels } from "../util/extractLabels";
 
-export const Greeter = (app: Application) => {
-  app.on("issues.opened", async context => {
-    if (!ExecutionFilter(context)) return;
+export const NAME = "Greeter";
 
-    await context.github.issues.createComment(
-      context.issue({ body: NewIssue })
-    );
-  });
-
-  app.on("pull_request.opened", async context => {
-    if (!ExecutionFilter(context)) return;
-
-    await context.github.issues.createComment(context.issue({ body: NewPull }));
+export const initGreeter = (app: Application) => {
+  app.on("issues.opened", async (context) => {
+    await runGreeter(context);
   });
 };
 
-const FunItems: string[] = [
-  "[this cute kitten 😺](https://www.youtube.com/watch?v=0Bmhjf0rKe8)",
-  "this awesome picture\n\n![image](https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Sunset_2007-1.jpg/1280px-Sunset_2007-1.jpg)"
-];
+export async function runGreeter(context: Context) {
+  const isInvalid: boolean = extractLabels(context)
+    .map((label) => label.name)
+    .includes("invalid");
 
-const NewPull: string = `
-Automatic tasks are now running some initial checks before this can be merged.
-When those are done, someone will manually ensure that that it's OK. 💃
-
-While you wait, you can have a look at ${
-  FunItems[Math.floor(Math.random() * FunItems.length)]
+  if (isInvalid) {
+    return;
+  }
+  await context.github.issues.createComment(
+    context.issue({ body: messageNewIssue })
+  );
 }
-`;
-
-const NewIssue: string = `
-Make sure you have read the [issue guidelines](https://hacs.xyz/docs/issues) and that you filled out the **entire** template.
-`;
