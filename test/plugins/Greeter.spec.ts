@@ -12,7 +12,7 @@ describe(NAME, () => {
         issue: {
           base: { ref: "master" },
         },
-        sender: { login: "someone" },
+        sender: { login: "someone", type: "User" },
       },
       // @ts-ignore
       issue: (val) => val,
