@@ -4,11 +4,16 @@ export const NAME = "extractTasks";
 
 export interface ghTask {
   check: boolean;
-  name?: string;
+  name: string;
 }
 
 export function extractTasks(context: Context) {
+  const matchAll = /- \[( |)(x|X| |)(| )\] /;
+  const matchChecked = /- \[( |)(x|X)(| )\] /;
   let ghTasks: ghTask[] = [];
+  let check: boolean = false;
+  let name: string;
+
   const issueOrPr = context.payload.issue || context.payload.pull_request;
   const lines = issueOrPr.body;
 
@@ -17,15 +22,14 @@ export function extractTasks(context: Context) {
       return;
     }
 
-    let newTask: ghTask = { check: false };
-    if (/- \[(x|X)\]/.test(line)) {
-      newTask.check = true;
+    if (matchChecked.test(line)) {
+      check = true;
     }
-    newTask.name = line
-      .split(/- \[(x|X| )\] /)
-      [line.split(/- \[(x|X| )\] /).length - 1].trim()
+    name = line
+      .split(matchAll)
+      [line.split(matchAll).length - 1].trim()
       .replace(/\\r/g, "");
-    ghTasks.push(newTask);
+    ghTasks.push({ check, name });
   });
   return ghTasks;
 }
