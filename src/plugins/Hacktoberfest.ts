@@ -10,7 +10,7 @@ export const HacktoberFestMessage: string = `
 Make sure that you have signed up at https://hacktoberfest.digitalocean.com/
 `;
 
-const isHacktoberfestLive = () => new Date().getMonth() == 9;
+const isHacktoberfestLive = () => new Date().getMonth() === 9;
 
 export const initHacktoberfest = (app: Application) => {
   app.on("pull_request.opened", async (context) => {

@@ -43,7 +43,7 @@ describe(NAME, () => {
         log: () => undefined,
         payload: {
           issue: {
-            body: "- [ ] Test\\n- [ ] Test2",
+            body: "- [ ] Test\r\n- [ ] Test2",
           },
         },
       }),

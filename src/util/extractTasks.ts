@@ -12,7 +12,7 @@ export function extractTasks(context: Context) {
   const issueOrPr = context.payload.issue || context.payload.pull_request;
   const lines = issueOrPr.body;
 
-  lines.split("\\n").forEach((line: string) => {
+  lines.split("\n").forEach((line: string) => {
     if (!line.startsWith("- [")) {
       return;
     }
@@ -21,9 +21,9 @@ export function extractTasks(context: Context) {
     if (/- \[(x|X)\]/.test(line)) {
       newTask.check = true;
     }
-    newTask.name = line.split(/- \[(x|X| )\] /)[
-      line.split(/- \[(x|X| )\] /).length - 1
-    ];
+    newTask.name = line
+      .split(/- \[(x|X| )\] /)
+      [line.split(/- \[(x|X| )\] /).length - 1].replace("\r", "");
     ghTasks.push(newTask);
   });
   return ghTasks;

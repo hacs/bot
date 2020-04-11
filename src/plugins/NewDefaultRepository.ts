@@ -8,19 +8,23 @@ import { AppdaemonCheck } from "./checks/AppdaemonCheck";
 import { NetdaemonCheck } from "./checks/NetdaemonCheck";
 import { PythonScriptCheck } from "./checks/PythonScriptCheck";
 import { extractOrgRepo } from "../util/extractOrgRepo";
+import { extractTasks } from "../util/extractTasks";
+import { senderIsBot } from "../filter";
 
 export const NewDefaultRepository = (app: Application) => {
   app.on(
     [
       "pull_request.opened",
+      "pull_request.edited",
       "pull_request.reopened",
       "pull_request.labeled",
       "pull_request.synchronize",
       "check_run.rerequested",
     ],
     async (context) => {
+      if (senderIsBot(context)) return;
       if (extractOrgRepo(context).repo !== "default") return;
-
+      if (extractTasks(context).length !== 4) return;
       let changedFiles = await getChangedFiles(context);
       changedFiles = changedFiles.filter((filen: string) => {
         if (filen === "blacklist") return false;
