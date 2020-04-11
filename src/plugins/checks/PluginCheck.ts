@@ -6,12 +6,12 @@ export async function PluginCheck(
   owner: string,
   repo: string
 ) {
-  const { data: PR } = await context.github.pullRequests.get(context.issue());
+  const { data: PR } = await context.github.pulls.get(context.issue());
   const PRSHA = PR.head.sha;
   var conclusion: "success" | "failure" | "neutral" = "success";
   let Summary = {
     title: "HACS Category checks",
-    summary: `Running tests for [${owner}/${repo}](https://github.com/${owner}/${repo})`
+    summary: `Running tests for [${owner}/${repo}](https://github.com/${owner}/${repo})`,
   };
 
   Summary.summary += StatusIconDescription;
@@ -22,7 +22,7 @@ export async function PluginCheck(
       status: "in_progress",
       name: "HACS Category checks",
       output: Summary,
-      details_url: "https://hacs.xyz/docs/publish/start"
+      details_url: "https://hacs.xyz/docs/publish/start",
     })
   );
 
@@ -37,7 +37,7 @@ export async function PluginCheck(
         head_sha: PRSHA,
         check_run_id: CheckRun.id,
         output: Summary,
-        conclusion: conclusion
+        conclusion: conclusion,
       })
     );
     return;
@@ -64,7 +64,7 @@ export async function PluginCheck(
     context.issue({
       head_sha: PRSHA,
       check_run_id: CheckRun.id,
-      output: Summary
+      output: Summary,
     })
   );
   // --------------------------------------------------------------------------------
@@ -75,7 +75,7 @@ export async function PluginCheck(
       head_sha: PRSHA,
       check_run_id: CheckRun.id,
       output: Summary,
-      conclusion: conclusion
+      conclusion: conclusion,
     })
   );
 }
@@ -86,16 +86,16 @@ async function CheckDist(owner: string, repo: string, context: Context) {
     `${repo.replace("lovelace-", "")}.js`,
     `${repo}.js`,
     `${repo}.umd.js`,
-    `${repo}-bundle.js`
+    `${repo}-bundle.js`,
   ];
   try {
     var DistContents = await context.github.repos.getContents({
       owner: owner,
       repo: repo,
-      path: "dist"
+      path: "dist",
     });
 
-    (DistContents.data as [any]).forEach(element => {
+    (DistContents.data as [any]).forEach((element) => {
       if (valid_names.includes(element.name)) pluginExist = true;
     });
     if (pluginExist) return true;
@@ -111,15 +111,15 @@ async function CheckRelease(owner: string, repo: string, context: Context) {
     `${repo.replace("lovelace-", "")}.js`,
     `${repo}.js`,
     `${repo}.umd.js`,
-    `${repo}-bundle.js`
+    `${repo}-bundle.js`,
   ];
   try {
     var ReleaseContents = await context.github.repos.getLatestRelease({
       owner: owner,
-      repo: repo
+      repo: repo,
     });
 
-    (ReleaseContents.data.assets as [any]).forEach(element => {
+    (ReleaseContents.data.assets as [any]).forEach((element) => {
       if (valid_names.includes(element.name)) pluginExist = true;
     });
     if (pluginExist) return true;
@@ -135,16 +135,16 @@ async function CheckRoot(owner: string, repo: string, context: Context) {
     `${repo.replace("lovelace-", "")}.js`,
     `${repo}.js`,
     `${repo}.umd.js`,
-    `${repo}-bundle.js`
+    `${repo}-bundle.js`,
   ];
   try {
     var RootContents = await context.github.repos.getContents({
       owner: owner,
       repo: repo,
-      path: ""
+      path: "",
     });
 
-    (RootContents.data as [any]).forEach(element => {
+    (RootContents.data as [any]).forEach((element) => {
       if (valid_names.includes(element.name)) pluginExist = true;
     });
     if (pluginExist) return true;

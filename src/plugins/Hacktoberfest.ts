@@ -1,27 +1,29 @@
 import { Application, Context } from "probot";
-import { ExecutionFilter } from "./ExecutionFilter";
+import { senderIsBot } from "../filter";
 
-const isHacktoberfestLive = () => new Date().getMonth() == 9;
+export const NAME = "Hacktoberfest";
+export const LABEL_INVALID = "invalid";
 
-const HacktoberFestMessage: string = `
+export const HacktoberFestMessage: string = `
 ## It's Hacktoberfest 🎉
 
 Make sure that you have signed up at https://hacktoberfest.digitalocean.com/
 `;
 
-export const Hacktoberfest = (app: Application) => {
-  if (!isHacktoberfestLive) return;
-  app.on("pull_request.opened", async context => {
-    if (!ExecutionFilter(context)) return;
-    await OpenAction(context);
+const isHacktoberfestLive = () => new Date().getMonth() == 9;
+
+export const initHacktoberfest = (app: Application) => {
+  app.on("pull_request.opened", async (context) => {
+    await openAction(context);
   });
-  app.on("pull_request.closed", async context => {
-    if (!ExecutionFilter(context)) return;
-    await CloseAction(context);
+  app.on("pull_request.closed", async (context) => {
+    await closeAction(context);
   });
 };
 
-async function OpenAction(context: Context) {
+export async function openAction(context: Context) {
+  if (!isHacktoberfestLive) return;
+  if (senderIsBot(context)) return;
   await context.github.issues.createComment(
     context.issue({ body: HacktoberFestMessage })
   );
@@ -33,15 +35,19 @@ async function OpenAction(context: Context) {
   );
 }
 
-async function CloseAction(context: Context) {
-  const PRStatus = await context.github.pullRequests.get(context.issue());
+export async function closeAction(context: Context) {
+  if (!isHacktoberfestLive) return;
+  if (senderIsBot(context)) return;
+  const PRStatus = await context.github.pulls.get(context.issue());
   if (PRStatus.data.merged) return;
 
   await context.github.issues.removeLabel(
     context.issue({ name: "Hacktoberfest" })
   );
 
-  await context.github.issues.addLabels(context.issue({ labels: ["invalid"] }));
+  await context.github.issues.addLabels(
+    context.issue({ labels: [LABEL_INVALID] })
+  );
 }
 
 async function CreateOrUpdateHacktoberfestLabel(context: Context) {
@@ -50,7 +56,7 @@ async function CreateOrUpdateHacktoberfestLabel(context: Context) {
     context.issue()
   );
 
-  CurrentLabels.data.forEach(element => {
+  CurrentLabels.data.forEach((element) => {
     if (element.name.toLocaleLowerCase() === "hacktoberfest")
       LabelExists = true;
   });
@@ -60,7 +66,7 @@ async function CreateOrUpdateHacktoberfestLabel(context: Context) {
       context.issue({
         current_name: "hacktoberfest",
         name: "Hacktoberfest",
-        color: "ff5500"
+        color: "ff5500",
       })
     );
   } else {

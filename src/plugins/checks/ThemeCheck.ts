@@ -2,7 +2,7 @@ import { Context } from "probot";
 import {
   StatusIconDescription,
   StatusFailed,
-  StatusSuccess
+  StatusSuccess,
 } from "./StatusIconDescription";
 
 export async function ThemeCheck(
@@ -10,12 +10,12 @@ export async function ThemeCheck(
   owner: string,
   repo: string
 ) {
-  const { data: PR } = await context.github.pullRequests.get(context.issue());
+  const { data: PR } = await context.github.pulls.get(context.issue());
   const PRSHA = PR.head.sha;
   var conclusion: "success" | "failure" | "neutral" = "success";
   let Summary = {
     title: "HACS Category checks",
-    summary: `Running tests for [${owner}/${repo}](https://github.com/${owner}/${repo})`
+    summary: `Running tests for [${owner}/${repo}](https://github.com/${owner}/${repo})`,
   };
 
   Summary.summary += StatusIconDescription;
@@ -26,7 +26,7 @@ export async function ThemeCheck(
       status: "in_progress",
       name: "HACS Category checks",
       output: Summary,
-      details_url: "https://hacs.xyz/docs/publish/start"
+      details_url: "https://hacs.xyz/docs/publish/start",
     })
   );
 
@@ -41,7 +41,7 @@ export async function ThemeCheck(
         head_sha: PRSHA,
         check_run_id: CheckRun.id,
         output: Summary,
-        conclusion: conclusion
+        conclusion: conclusion,
       })
     );
     return;
@@ -52,7 +52,7 @@ export async function ThemeCheck(
     await context.github.repos.getContents({
       owner: owner,
       repo: repo,
-      path: "themes"
+      path: "themes",
     });
     Summary.summary += `\n${StatusSuccess}  'themes' directory exist in the repository.`;
   } catch (error) {
@@ -66,7 +66,7 @@ export async function ThemeCheck(
     context.issue({
       head_sha: PRSHA,
       check_run_id: CheckRun.id,
-      output: Summary
+      output: Summary,
     })
   );
   // --------------------------------------------------------------------------------
@@ -77,7 +77,7 @@ export async function ThemeCheck(
       head_sha: PRSHA,
       check_run_id: CheckRun.id,
       output: Summary,
-      conclusion: conclusion
+      conclusion: conclusion,
     })
   );
 }
