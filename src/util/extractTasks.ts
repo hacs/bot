@@ -13,7 +13,7 @@ export function extractTasks(context: Context) {
   const lines = issueOrPr.body;
 
   lines.split("\n").forEach((line: string) => {
-    if (!line.startsWith("- [")) {
+    if (!line.trim().startsWith("- [")) {
       return;
     }
 
@@ -23,7 +23,8 @@ export function extractTasks(context: Context) {
     }
     newTask.name = line
       .split(/- \[(x|X| )\] /)
-      [line.split(/- \[(x|X| )\] /).length - 1].replace("\r", "");
+      [line.split(/- \[(x|X| )\] /).length - 1].trim()
+      .replace(/\\r/g, "");
     ghTasks.push(newTask);
   });
   return ghTasks;
