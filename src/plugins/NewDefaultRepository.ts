@@ -28,9 +28,21 @@ export const NewDefaultRepository = (app: Application) => {
       if (extractOrgRepo(context).repo !== "default") return;
       if (extractTasks(context).filter((task) => task.check).length !== 4) {
         context.log(NAME, "Missing tasks");
+        await context.github.issues.addLabels(
+          context.issue({ labels: ["Not finished"] })
+        );
         return;
       }
-
+      const CurrentLabels = await context.github.issues.listLabelsOnIssue(
+        context.issue()
+      );
+      CurrentLabels.data.forEach(async (element) => {
+        if (element.name === "Not finished") {
+          await context.github.issues.removeLabel(
+            context.issue({ name: "Not finished" })
+          );
+        }
+      });
       let changedFiles = await getChangedFiles(context);
       changedFiles = changedFiles.filter((filen: string) => {
         if (filen === "blacklist") return false;
