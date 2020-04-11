@@ -1,10 +1,11 @@
 import { Application } from "probot";
-import { ExecutionFilter } from "./ExecutionFilter";
-import { IsAdmin } from "./ExecutionFilter";
+import { senderIsAdmin, senderIsBot } from "../filter";
+import { extractOrgRepo } from "../util/extractOrgRepo";
 
 export const ReleaseHelper = (app: Application) => {
-  app.on("issue_comment.created", async context => {
-    if (!ExecutionFilter(context)) return;
+  app.on("issue_comment.created", async (context) => {
+    if (extractOrgRepo(context).org !== "integration" || senderIsBot(context))
+      return;
     if (!context.payload.issue.title.startsWith("Create release ")) return;
     if (!context.payload.comment.body.startsWith("@hacs-bot ")) return;
 
@@ -20,7 +21,7 @@ export const ReleaseHelper = (app: Application) => {
       `Command ${command} requested by ${context.payload.sender.login}`
     );
 
-    if (!IsAdmin(context)) {
+    if (!senderIsAdmin(context)) {
       await context.github.reactions.createForIssueComment(
         context.issue({ comment_id: commentid, content: "confused" })
       );
@@ -40,7 +41,7 @@ export const ReleaseHelper = (app: Application) => {
       );
       await context.github.issues.createComment(
         context.issue({
-          body: `Creating release with release number ${version}`
+          body: `Creating release with release number ${version}`,
         })
       );
       await context.github.repos.createRelease(
@@ -53,7 +54,7 @@ export const ReleaseHelper = (app: Application) => {
 
       await context.github.issues.createComment(
         context.issue({
-          body: `The new release is published here ${release.data.html_url}`
+          body: `The new release is published here ${release.data.html_url}`,
         })
       );
       await context.github.issues.update(context.issue({ state: "closed" }));
@@ -66,7 +67,7 @@ export const ReleaseHelper = (app: Application) => {
       );
       await context.github.issues.createComment(
         context.issue({
-          body: `Creating release with release number ${version}`
+          body: `Creating release with release number ${version}`,
         })
       );
       await context.github.repos.createRelease(
@@ -78,7 +79,7 @@ export const ReleaseHelper = (app: Application) => {
 
       await context.github.issues.createComment(
         context.issue({
-          body: `The new release is published here ${release.data.html_url}`
+          body: `The new release is published here ${release.data.html_url}`,
         })
       );
       await context.github.issues.update(context.issue({ state: "closed" }));

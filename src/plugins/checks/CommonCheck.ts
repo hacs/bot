@@ -162,7 +162,9 @@ export async function CommonCheck(
       path: "hacs.json",
     });
 
-    var hacsManifestDecoded = JSON.parse(Base64.decode(hacsManifest.content));
+    var hacsManifestDecoded = JSON.parse(
+      Base64.decode((hacsManifest as any).content)
+    );
 
     if (!hacsManifestDecoded.name) throw "Data not correct";
 

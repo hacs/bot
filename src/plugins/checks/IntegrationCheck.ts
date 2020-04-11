@@ -6,12 +6,12 @@ export async function IntegrationCheck(
   owner: string,
   repo: string
 ) {
-  const { data: PR } = await context.github.pullRequests.get(context.issue());
+  const { data: PR } = await context.github.pulls.get(context.issue());
   const PRSHA = PR.head.sha;
   var conclusion: "success" | "failure" | "neutral" = "success";
   let Summary = {
     title: "HACS Category checks",
-    summary: `Running tests for [${owner}/${repo}](https://github.com/${owner}/${repo})`
+    summary: `Running tests for [${owner}/${repo}](https://github.com/${owner}/${repo})`,
   };
 
   Summary.summary += StatusIconDescription;
@@ -22,7 +22,7 @@ export async function IntegrationCheck(
       status: "in_progress",
       name: "HACS Category checks",
       output: Summary,
-      details_url: "https://hacs.xyz/docs/publish/start"
+      details_url: "https://hacs.xyz/docs/publish/start",
     })
   );
 
@@ -37,7 +37,7 @@ export async function IntegrationCheck(
         head_sha: PRSHA,
         check_run_id: CheckRun.id,
         output: Summary,
-        conclusion: conclusion
+        conclusion: conclusion,
       })
     );
     return;
@@ -48,7 +48,7 @@ export async function IntegrationCheck(
     var Integration = await context.github.repos.getContents({
       owner: owner,
       repo: repo,
-      path: "custom_components"
+      path: "custom_components",
     });
     Summary.summary +=
       "\n✅  'custom_components' directory exist in the repository.";
@@ -64,7 +64,7 @@ export async function IntegrationCheck(
     context.issue({
       head_sha: PRSHA,
       check_run_id: CheckRun.id,
-      output: Summary
+      output: Summary,
     })
   );
   // --------------------------------------------------------------------------------
@@ -74,16 +74,16 @@ export async function IntegrationCheck(
     var Integration = await context.github.repos.getContents({
       owner: owner,
       repo: repo,
-      path: "custom_components"
+      path: "custom_components",
     });
     var IntegrationManifest = await context.github.repos.getContents({
       owner: owner,
       repo: repo,
-      path: Integration.data[0].path + "/manifest.json"
+      path: (Integration as any).data[0].path + "/manifest.json",
     });
 
     var decoded = JSON.parse(
-      Base64.decode(IntegrationManifest.data["content"])
+      Base64.decode((IntegrationManifest as any).data["content"])
     );
     if (!decoded["domain"]) throw "wrong manifest";
 
@@ -99,7 +99,7 @@ export async function IntegrationCheck(
     context.issue({
       head_sha: PRSHA,
       check_run_id: CheckRun.id,
-      output: Summary
+      output: Summary,
     })
   );
   // --------------------------------------------------------------------------------
@@ -110,7 +110,7 @@ export async function IntegrationCheck(
       head_sha: PRSHA,
       check_run_id: CheckRun.id,
       output: Summary,
-      conclusion: conclusion
+      conclusion: conclusion,
     })
   );
 }

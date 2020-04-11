@@ -7,6 +7,7 @@ import { ThemeCheck } from "./checks/ThemeCheck";
 import { AppdaemonCheck } from "./checks/AppdaemonCheck";
 import { NetdaemonCheck } from "./checks/NetdaemonCheck";
 import { PythonScriptCheck } from "./checks/PythonScriptCheck";
+import { extractOrgRepo } from "../util/extractOrgRepo";
 
 export const NewDefaultRepository = (app: Application) => {
   app.on(
@@ -18,8 +19,7 @@ export const NewDefaultRepository = (app: Application) => {
       "check_run.rerequested",
     ],
     async (context) => {
-      if (context.repo().owner !== "hacs") return;
-      if (context.repo().repo !== "default") return;
+      if (extractOrgRepo(context).repo !== "default") return;
 
       let changedFiles = await getChangedFiles(context);
       changedFiles = changedFiles.filter((filen: string) => {
@@ -110,7 +110,7 @@ async function CategoryChecks(
 }
 
 async function getChangedFiles(context: Context) {
-  const listFilesResponse = await context.github.pullRequests.listFiles(
+  const listFilesResponse = await context.github.pulls.listFiles(
     context.issue()
   );
   const changedFiles = listFilesResponse.data.map((f) => f.filename);
@@ -118,7 +118,7 @@ async function getChangedFiles(context: Context) {
 }
 
 async function getFileDiff(context: Context, file: string) {
-  const { data: Pull } = await context.github.pullRequests.get(context.issue());
+  const { data: Pull } = await context.github.pulls.get(context.issue());
 
   const PullRef = Pull["head"]["sha"];
 
@@ -127,14 +127,16 @@ async function getFileDiff(context: Context, file: string) {
   );
 
   var ChangedDecoded: string[] = JSON.parse(
-    Base64.decode(ChangedContents["content"])
+    Base64.decode((ChangedContents as any)["content"])
   );
 
   const { data: Contents } = await context.github.repos.getContents(
     context.issue({ path: file })
   );
 
-  var Decoded: string[] = JSON.parse(Base64.decode(Contents["content"]));
+  var Decoded: string[] = JSON.parse(
+    Base64.decode((Contents as any)["content"])
+  );
 
   var NewItems: string[] = [];
 

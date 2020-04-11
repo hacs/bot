@@ -1,6 +1,7 @@
 import { Application, Context } from "probot";
 import { messageNewIssue } from "../messages";
 import { extractLabels } from "../util/extractLabels";
+import { senderIsBot } from "../filter";
 
 export const NAME = "Greeter";
 
@@ -11,6 +12,7 @@ export const initGreeter = (app: Application) => {
 };
 
 export async function runGreeter(context: Context) {
+  if (senderIsBot(context)) return;
   const isInvalid: boolean = extractLabels(context)
     .map((label) => label.name)
     .includes("invalid");
