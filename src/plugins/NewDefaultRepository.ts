@@ -11,6 +11,8 @@ import { extractOrgRepo } from "../util/extractOrgRepo";
 import { extractTasks } from "../util/extractTasks";
 import { senderIsBot } from "../filter";
 
+export const NAME = "NewDefaultRepository";
+
 export const NewDefaultRepository = (app: Application) => {
   app.on(
     [
@@ -24,7 +26,11 @@ export const NewDefaultRepository = (app: Application) => {
     async (context) => {
       if (senderIsBot(context)) return;
       if (extractOrgRepo(context).repo !== "default") return;
-      if (extractTasks(context).length !== 4) return;
+      if (extractTasks(context).filter((task) => task.check).length !== 4) {
+        context.log(NAME, "Missing tasks");
+        return;
+      }
+
       let changedFiles = await getChangedFiles(context);
       changedFiles = changedFiles.filter((filen: string) => {
         if (filen === "blacklist") return false;
