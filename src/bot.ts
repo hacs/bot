@@ -1,5 +1,6 @@
 import { Application } from "probot";
 import { initDebug } from "./plugins/Debug";
+import { initKnownIssues } from "./plugins/KnownIssues/plugin";
 import { initGreeter } from "./plugins/Greeter";
 import { initHacktoberfest } from "./plugins/Hacktoberfest";
 import { ClearTempLabels } from "./plugins/ClearTempLabels";
@@ -10,6 +11,7 @@ import { ReleaseHelper } from "./plugins/ReleaseHelper";
 
 export = (app: Application) => {
   initDebug(app);
+  initKnownIssues(app);
   initGreeter(app);
   initHacktoberfest(app);
 

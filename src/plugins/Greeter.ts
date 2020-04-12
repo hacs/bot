@@ -15,7 +15,7 @@ export async function runGreeter(context: Context) {
   if (senderIsBot(context)) return;
   const isInvalid: boolean = extractLabels(context)
     .map((label) => label.name)
-    .includes("invalid");
+    .includes("invalid" || "Issue not in HACS");
 
   if (isInvalid) {
     return;

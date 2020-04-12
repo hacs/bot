@@ -1,9 +1,9 @@
 // For format details, see https://aka.ms/vscode-remote/devcontainer.json or the definition README at
 {
 	"name": "hacs-bot",
-	"image": "ludeeus/devcontainer:frontend-stable",
+	"image": "ludeeus/devcontainer:frontend",
 	"context": "..",
-	"postCreateCommand": "npm install",
+	"postCreateCommand": "yarn",
 	"runArgs": [
 	  "-v",
 	  "${env:HOME}${env:USERPROFILE}/.ssh:/tmp/.ssh" // This is added so you can push from inside the container
