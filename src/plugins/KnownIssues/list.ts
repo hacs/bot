@@ -1,5 +1,6 @@
 interface knownIssue {
   search: string[];
+  lables: string[];
   message: string;
 }
 
@@ -9,6 +10,7 @@ export const KNOWN_ISSUES: knownIssue[] = [
       "TypeError: expected string or bytes-like object",
       "match = self._regex.search(version)",
     ],
+    lables: ["Issue not in HACS"],
     message: `You get the log entry \`TypeError: expected string or bytes-like object\` when HA could not install all the required dependecies for HACS.
 There is nothing that can be done from HACS, since this happens _before_ HACS is started.
 
