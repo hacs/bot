@@ -1,10 +1,16 @@
 import { Context } from "probot";
 import {
-  StatusIconDescription,
   StatusFailed,
   StatusNeutral,
   StatusSuccess,
-} from "./StatusIconDescription";
+  Check,
+  updateCheck,
+  createCheck,
+} from "./Status";
+import { strict } from "assert";
+
+const TITLE = "Common repository checks";
+const NAME = "CommonCheck";
 
 export async function CommonCheck(
   context: Context,
@@ -14,23 +20,10 @@ export async function CommonCheck(
   const { data: PR } = await context.github.pulls.get(context.issue());
   const PRAuthor = PR.user.login;
   const PRSHA = PR.head.sha;
-  var conclusion: "success" | "failure" | "neutral" = "success";
-  let Summary = {
-    title: "Common repository checks",
-    summary: `Running tests for [${owner}/${repo}](https://github.com/${owner}/${repo})`,
-  };
 
-  Summary.summary += StatusIconDescription;
+  const checks: Check[] = [];
 
-  const { data: CheckRun } = await context.github.checks.create(
-    context.issue({
-      head_sha: PRSHA,
-      status: "in_progress",
-      name: "Common repository checks",
-      output: Summary,
-      details_url: "https://hacs.xyz/docs/publish/start",
-    })
-  );
+  const { data: CheckRun } = await createCheck(context, PRSHA, TITLE);
 
   try {
     await context.github.repos.get({ owner: owner, repo: repo });

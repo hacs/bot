@@ -1,5 +1,5 @@
 import { Context } from "probot";
-import { StatusIconDescription } from "./StatusIconDescription";
+import { StatusIconDescription } from "./Status";
 
 export async function AppdaemonCheck(
   context: Context,

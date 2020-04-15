@@ -1,9 +1,5 @@
 import { Context } from "probot";
-import {
-  StatusIconDescription,
-  StatusFailed,
-  StatusSuccess,
-} from "./StatusIconDescription";
+import { StatusIconDescription, StatusFailed, StatusSuccess } from "./Status";
 
 export async function ThemeCheck(
   context: Context,

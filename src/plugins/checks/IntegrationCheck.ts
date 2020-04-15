@@ -1,5 +1,5 @@
 import { Context } from "probot";
-import { StatusIconDescription } from "./StatusIconDescription";
+import { StatusIconDescription } from "./Status";
 
 export async function IntegrationCheck(
   context: Context,
@@ -90,7 +90,8 @@ export async function IntegrationCheck(
 
     Summary.summary += "\n✅  Integration manifest exist";
   } catch (error) {
-    Summary.summary += "\n❌  [Integration manifest does not exist, or is not valid JSON]";
+    Summary.summary +=
+      "\n❌  [Integration manifest does not exist, or is not valid JSON]";
     Summary.summary +=
       "(https://hacs.xyz/docs/publish/integration#repository-structure)";
     conclusion = "failure";
@@ -105,7 +106,8 @@ export async function IntegrationCheck(
   if (manifest.includes("documentation")) {
     Summary.summary += "\n✅  Integration manifest includes 'documentation'";
   } else {
-    Summary.summary += "\n❌  Integration manifest does not  includes 'documentation'";
+    Summary.summary +=
+      "\n❌  Integration manifest does not  includes 'documentation'";
   }
 
   await context.github.checks.update(
