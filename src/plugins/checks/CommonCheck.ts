@@ -1,16 +1,7 @@
 import { Context } from "probot";
-import {
-  StatusFailed,
-  StatusNeutral,
-  StatusSuccess,
-  Check,
-  updateCheck,
-  createCheck,
-} from "./Status";
-import { strict } from "assert";
+import { Check, updateCheck, createCheck } from "./Status";
 
 const TITLE = "Common repository checks";
-const NAME = "CommonCheck";
 
 export async function CommonCheck(
   context: Context,
@@ -38,6 +29,12 @@ export async function CommonCheck(
   const { data: Repository } = await context.github.repos.get({
     owner: owner,
     repo: repo,
+  });
+
+  const { data: BaseFiles } = await context.github.repos.getContents({
+    owner: owner,
+    repo: repo,
+    path: "",
   });
 
   // Check if the repository is a fork
@@ -81,25 +78,12 @@ export async function CommonCheck(
   // --------------------------------------------------------------------------------
 
   // Check if the repository has a README file
-  let ReadmeExist: boolean;
-  try {
-    var { data: BaseFiles } = await context.github.repos.getContents({
-      owner: owner,
-      repo: repo,
-      path: "",
-    });
-
-    ReadmeExist =
-      (BaseFiles as [any])
-        .map((file) => file.name)
-        .filter((file) => {
-          return file.toLowerCase().includes("readme");
-        }).length === 1;
-
-    if (!ReadmeExist) throw "README does not exist";
-  } catch (error) {
-    ReadmeExist = false;
-  }
+  const ReadmeExist =
+    (BaseFiles as [any])
+      .map((file) => file.name)
+      .filter((file) => {
+        return file.toLowerCase().includes("readme");
+      }).length === 1;
 
   checks.push({
     description: "README file exist in the repository",
@@ -111,52 +95,49 @@ export async function CommonCheck(
   // --------------------------------------------------------------------------------
 
   // Check if the repository has a hacs.json file
+  let manifest: any;
   try {
-    var { data: hacsManifest } = await context.github.repos.getContents({
+    const { data: hacsManifest } = await context.github.repos.getContents({
       owner: owner,
       repo: repo,
       path: "hacs.json",
     });
 
-    var hacsManifestDecoded = JSON.parse(
-      Base64.decode((hacsManifest as any).content)
-    );
-
-    if (!hacsManifestDecoded.name) throw "Data not correct";
-
-    Summary.summary += `\n${StatusSuccess}  hacs.json file exist in the repository.`;
+    manifest = JSON.parse(Base64.decode((hacsManifest as any).content));
   } catch (error) {
-    Summary.summary += `\n${StatusFailed}  [hacs.json file does not exist in the repository, or is not correctly formated]`;
-    Summary.summary += "(https://hacs.xyz/docs/publish/start#hacsjson)";
-    conclusion = "failure";
+    context.log(error);
   }
+
+  checks.push({
+    description: "hacs.json file exist in the repository, and is valid JSON",
+    success: manifest !== undefined,
+    link: "https://hacs.xyz/docs/publish/start#hacsjson",
+  });
+
+  checks.push({
+    description: "hacs.json have required information (name)",
+    success: manifest.includes("name"),
+    link: "https://hacs.xyz/docs/publish/start#hacsjson",
+  });
 
   updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
   // --------------------------------------------------------------------------------
 
   // Check if the repository has a INFO file
-  if (hacsManifestDecoded !== undefined) {
-    if (!hacsManifestDecoded.render_readme) {
-      try {
-        var InfoExist = false;
-        var { data: BaseFiles } = await context.github.repos.getContents({
-          owner: owner,
-          repo: repo,
-          path: "",
-        });
+  if (manifest !== undefined) {
+    if (!manifest.render_readme) {
+      const InfoExist =
+        (BaseFiles as [any])
+          .map((file) => file.name)
+          .filter((file) => {
+            return file.toLowerCase().includes("info");
+          }).length === 1;
 
-        (BaseFiles as [any]).forEach((element) => {
-          if (String(element.name).toLowerCase() === "info") InfoExist = true;
-          if (String(element.name).toLowerCase() === "info.md")
-            InfoExist = true;
-        });
-
-        if (!InfoExist) throw "INFO does not exist";
-        Summary.summary += `\n${StatusSuccess}  INFO file exist in the repository.`;
-      } catch (error) {
-        Summary.summary += `\n${StatusFailed}  [INFO file does not exist in the repository.]`;
-        Summary.summary += "(https://hacs.xyz/docs/publish/start#infomd)";
-      }
+      checks.push({
+        description: "INFO file exist in the repository",
+        success: InfoExist,
+        link: "https://hacs.xyz/docs/publish/start#infomd",
+      });
 
       updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
     }
