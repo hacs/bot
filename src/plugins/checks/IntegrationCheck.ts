@@ -70,6 +70,7 @@ export async function IntegrationCheck(
   // --------------------------------------------------------------------------------
 
   // Check if the integration manifest exist in the repository
+  let manifest: any;
   try {
     var Integration = await context.github.repos.getContents({
       owner: owner,
@@ -82,17 +83,29 @@ export async function IntegrationCheck(
       path: (Integration as any).data[0].path + "/manifest.json",
     });
 
-    var decoded = JSON.parse(
+    manifest = JSON.parse(
       Base64.decode((IntegrationManifest as any).data["content"])
     );
-    if (!decoded["domain"]) throw "wrong manifest";
+    if (!manifest["domain"]) throw "wrong manifest content";
 
     Summary.summary += "\n✅  Integration manifest exist";
   } catch (error) {
-    Summary.summary += "\n❌  [Integration manifest does not exist]";
+    Summary.summary += "\n❌  [Integration manifest does not exist, or is not valid JSON]";
     Summary.summary +=
       "(https://hacs.xyz/docs/publish/integration#repository-structure)";
     conclusion = "failure";
+  }
+
+  if (manifest.includes("domain")) {
+    Summary.summary += "\n✅  Integration manifest includes 'domain'";
+  } else {
+    Summary.summary += "\n❌  Integration manifest does not  includes 'domain'";
+  }
+
+  if (manifest.includes("documentation")) {
+    Summary.summary += "\n✅  Integration manifest includes 'documentation'";
+  } else {
+    Summary.summary += "\n❌  Integration manifest does not  includes 'documentation'";
   }
 
   await context.github.checks.update(
