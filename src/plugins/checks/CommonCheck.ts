@@ -25,20 +25,13 @@ export async function CommonCheck(
 
   const { data: CheckRun } = await createCheck(context, PRSHA, TITLE);
 
+  // Check if the repository exsist
   try {
     await context.github.repos.get({ owner: owner, repo: repo });
-    Summary.summary += `\n\n${StatusSuccess}  Repository exist`;
+    checks.push({ description: "Repository exist", success: true });
   } catch (error) {
-    Summary.summary += `\n\n${StatusFailed}  Repository does not exist`;
-    conclusion = "failure";
-    await context.github.checks.update(
-      context.issue({
-        head_sha: PRSHA,
-        check_run_id: CheckRun.id,
-        output: Summary,
-        conclusion: conclusion,
-      })
-    );
+    checks.push({ description: "Repository does not exist", success: false });
+    updateCheck(context, PRSHA, CheckRun.id, TITLE, checks, "failure");
     return;
   }
 
@@ -48,103 +41,73 @@ export async function CommonCheck(
   });
 
   // Check if the repository is a fork
-  if (!Repository.fork) {
-    Summary.summary += `\n${StatusSuccess}  Repository is not a fork`;
-  } else {
-    Summary.summary += `\n${StatusNeutral}  Repository is a fork`;
-    conclusion = "failure";
-  }
+  checks.push({
+    description: "Repository is not a fork",
+    success: !Repository.fork,
+    canFail: true,
+  });
 
-  await context.github.checks.update(
-    context.issue({
-      head_sha: PRSHA,
-      check_run_id: CheckRun.id,
-      output: Summary,
-    })
-  );
+  updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
   // --------------------------------------------------------------------------------
 
   // Check if the author of the PR is the owner of the repo
-  if (PRAuthor === owner) {
-    Summary.summary += `\n${StatusSuccess}  ${PRAuthor} is the owner of ${owner}/${repo}`;
-  } else {
-    Summary.summary += `\n${StatusNeutral}  [${PRAuthor} is not the owner of ${owner}/${repo}](https://hacs.xyz/docs/publish/include)`;
-    conclusion = "failure";
-  }
+  checks.push({
+    description: `${PRAuthor} is the owner of ${owner}/${repo}`,
+    success: PRAuthor === owner,
+    canFail: true,
+    link: "https://hacs.xyz/docs/publish/include",
+  });
 
-  await context.github.checks.update(
-    context.issue({
-      head_sha: PRSHA,
-      check_run_id: CheckRun.id,
-      output: Summary,
-    })
-  );
+  updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
   // --------------------------------------------------------------------------------
 
   // Check if the repository is archived
-  if (!Repository.archived) {
-    Summary.summary += `\n${StatusSuccess}  Repository is not archived`;
-  } else {
-    Summary.summary += `\n${StatusFailed}  Repository is archived`;
-    conclusion = "failure";
-  }
+  checks.push({
+    description: "Repository is not archived",
+    success: !Repository.archived,
+  });
 
-  await context.github.checks.update(
-    context.issue({
-      head_sha: PRSHA,
-      check_run_id: CheckRun.id,
-      output: Summary,
-    })
-  );
+  updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
   // --------------------------------------------------------------------------------
 
   // Check if the repository has a description
-  if (Repository.description !== null) {
-    Summary.summary += `\n${StatusSuccess}  Repository has a description`;
-  } else {
-    Summary.summary += `\n${StatusFailed}  [Repository does not have a description](https://hacs.xyz/docs/publish/start#description)`;
-    conclusion = "failure";
-  }
+  checks.push({
+    description: "Repository has a description",
+    success: Repository.description !== null,
+    link: "https://hacs.xyz/docs/publish/start#description",
+  });
 
-  await context.github.checks.update(
-    context.issue({
-      head_sha: PRSHA,
-      check_run_id: CheckRun.id,
-      output: Summary,
-    })
-  );
+  updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
   // --------------------------------------------------------------------------------
 
   // Check if the repository has a README file
+  let ReadmeExist: boolean;
   try {
-    var ReadmeExist = false;
     var { data: BaseFiles } = await context.github.repos.getContents({
       owner: owner,
       repo: repo,
       path: "",
     });
 
-    (BaseFiles as [any]).forEach((element) => {
-      if (String(element.name).toLowerCase() === "readme") ReadmeExist = true;
-      if (String(element.name).toLowerCase() === "readme.md")
-        ReadmeExist = true;
-    });
+    ReadmeExist =
+      (BaseFiles as [any])
+        .map((file) => file.name)
+        .filter((file) => {
+          return file.toLowerCase().includes("readme");
+        }).length === 1;
 
     if (!ReadmeExist) throw "README does not exist";
-    Summary.summary += `\n${StatusSuccess}  README file exist in the repository.`;
   } catch (error) {
-    Summary.summary += `\n${StatusFailed}  [README file does not exist in the repository.]`;
-    Summary.summary += "(https://hacs.xyz/docs/publish/start#readme)";
-    conclusion = "failure";
+    ReadmeExist = false;
   }
 
-  await context.github.checks.update(
-    context.issue({
-      head_sha: PRSHA,
-      check_run_id: CheckRun.id,
-      output: Summary,
-    })
-  );
+  checks.push({
+    description: "README file exist in the repository",
+    success: ReadmeExist,
+    link: "https://hacs.xyz/docs/publish/start#readme",
+  });
+
+  updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
   // --------------------------------------------------------------------------------
 
   // Check if the repository has a hacs.json file
@@ -168,13 +131,7 @@ export async function CommonCheck(
     conclusion = "failure";
   }
 
-  await context.github.checks.update(
-    context.issue({
-      head_sha: PRSHA,
-      check_run_id: CheckRun.id,
-      output: Summary,
-    })
-  );
+  updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
   // --------------------------------------------------------------------------------
 
   // Check if the repository has a INFO file
@@ -199,27 +156,24 @@ export async function CommonCheck(
       } catch (error) {
         Summary.summary += `\n${StatusFailed}  [INFO file does not exist in the repository.]`;
         Summary.summary += "(https://hacs.xyz/docs/publish/start#infomd)";
-        conclusion = "failure";
       }
 
-      await context.github.checks.update(
-        context.issue({
-          head_sha: PRSHA,
-          check_run_id: CheckRun.id,
-          output: Summary,
-        })
-      );
+      updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
     }
   }
   // --------------------------------------------------------------------------------
 
   // Final CheckRun update
-  await context.github.checks.update(
-    context.issue({
-      head_sha: PRSHA,
-      check_run_id: CheckRun.id,
-      output: Summary,
-      conclusion: conclusion,
-    })
+  updateCheck(
+    context,
+    PRSHA,
+    CheckRun.id,
+    TITLE,
+    checks,
+    checks.filter((check) => {
+      return !check.success;
+    }).length === 0
+      ? "success"
+      : "failure"
   );
 }

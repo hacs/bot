@@ -18,8 +18,8 @@ ${StatusFailed} | Check failed, this needs to be corrected before the PR can be 
 
 export interface Check {
   description: string;
-  canFail: boolean;
-  success: boolean;
+  canFail?: boolean;
+  success?: boolean;
   link?: string;
 }
 
