@@ -1,7 +1,7 @@
 import { Application, Context } from "probot";
-import { extractLabels } from "../util/extractLabels";
-import { extractOrgRepo } from "../util/extractOrgRepo";
-import { extractTasks } from "../util/extractTasks";
+import { extractLabels } from "../../util/extractLabels";
+import { extractOrgRepo } from "../../util/extractOrgRepo";
+import { extractTasks } from "../../util/extractTasks";
 
 export const NAME = "Debug";
 

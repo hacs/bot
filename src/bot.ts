@@ -1,13 +1,13 @@
 import { Application } from "probot";
-import { initDebug } from "./plugins/Debug";
+
+import { initDebug } from "./plugins/Debug/plugin";
 import { initKnownIssues } from "./plugins/KnownIssues/plugin";
-import { initGreeter } from "./plugins/Greeter";
-import { initHacktoberfest } from "./plugins/Hacktoberfest";
-import { ClearTempLabels } from "./plugins/ClearTempLabels";
-import { NewDefaultRepository } from "./plugins/NewDefaultRepository";
-import { NewDefaultRepositoryMerged } from "./plugins/NewDefaultRepositoryMerged";
-import { ClosedIssue } from "./plugins/ClosedIssue";
-import { ReleaseHelper } from "./plugins/ReleaseHelper";
+import { initGreeter } from "./plugins/Greeter/plugin";
+import { initHacktoberfest } from "./plugins/Hacktoberfest/plugin";
+import { initClearTempLabels } from "./plugins/ClearTempLabels/plugin";
+import { initNewDefaultRepository } from "./plugins/NewDefaultRepository/plugin";
+import { initClosedIssue } from "./plugins/ClosedIssue/plugin";
+import { initReleaseHelper } from "./plugins/ReleaseHelper/plugin";
 
 export = (app: Application) => {
   initDebug(app);
@@ -15,10 +15,10 @@ export = (app: Application) => {
   initGreeter(app);
   initHacktoberfest(app);
 
-  NewDefaultRepository(app);
+  initNewDefaultRepository(app);
 
-  ClosedIssue(app);
-  ClearTempLabels(app);
-  NewDefaultRepositoryMerged(app);
-  ReleaseHelper(app);
+  initClosedIssue(app);
+  initClearTempLabels(app);
+  initNewDefaultRepository(app);
+  initReleaseHelper(app);
 };

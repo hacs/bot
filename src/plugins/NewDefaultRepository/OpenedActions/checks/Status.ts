@@ -13,6 +13,8 @@ ${StatusSuccess} | Check passed successfully
 ${StatusNeutral} | An optional check failed, this will require a manual review
 ${StatusFailed} | Check failed, this needs to be corrected before the PR can be merged
 
+_Currently everything will get a manual review, but that may change in the future, who knows._
+
 ## Checks\n\n
 `;
 

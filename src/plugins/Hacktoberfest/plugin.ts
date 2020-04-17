@@ -1,5 +1,5 @@
 import { Application, Context } from "probot";
-import { senderIsBot } from "../filter";
+import { senderIsBot } from "../../filter";
 
 export const NAME = "Hacktoberfest";
 export const LABEL_INVALID = "invalid";
