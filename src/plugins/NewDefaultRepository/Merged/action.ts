@@ -2,13 +2,21 @@ import { Context } from "probot";
 
 import { extractOrgRepo } from "../../../util/extractOrgRepo";
 import { postToDiscord } from "./postToDiscord";
+import { postToPullRequest } from "./postToPullRequest";
+
+import { categories } from "../plugin";
 
 export async function runMergedActions(context: Context) {
   if (extractOrgRepo(context).repo !== "default") return;
   const { data: pull } = await context.github.pulls.get(context.issue());
   const titleElements = pull.title.split(" ");
   const owner_repo = titleElements[3].replace("[", "").replace("]", "");
-  const category = titleElements[2];
+  const category = titleElements[2].toLowerCase();
+
+  if (!categories.includes(category)) {
+    context.log(`${category} not in ${categories}`);
+    return;
+  }
 
   if (!pull.merged) {
     context.log("Did not merge");
@@ -21,4 +29,5 @@ export async function runMergedActions(context: Context) {
   });
 
   await postToDiscord(repoAdded, category);
+  await postToPullRequest(context, category);
 }

@@ -5,6 +5,15 @@ import { runOpenedActions } from "./Opened/action";
 
 export const NAME = "NewDefaultRepository";
 
+export const categories: string[] = [
+  "appdaemon",
+  "integration",
+  "netdaemon",
+  "plugin",
+  "python_script",
+  "theme",
+];
+
 export const initNewDefaultRepository = (app: Application) => {
   app.on(
     [
