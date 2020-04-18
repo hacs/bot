@@ -1,7 +1,7 @@
 import { Application, Context } from "probot";
-import { messageNewIssue } from "../messages";
-import { extractLabels } from "../util/extractLabels";
-import { senderIsBot } from "../filter";
+import { messageNewIssue } from "../../messages";
+import { extractLabels } from "../../util/extractLabels";
+import { senderIsBot } from "../../util/filter";
 
 export const NAME = "Greeter";
 

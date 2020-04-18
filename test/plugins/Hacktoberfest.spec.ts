@@ -3,7 +3,7 @@ import {
   NAME,
   openAction,
   HacktoberFestMessage,
-} from "../../src/plugins/Hacktoberfest";
+} from "../../src/plugins/Hacktoberfest/plugin";
 
 describe(NAME, () => {
   it("On open", async () => {

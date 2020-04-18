@@ -1,5 +1,4 @@
-import * as assert from "assert";
-import { NAME, runDebug } from "../../src/plugins/Debug";
+import { NAME, runDebug } from "../../src/plugins/Debug/plugin";
 
 describe(NAME, () => {
   it("runDebug", async () => {

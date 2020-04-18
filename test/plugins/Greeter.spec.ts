@@ -1,5 +1,5 @@
 import * as assert from "assert";
-import { NAME, runGreeter } from "../../src/plugins/Greeter";
+import { NAME, runGreeter } from "../../src/plugins/Greeter/plugin";
 import { messageNewIssue } from "../../src/messages";
 
 describe(NAME, () => {

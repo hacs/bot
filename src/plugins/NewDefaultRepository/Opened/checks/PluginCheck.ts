@@ -1,5 +1,7 @@
 import { Context } from "probot";
-import { StatusIconDescription } from "./StatusIconDescription";
+import { Check, updateCheck, createCheck } from "./Status";
+
+const TITLE = "HACS Category checks";
 
 export async function PluginCheck(
   context: Context,
@@ -8,75 +10,43 @@ export async function PluginCheck(
 ) {
   const { data: PR } = await context.github.pulls.get(context.issue());
   const PRSHA = PR.head.sha;
-  var conclusion: "success" | "failure" | "neutral" = "success";
-  let Summary = {
-    title: "HACS Category checks",
-    summary: `Running tests for [${owner}/${repo}](https://github.com/${owner}/${repo})`,
-  };
 
-  Summary.summary += StatusIconDescription;
+  const checks: Check[] = [];
 
-  const { data: CheckRun } = await context.github.checks.create(
-    context.issue({
-      head_sha: PRSHA,
-      status: "in_progress",
-      name: "HACS Category checks",
-      output: Summary,
-      details_url: "https://hacs.xyz/docs/publish/start",
-    })
-  );
-
-  try {
-    await context.github.repos.get({ owner: owner, repo: repo });
-    Summary.summary += "\n\n✅  Repository exist";
-  } catch (error) {
-    Summary.summary += "\n\n❌  Repository does not exist";
-    conclusion = "failure";
-    await context.github.checks.update(
-      context.issue({
-        head_sha: PRSHA,
-        check_run_id: CheckRun.id,
-        output: Summary,
-        conclusion: conclusion,
-      })
-    );
-    return;
-  }
+  const { data: CheckRun } = await createCheck(context, PRSHA, TITLE);
 
   // Check if the plugin files exsis.
+  let pluginExist = false;
   try {
-    var pluginExist = false;
     if (!pluginExist) pluginExist = await CheckDist(owner, repo, context);
     if (!pluginExist) pluginExist = await CheckRelease(owner, repo, context);
     if (!pluginExist) pluginExist = await CheckRoot(owner, repo, context);
-
-    if (!pluginExist) throw "error";
-    Summary.summary += "\n✅  Plugin exist";
   } catch (error) {
-    Summary.summary +=
-      "\n❌  [The location of the plugin is in one of the expected locations]";
-    Summary.summary +=
-      "(https://hacs.xyz/docs/publish/plugin#repository-structure)";
-    conclusion = "failure";
+    pluginExist = false;
   }
 
-  await context.github.checks.update(
-    context.issue({
-      head_sha: PRSHA,
-      check_run_id: CheckRun.id,
-      output: Summary,
-    })
-  );
+  checks.push({
+    description:
+      "The location of the plugin is in one of the expected locations",
+    success: pluginExist,
+    link: "https://hacs.xyz/docs/publish/plugin#repository-structure",
+  });
+
+  // await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
   // --------------------------------------------------------------------------------
 
   // Final CheckRun update
-  await context.github.checks.update(
-    context.issue({
-      head_sha: PRSHA,
-      check_run_id: CheckRun.id,
-      output: Summary,
-      conclusion: conclusion,
-    })
+  await updateCheck(
+    context,
+    PRSHA,
+    CheckRun.id,
+    TITLE,
+    checks,
+    checks.filter((check) => {
+      return !check.success;
+    }).length === 0
+      ? "success"
+      : "failure"
   );
 }
 
