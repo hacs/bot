@@ -1,5 +1,5 @@
 import * as assert from "assert";
-import { NAME, senderIsAdmin, senderIsBot } from "../src/filter";
+import { NAME, senderIsAdmin, senderIsBot } from "../src/util/filter";
 
 describe(NAME, () => {
   it("Sender is admin", async () => {
