@@ -1,5 +1,7 @@
 import { Context } from "probot";
-import { StatusIconDescription } from "./Status";
+import { Check, updateCheck, createCheck } from "./Status";
+
+const TITLE = "HACS Category checks";
 
 export async function IntegrationCheck(
   context: Context,
@@ -7,125 +9,102 @@ export async function IntegrationCheck(
   repo: string
 ) {
   const { data: PR } = await context.github.pulls.get(context.issue());
+  const PRAuthor = PR.user.login;
   const PRSHA = PR.head.sha;
-  var conclusion: "success" | "failure" | "neutral" = "success";
-  let Summary = {
-    title: "HACS Category checks",
-    summary: `Running tests for [${owner}/${repo}](https://github.com/${owner}/${repo})`,
-  };
 
-  Summary.summary += StatusIconDescription;
+  const checks: Check[] = [];
 
-  const { data: CheckRun } = await context.github.checks.create(
-    context.issue({
-      head_sha: PRSHA,
-      status: "in_progress",
-      name: "HACS Category checks",
-      output: Summary,
-      details_url: "https://hacs.xyz/docs/publish/start",
-    })
-  );
-
-  try {
-    await context.github.repos.get({ owner: owner, repo: repo });
-    Summary.summary += "\n\n✅  Repository exist";
-  } catch (error) {
-    Summary.summary += "\n\n❌  Repository does not exist";
-    conclusion = "failure";
-    await context.github.checks.update(
-      context.issue({
-        head_sha: PRSHA,
-        check_run_id: CheckRun.id,
-        output: Summary,
-        conclusion: conclusion,
-      })
-    );
-    return;
-  }
+  const { data: CheckRun } = await createCheck(context, PRSHA, TITLE);
 
   // Check if the custom_components directory exist in the repository
+  let dirExsist!: boolean;
+  let cc: any;
   try {
-    var Integration = await context.github.repos.getContents({
+    cc = await context.github.repos.getContents({
       owner: owner,
       repo: repo,
       path: "custom_components",
     });
-    Summary.summary +=
-      "\n✅  'custom_components' directory exist in the repository.";
+    dirExsist = true;
   } catch (error) {
-    Summary.summary +=
-      "\n❌  ['custom_components' directory does not exist in the repository.]";
-    Summary.summary +=
-      "(https://hacs.xyz/docs/publish/integration#repository-structure)";
-    conclusion = "failure";
+    dirExsist = false;
   }
 
-  await context.github.checks.update(
-    context.issue({
-      head_sha: PRSHA,
-      check_run_id: CheckRun.id,
-      output: Summary,
-    })
-  );
+  checks.push({
+    description: "'custom_components' directory exist in the repository",
+    success: dirExsist,
+    link: "https://hacs.xyz/docs/publish/integration#repository-structure",
+  });
+
+  if (!dirExsist) {
+    await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks, "failure");
+    return;
+  } else {
+    await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
+  }
   // --------------------------------------------------------------------------------
 
   // Check if the integration manifest exist in the repository
   let manifest: any;
+  let manifestValid!: boolean;
   try {
-    var Integration = await context.github.repos.getContents({
+    const IntegrationManifest = await context.github.repos.getContents({
       owner: owner,
       repo: repo,
-      path: "custom_components",
-    });
-    var IntegrationManifest = await context.github.repos.getContents({
-      owner: owner,
-      repo: repo,
-      path: (Integration as any).data[0].path + "/manifest.json",
+      path: (cc as any).data[0].path + "/manifest.json",
     });
 
     manifest = JSON.parse(
       Base64.decode((IntegrationManifest as any).data["content"])
     );
-    if (!manifest["domain"]) throw "wrong manifest content";
 
-    Summary.summary += "\n✅  Integration manifest exist";
+    manifestValid = true;
   } catch (error) {
-    Summary.summary +=
-      "\n❌  [Integration manifest does not exist, or is not valid JSON]";
-    Summary.summary +=
-      "(https://hacs.xyz/docs/publish/integration#repository-structure)";
-    conclusion = "failure";
+    manifestValid = false;
   }
 
-  if (manifest.includes("domain")) {
-    Summary.summary += "\n✅  Integration manifest includes 'domain'";
+  checks.push({
+    description: "Integration manifest does exist and is valid JSON",
+    success: manifestValid,
+    link: "https://hacs.xyz/docs/publish/integration#repository-structure",
+  });
+
+  if (!manifestValid) {
+    await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks, "failure");
+    return;
   } else {
-    Summary.summary += "\n❌  Integration manifest does not  includes 'domain'";
+    await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
   }
 
-  if (manifest.includes("documentation")) {
-    Summary.summary += "\n✅  Integration manifest includes 'documentation'";
-  } else {
-    Summary.summary +=
-      "\n❌  Integration manifest does not  includes 'documentation'";
-  }
+  checks.push({
+    description: "Integration manifest has a 'domain' key",
+    success: manifest.includes("domain"),
+  });
 
-  await context.github.checks.update(
-    context.issue({
-      head_sha: PRSHA,
-      check_run_id: CheckRun.id,
-      output: Summary,
-    })
-  );
+  checks.push({
+    description: "Integration manifest has a 'documentation' key",
+    success: manifest.includes("documentation"),
+  });
+
+  checks.push({
+    description: "Integration manifest has a 'name' key",
+    success: manifest.includes("name"),
+  });
+
+  //await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
   // --------------------------------------------------------------------------------
 
   // Final CheckRun update
-  await context.github.checks.update(
-    context.issue({
-      head_sha: PRSHA,
-      check_run_id: CheckRun.id,
-      output: Summary,
-      conclusion: conclusion,
-    })
+  await updateCheck(
+    context,
+    PRSHA,
+    CheckRun.id,
+    TITLE,
+    checks,
+    checks.filter((check) => {
+      return !check.success;
+    }).length === 0
+      ? "success"
+      : "failure"
   );
 }

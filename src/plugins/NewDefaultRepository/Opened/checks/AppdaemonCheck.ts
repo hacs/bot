@@ -17,21 +17,21 @@ export async function AppdaemonCheck(
   const { data: CheckRun } = await createCheck(context, PRSHA, TITLE);
 
   // Check if the apps directory exist in the repository
-  let appsExsist!: boolean;
+  let dirExsist!: boolean;
   try {
     await context.github.repos.getContents({
       owner: owner,
       repo: repo,
       path: "apps",
     });
-    appsExsist = true;
+    dirExsist = true;
   } catch (error) {
-    appsExsist = false;
+    dirExsist = false;
   }
 
   checks.push({
     description: "'apps' directory exist in the repository",
-    success: appsExsist,
+    success: dirExsist,
     link: "https://hacs.xyz/docs/publish/appdaemon#repository-structure",
   });
 
