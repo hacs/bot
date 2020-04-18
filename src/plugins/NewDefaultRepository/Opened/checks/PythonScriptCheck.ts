@@ -1,5 +1,7 @@
 import { Context } from "probot";
-import { StatusIconDescription } from "./Status";
+import { Check, updateCheck, createCheck } from "./Status";
+
+const TITLE = "HACS Category checks";
 
 export async function PythonScriptCheck(
   context: Context,
@@ -8,74 +10,44 @@ export async function PythonScriptCheck(
 ) {
   const { data: PR } = await context.github.pulls.get(context.issue());
   const PRSHA = PR.head.sha;
-  var conclusion: "success" | "failure" | "neutral" = "success";
-  let Summary = {
-    title: "HACS Category checks",
-    summary: `Running tests for [${owner}/${repo}](https://github.com/${owner}/${repo})`,
-  };
 
-  Summary.summary += StatusIconDescription;
+  const checks: Check[] = [];
 
-  const { data: CheckRun } = await context.github.checks.create(
-    context.issue({
-      head_sha: PRSHA,
-      status: "in_progress",
-      name: "HACS Category checks",
-      output: Summary,
-      details_url: "https://hacs.xyz/docs/publish/start",
-    })
-  );
+  const { data: CheckRun } = await createCheck(context, PRSHA, TITLE);
 
-  try {
-    await context.github.repos.get({ owner: owner, repo: repo });
-    Summary.summary += "\n\n✅  Repository exist";
-  } catch (error) {
-    Summary.summary += "\n\n❌  Repository does not exist";
-    conclusion = "failure";
-    await context.github.checks.update(
-      context.issue({
-        head_sha: PRSHA,
-        check_run_id: CheckRun.id,
-        output: Summary,
-        conclusion: conclusion,
-      })
-    );
-    return;
-  }
-
-  // Check if the python_script directory exist in the repository
+  // Check if the python_scripts directory exist in the repository
+  let dirExsist!: boolean;
   try {
     await context.github.repos.getContents({
       owner: owner,
       repo: repo,
       path: "python_scripts",
     });
-    Summary.summary +=
-      "\n✅  'python_scripts' directory exist in the repository.";
+    dirExsist = true;
   } catch (error) {
-    Summary.summary +=
-      "\n❌  ['python_scripts' directory does not exist in the repository.]";
-    Summary.summary +=
-      "(https://hacs.xyz/docs/publish/python_script#repository-structure)";
-    conclusion = "failure";
+    dirExsist = false;
   }
 
-  await context.github.checks.update(
-    context.issue({
-      head_sha: PRSHA,
-      check_run_id: CheckRun.id,
-      output: Summary,
-    })
-  );
+  checks.push({
+    description: "'python_scripts' directory exist in the repository",
+    success: dirExsist,
+    link: "https://hacs.xyz/docs/publish/python_script#repository-structure",
+  });
+
+  // await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
   // --------------------------------------------------------------------------------
 
   // Final CheckRun update
-  await context.github.checks.update(
-    context.issue({
-      head_sha: PRSHA,
-      check_run_id: CheckRun.id,
-      output: Summary,
-      conclusion: conclusion,
-    })
+  await updateCheck(
+    context,
+    PRSHA,
+    CheckRun.id,
+    TITLE,
+    checks,
+    checks.filter((check) => {
+      return !check.success;
+    }).length === 0
+      ? "success"
+      : "failure"
   );
 }

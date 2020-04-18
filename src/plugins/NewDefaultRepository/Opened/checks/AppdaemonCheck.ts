@@ -9,7 +9,6 @@ export async function AppdaemonCheck(
   repo: string
 ) {
   const { data: PR } = await context.github.pulls.get(context.issue());
-  const PRAuthor = PR.user.login;
   const PRSHA = PR.head.sha;
 
   const checks: Check[] = [];
