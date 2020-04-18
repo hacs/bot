@@ -22,7 +22,7 @@ export async function CommonCheck(
     checks.push({ description: "Repository exist", success: true });
   } catch (error) {
     checks.push({ description: "Repository does not exist", success: false });
-    updateCheck(context, PRSHA, CheckRun.id, TITLE, checks, "failure");
+    await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks, "failure");
     return;
   }
 
@@ -44,7 +44,7 @@ export async function CommonCheck(
     canFail: true,
   });
 
-  updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
+  await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
   // --------------------------------------------------------------------------------
 
   // Check if the author of the PR is the owner of the repo
@@ -55,7 +55,7 @@ export async function CommonCheck(
     link: "https://hacs.xyz/docs/publish/include",
   });
 
-  updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
+  await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
   // --------------------------------------------------------------------------------
 
   // Check if the repository is archived
@@ -64,7 +64,7 @@ export async function CommonCheck(
     success: !Repository.archived,
   });
 
-  updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
+  await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
   // --------------------------------------------------------------------------------
 
   // Check if the repository has a description
@@ -74,7 +74,7 @@ export async function CommonCheck(
     link: "https://hacs.xyz/docs/publish/start#description",
   });
 
-  updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
+  await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
   // --------------------------------------------------------------------------------
 
   // Check if the repository has a README file
@@ -91,7 +91,7 @@ export async function CommonCheck(
     link: "https://hacs.xyz/docs/publish/start#readme",
   });
 
-  updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
+  await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
   // --------------------------------------------------------------------------------
 
   // Check if the repository has a hacs.json file
@@ -120,7 +120,7 @@ export async function CommonCheck(
     link: "https://hacs.xyz/docs/publish/start#hacsjson",
   });
 
-  updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
+  await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
   // --------------------------------------------------------------------------------
 
   // Check if the repository has a INFO file
@@ -139,13 +139,13 @@ export async function CommonCheck(
         link: "https://hacs.xyz/docs/publish/start#infomd",
       });
 
-      updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
+      await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
     }
   }
   // --------------------------------------------------------------------------------
 
   // Final CheckRun update
-  updateCheck(
+  await updateCheck(
     context,
     PRSHA,
     CheckRun.id,
