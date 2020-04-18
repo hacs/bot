@@ -1,5 +1,5 @@
 import { Application, Context } from "probot";
-import { senderIsAdmin, senderIsBot } from "../../filter";
+import { senderIsAdmin, senderIsBot } from "../../util/filter";
 import { extractOrgRepo } from "../../util/extractOrgRepo";
 
 export const NAME = "ReleaseHelper";

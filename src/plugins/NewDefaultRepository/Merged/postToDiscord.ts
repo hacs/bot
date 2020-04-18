@@ -1,5 +1,5 @@
 import axios from "axios";
-export async function postNewRepoOnDiscord(repo: any, category: string) {
+export async function postToDiscord(repo: any, category: string) {
   const EmbedForDiscord = {
     embeds: [
       {

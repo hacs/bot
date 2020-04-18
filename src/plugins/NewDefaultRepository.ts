@@ -1,15 +1,15 @@
 import { Application, Context } from "probot";
 import { Base64 } from "js-base64";
-import { CommonCheck } from "./NewDefaultRepository/OpenedActions/checks/CommonCheck";
-import { IntegrationCheck } from "./NewDefaultRepository/OpenedActions/checks/IntegrationCheck";
-import { PluginCheck } from "./NewDefaultRepository/OpenedActions/checks/PluginCheck";
-import { ThemeCheck } from "./NewDefaultRepository/OpenedActions/checks/ThemeCheck";
-import { AppdaemonCheck } from "./NewDefaultRepository/OpenedActions/checks/AppdaemonCheck";
-import { NetdaemonCheck } from "./NewDefaultRepository/OpenedActions/checks/NetdaemonCheck";
-import { PythonScriptCheck } from "./NewDefaultRepository/OpenedActions/checks/PythonScriptCheck";
+import { CommonCheck } from "./NewDefaultRepository/Opened/checks/CommonCheck";
+import { IntegrationCheck } from "./NewDefaultRepository/Opened/checks/IntegrationCheck";
+import { PluginCheck } from "./NewDefaultRepository/Opened/checks/PluginCheck";
+import { ThemeCheck } from "./NewDefaultRepository/Opened/checks/ThemeCheck";
+import { AppdaemonCheck } from "./NewDefaultRepository/Opened/checks/AppdaemonCheck";
+import { NetdaemonCheck } from "./NewDefaultRepository/Opened/checks/NetdaemonCheck";
+import { PythonScriptCheck } from "./NewDefaultRepository/Opened/checks/PythonScriptCheck";
 import { extractOrgRepo } from "../util/extractOrgRepo";
 import { extractTasks } from "../util/extractTasks";
-import { senderIsBot } from "../filter";
+import { senderIsBot } from "../util/filter";
 
 export const NAME = "NewDefaultRepository";
 

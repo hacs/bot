@@ -1,5 +1,5 @@
 import { Application, Context } from "probot";
-import { senderIsBot, senderIsAdmin } from "../../filter";
+import { senderIsBot, senderIsAdmin } from "../../util/filter";
 
 import { KNOWN_ISSUES } from "./list";
 

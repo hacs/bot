@@ -1,5 +1,5 @@
 import { Application, Context } from "probot";
-import { senderIsAdmin, senderIsBot } from "../../filter";
+import { senderIsAdmin, senderIsBot } from "../../util/filter";
 import { messageClosedIssue } from "../../messages";
 
 export const NAME = "ClosedIssue";
