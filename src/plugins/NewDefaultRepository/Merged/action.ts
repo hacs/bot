@@ -1,13 +1,15 @@
 import { Context } from "probot";
 
 import { extractOrgRepo } from "../../../util/extractOrgRepo";
+import { senderIsBot } from "../../../util/filter";
 import { postToDiscord } from "./postToDiscord";
 import { postToPullRequest } from "./postToPullRequest";
 
 import { categories } from "../plugin";
 
 export async function runMergedActions(context: Context) {
-  if (extractOrgRepo(context).repo !== "default") return;
+  if (extractOrgRepo(context).repo !== "default" || senderIsBot(context))
+    return;
   const { data: pull } = await context.github.pulls.get(context.issue());
   const titleElements = pull.title.split(" ");
   const owner_repo = titleElements[3].replace("[", "").replace("]", "");
