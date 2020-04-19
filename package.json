@@ -33,7 +33,7 @@
     "codeowners-utils": "^1.0.0",
     "ignore": "^5.1.2",
     "js-base64": "^2.5.2",
-    "probot": "^9.2.19"
+    "probot": "^9.11.3"
   },
   "husky": {
     "hooks": {

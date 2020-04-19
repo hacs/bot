@@ -25,9 +25,7 @@ export async function runOpenedActions(context: Context) {
     return;
   }
   const CurrentLabels = await context.github.issues.listLabelsOnIssue(
-    context.issue({
-      issue_number: context.issue().number,
-    })
+    context.issue()
   );
   CurrentLabels.data.forEach(async (element) => {
     if (element.name === "Not finished") {

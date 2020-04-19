@@ -10,9 +10,7 @@ export const initClearTempLabels = (app: Application) => {
 
 export async function runClearTempLabels(context: Context) {
   const CurrentLabels = await context.github.issues.listLabelsOnIssue(
-    context.issue({
-      issue_number: context.issue().number,
-    })
+    context.issue()
   );
   CurrentLabels.data.forEach(async (element) => {
     if (element.name === "recheck") {
