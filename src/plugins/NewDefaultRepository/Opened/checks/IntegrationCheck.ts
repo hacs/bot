@@ -60,7 +60,10 @@ export async function IntegrationCheck(
     context.log(IntegrationManifest);
 
     manifest = JSON.parse(
-      Buffer.from((IntegrationManifest as any).content, "base64").toString()
+      Buffer.from(
+        (IntegrationManifest.data as any).content,
+        "base64"
+      ).toString()
     );
     context.log(manifest);
 
