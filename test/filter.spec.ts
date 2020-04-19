@@ -34,7 +34,7 @@ describe(NAME, () => {
         // @ts-ignore
         log: () => undefined,
         payload: {
-          sender: { type: "bot" },
+          sender: { type: "Bot" },
         },
       }),
       true
