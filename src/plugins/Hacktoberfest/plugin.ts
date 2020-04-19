@@ -1,4 +1,5 @@
 import { Application, Context } from "probot";
+import { contextData } from "../../util/context";
 import { senderIsBot } from "../../util/filter";
 
 export const NAME = "Hacktoberfest";
@@ -38,7 +39,9 @@ export async function openAction(context: Context) {
 export async function closeAction(context: Context) {
   if (!isHacktoberfestLive) return;
   if (senderIsBot(context)) return;
-  const PRStatus = await context.github.pulls.get(context.issue());
+  const PRStatus = await context.github.pulls.get(
+    new contextData(context.issue()).pull
+  );
   if (PRStatus.data.merged) return;
 
   await context.github.issues.removeLabel(

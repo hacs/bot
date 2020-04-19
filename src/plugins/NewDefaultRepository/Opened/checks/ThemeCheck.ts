@@ -1,4 +1,5 @@
 import { Context } from "probot";
+import { contextData } from "../../../../util/context";
 import { Check, updateCheck, createCheck } from "./Status";
 
 const TITLE = "HACS Category checks";
@@ -8,7 +9,9 @@ export async function ThemeCheck(
   owner: string,
   repo: string
 ) {
-  const { data: PR } = await context.github.pulls.get(context.issue());
+  const { data: PR } = await context.github.pulls.get(
+    new contextData(context.issue()).pull
+  );
   const PRSHA = PR.head.sha;
 
   const checks: Check[] = [];
