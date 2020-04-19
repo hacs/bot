@@ -17,21 +17,24 @@ interface issue extends repo {
 
 export class contextData {
   payload!: payload;
-  repo: repo = {
-    owner: this.payload.owner,
-    repo: this.payload.repo,
-  };
-  pull: pull = {
-    owner: this.payload.owner,
-    repo: this.payload.repo,
-    pull_number: this.payload.number,
-  };
-  issue: issue = {
-    owner: this.payload.owner,
-    repo: this.payload.repo,
-    issue_number: this.payload.number,
-  };
+  repo: repo;
+  pull: pull;
+  issue: issue;
   constructor(payload: payload) {
     this.payload = payload;
+    this.repo = {
+      owner: payload.owner,
+      repo: payload.repo,
+    };
+    this.pull = {
+      owner: payload.owner,
+      repo: payload.repo,
+      pull_number: payload.number,
+    };
+    this.issue = {
+      owner: payload.owner,
+      repo: payload.repo,
+      issue_number: payload.number,
+    };
   }
 }
