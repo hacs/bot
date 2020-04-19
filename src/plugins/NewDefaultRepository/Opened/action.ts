@@ -17,7 +17,21 @@ export const NAME = "NewDefaultRepositoryOpened";
 export async function runOpenedActions(context: Context) {
   if (senderIsBot(context)) return;
   if (extractOrgRepo(context).repo !== "default") return;
-  if (extractTasks(context).filter((task) => task.check).length !== 4) {
+
+  const tasks = extractTasks(context);
+  if (tasks.length === 0) {
+    context.log(NAME, "Missing tasks");
+    await context.github.issues.addLabels(
+      context.issue({ labels: ["Not finished"] })
+    );
+    await context.github.issues.createComment(
+      context.issue({
+        body: "Pull request template is deleted/not complete.",
+      })
+    );
+    return;
+  }
+  if (tasks.filter((task) => task.check).length !== 4) {
     context.log(NAME, "Missing tasks");
     await context.github.issues.addLabels(
       context.issue({ labels: ["Not finished"] })
