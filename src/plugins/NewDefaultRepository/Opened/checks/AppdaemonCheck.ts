@@ -41,16 +41,5 @@ export async function AppdaemonCheck(
   // --------------------------------------------------------------------------------
 
   // Final CheckRun update
-  await updateCheck(
-    context,
-    PRSHA,
-    CheckRun.id,
-    TITLE,
-    checks,
-    checks.filter((check) => {
-      return !check.success;
-    }).length === 0
-      ? "success"
-      : "failure"
-  );
+  await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks, true);
 }

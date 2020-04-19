@@ -35,7 +35,7 @@ export async function CommonCheck(
   if (repositoryExsist) {
     await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
   } else {
-    await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks, "failure");
+    await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks, true);
     return;
   }
 
@@ -130,7 +130,7 @@ export async function CommonCheck(
   if (manifestIsValid) {
     await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
   } else {
-    await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks, "failure");
+    await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks, true);
     return;
   }
 
@@ -166,16 +166,5 @@ export async function CommonCheck(
   // --------------------------------------------------------------------------------
 
   // Final CheckRun update
-  await updateCheck(
-    context,
-    PRSHA,
-    CheckRun.id,
-    TITLE,
-    checks,
-    checks.filter((check) => {
-      return !check.success;
-    }).length === 0
-      ? "success"
-      : "failure"
-  );
+  await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks, true);
 }

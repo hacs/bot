@@ -40,7 +40,7 @@ export async function IntegrationCheck(
   });
 
   if (!dirExsist) {
-    await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks, "failure");
+    await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks, true);
     return;
   } else {
     await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
@@ -76,7 +76,7 @@ export async function IntegrationCheck(
   });
 
   if (!manifestValid) {
-    await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks, "failure");
+    await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks, true);
     return;
   } else {
     await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
@@ -103,16 +103,5 @@ export async function IntegrationCheck(
   // --------------------------------------------------------------------------------
 
   // Final CheckRun update
-  await updateCheck(
-    context,
-    PRSHA,
-    CheckRun.id,
-    TITLE,
-    checks,
-    checks.filter((check) => {
-      return !check.success;
-    }).length === 0
-      ? "success"
-      : "failure"
-  );
+  await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks, true);
 }

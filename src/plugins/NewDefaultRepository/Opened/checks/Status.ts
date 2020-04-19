@@ -46,7 +46,7 @@ export async function updateCheck(
   id: number,
   title: string,
   checks: Check[],
-  conclusion?: "success" | "failure" | "neutral"
+  final: boolean = false
 ) {
   let summary: string = StatusIconDescription;
   checks.forEach((check) => {
@@ -67,8 +67,19 @@ export async function updateCheck(
     output: { title, summary },
   };
 
-  if (conclusion) {
-    data.conclusion = conclusion;
+  if (final) {
+    data.conclusion =
+      checks.filter((check) => {
+        if (!check.canFail) return !check.success;
+        return false;
+      }).length !== 0
+        ? "failure"
+        : checks.filter((check) => {
+            if (check.canFail && !check.success) return true;
+            return false;
+          }).length !== 0
+        ? "neutral"
+        : "success";
   }
 
   await context.github.checks.update(context.issue(data));

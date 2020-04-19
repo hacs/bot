@@ -9,11 +9,12 @@ Here is a few resources that can be useful:
 - [HACS @ twitter][hacstwitter]
 `;
 
-export const messageIntegrations = `- [Validate your integration with this GitHub Action][hassfestaction]`;
+export const messageIntegrations = `- [Use hassfest to validate your integration with this GitHub Action][hassfestaction]`;
 
 export const messagePlugins = `- [Did you know you can add your card to the card-picker in Lovelace?][lovelace_custom_card]`;
 
 export const messageLinks = `
+
 <!-- Links -->
 [hacsdiscord]: https://discord.gg/apgchf8
 [hacstwitter]: https://twitter.com/HACSIntegration
