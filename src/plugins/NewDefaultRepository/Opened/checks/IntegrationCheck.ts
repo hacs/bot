@@ -77,17 +77,17 @@ export async function IntegrationCheck(
 
   checks.push({
     description: "Integration manifest has a 'domain' key",
-    success: manifest.includes("domain"),
+    success: manifest.hasOwnProperty("domain"),
   });
 
   checks.push({
     description: "Integration manifest has a 'documentation' key",
-    success: manifest.includes("documentation"),
+    success: manifest.hasOwnProperty("documentation"),
   });
 
   checks.push({
     description: "Integration manifest has a 'name' key",
-    success: manifest.includes("name"),
+    success: manifest.hasOwnProperty("name"),
   });
 
   //await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);

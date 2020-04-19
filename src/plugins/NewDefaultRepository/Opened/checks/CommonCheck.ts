@@ -123,12 +123,13 @@ export async function CommonCheck(
     await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
   } else {
     await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks, "failure");
+    return;
   }
 
   // Check manifest content
   checks.push({
     description: "hacs.json have required information (name)",
-    success: manifest.includes("name"),
+    success: manifest.hasOwnProperty("name"),
     link: "https://hacs.xyz/docs/publish/start#hacsjson",
   });
 
