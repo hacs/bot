@@ -10,7 +10,7 @@ import { initClosedIssue } from "./plugins/ClosedIssue/plugin";
 import { initReleaseHelper } from "./plugins/ReleaseHelper/plugin";
 
 export = (app: Application) => {
-  initDebug(app);
+  //initDebug(app);
   initKnownIssues(app);
   initGreeter(app);
   initHacktoberfest(app);
