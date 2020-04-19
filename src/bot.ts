@@ -15,8 +15,6 @@ export = (app: Application) => {
   initGreeter(app);
   initHacktoberfest(app);
 
-  initNewDefaultRepository(app);
-
   initClosedIssue(app);
   initClearTempLabels(app);
   initNewDefaultRepository(app);
