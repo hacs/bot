@@ -8,5 +8,5 @@ export function senderIsAdmin(context: Context) {
 }
 
 export function senderIsBot(context: Context) {
-  return context.payload.sender.type !== "User";
+  return context.payload.sender.type === "Bot";
 }
