@@ -8,6 +8,7 @@ describe(NAME, () => {
       payload: {
         somekey: "somevalue",
         repository: { full_name: "hacs/bot" },
+        sender: { type: "User" },
         issue: {
           body:
             "Before you submit a pull request, please make sure you have done the following:\r\n" +

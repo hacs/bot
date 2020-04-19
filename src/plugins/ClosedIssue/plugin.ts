@@ -11,7 +11,12 @@ export const initClosedIssue = (app: Application) => {
 };
 
 export async function runClosedIssue(context: Context) {
-  if (senderIsAdmin(context) || senderIsBot(context)) return;
+  if (
+    senderIsAdmin(context) ||
+    senderIsBot(context) ||
+    context.payload.hasOwnProperty("pull_request")
+  )
+    return;
   const { data: Issue } = await context.github.issues.get(context.issue());
 
   if (Issue.state === "closed") {
