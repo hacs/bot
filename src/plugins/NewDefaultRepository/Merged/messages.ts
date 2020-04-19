@@ -9,9 +9,7 @@ Here is a few resources that can be useful:
 - [HACS @ twitter][hacstwitter]
 `;
 
-export const messageIntegrations = `
-- [Validate your integration with this GitHub Action][hassfestaction]
-`;
+export const messageIntegrations = `- [Validate your integration with this GitHub Action][hassfestaction]`;
 
 export const messageLinks = `
 <!-- Links -->
