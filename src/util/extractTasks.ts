@@ -22,12 +22,10 @@ export function extractTasks(context: Context) {
       return;
     }
 
-    if (matchChecked.test(line)) {
-      check = true;
-    }
-    name = line
-      .split(matchAll)
-      [line.split(matchAll).length - 1].trim()
+    const lineSplit = line.split(matchAll);
+    const check: boolean = matchChecked.test(line);
+    const name: string = lineSplit[lineSplit.length - 1]
+      .trim()
       .replace(/\\r/g, "");
     ghTasks.push({ check, name });
   });
