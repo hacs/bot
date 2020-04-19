@@ -17,19 +17,24 @@ export async function CommonCheck(
   const { data: CheckRun } = await createCheck(context, PRSHA, TITLE);
 
   // Check if the repository exsist
+  let repositoryExsist!: boolean;
+  let repository: any;
   try {
-    await context.github.repos.get({ owner: owner, repo: repo });
-    checks.push({ description: "Repository exist", success: true });
+    repository = await context.github.repos.get({ owner: owner, repo: repo });
+    repository = repository.data;
+    repositoryExsist = true;
   } catch (error) {
-    checks.push({ description: "Repository does not exist", success: false });
+    repositoryExsist = false;
+  }
+
+  checks.push({ description: "Repository exist", success: repositoryExsist });
+
+  if (repositoryExsist) {
+    await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
+  } else {
     await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks, "failure");
     return;
   }
-
-  const { data: Repository } = await context.github.repos.get({
-    owner: owner,
-    repo: repo,
-  });
 
   const { data: BaseFiles } = await context.github.repos.getContents({
     owner: owner,
@@ -40,7 +45,7 @@ export async function CommonCheck(
   // Check if the repository is a fork
   checks.push({
     description: "Repository is not a fork",
-    success: !Repository.fork,
+    success: !repository.fork,
     canFail: true,
   });
 
@@ -61,7 +66,7 @@ export async function CommonCheck(
   // Check if the repository is archived
   checks.push({
     description: "Repository is not archived",
-    success: !Repository.archived,
+    success: !repository.archived,
   });
 
   await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
@@ -70,7 +75,7 @@ export async function CommonCheck(
   // Check if the repository has a description
   checks.push({
     description: "Repository has a description",
-    success: Repository.description !== null,
+    success: repository.description !== null,
     link: "https://hacs.xyz/docs/publish/start#description",
   });
 
