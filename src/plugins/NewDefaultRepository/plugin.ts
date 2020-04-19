@@ -22,7 +22,6 @@ export const initNewDefaultRepository = (app: Application) => {
       "pull_request.reopened",
       "pull_request.labeled",
       "pull_request.synchronize",
-      "check_run.rerequested",
     ],
     async (context) => {
       await runOpenedActions(context);
