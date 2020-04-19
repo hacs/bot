@@ -18,6 +18,8 @@ export async function runOpenedActions(context: Context) {
   if (senderIsBot(context)) return;
   if (extractOrgRepo(context).repo !== "default") return;
 
+  context.log(NAME, "Is bot?", senderIsBot(context));
+
   const tasks = extractTasks(context);
   if (tasks.length === 0) {
     context.log(NAME, "Missing tasks");
