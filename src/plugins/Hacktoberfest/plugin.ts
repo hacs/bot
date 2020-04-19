@@ -4,6 +4,8 @@ import { senderIsBot } from "../../util/filter";
 
 export const NAME = "Hacktoberfest";
 export const LABEL_INVALID = "invalid";
+export const LABEL_HACKTOBERFEST = "Hacktoberfest";
+export const LABEL_HACKTOBERFEST_COLOR = "ff5500";
 
 export const HacktoberFestMessage: string = `
 ## It's Hacktoberfest 🎉
@@ -25,56 +27,68 @@ export const initHacktoberfest = (app: Application) => {
 export async function openAction(context: Context) {
   if (!isHacktoberfestLive) return;
   if (senderIsBot(context)) return;
-  await context.github.issues.createComment(
-    context.issue({ body: HacktoberFestMessage })
-  );
+
+  const contextdata = new contextData(context.issue());
+  await context.github.issues.createComment({
+    ...contextdata.issue,
+    ...{ body: HacktoberFestMessage },
+  });
 
   await CreateOrUpdateHacktoberfestLabel(context);
 
-  await context.github.issues.addLabels(
-    context.issue({ labels: ["Hacktoberfest"] })
-  );
+  await context.github.issues.addLabels({
+    ...contextdata.issue,
+    ...{ labels: [LABEL_HACKTOBERFEST] },
+  });
 }
 
 export async function closeAction(context: Context) {
   if (!isHacktoberfestLive) return;
   if (senderIsBot(context)) return;
-  const PRStatus = await context.github.pulls.get(
-    new contextData(context.issue()).pull
-  );
+
+  const contextdata = new contextData(context.issue());
+  const PRStatus = await context.github.pulls.get(contextdata.pull);
   if (PRStatus.data.merged) return;
 
-  await context.github.issues.removeLabel(
-    context.issue({ name: "Hacktoberfest" })
-  );
+  await context.github.issues.removeLabel({
+    ...contextdata.issue,
+    ...{ name: LABEL_HACKTOBERFEST },
+  });
 
-  await context.github.issues.addLabels(
-    context.issue({ labels: [LABEL_INVALID] })
-  );
+  await context.github.issues.addLabels({
+    ...contextdata.issue,
+    ...{ labels: [LABEL_INVALID] },
+  });
 }
 
 async function CreateOrUpdateHacktoberfestLabel(context: Context) {
   var LabelExists: boolean = false;
+  const contextdata = new contextData(context.issue());
   const CurrentLabels = await context.github.issues.listLabelsForRepo(
-    context.issue()
+    contextdata.repo
   );
 
   CurrentLabels.data.forEach((element) => {
-    if (element.name.toLocaleLowerCase() === "hacktoberfest")
+    if (element.name.toLowerCase() === LABEL_HACKTOBERFEST.toLowerCase())
       LabelExists = true;
   });
 
   if (LabelExists) {
-    await context.github.issues.updateLabel(
-      context.issue({
-        current_name: "hacktoberfest",
-        name: "Hacktoberfest",
-        color: "ff5500",
-      })
-    );
+    await context.github.issues.updateLabel({
+      ...contextdata.issue,
+      ...{
+        current_name: LABEL_HACKTOBERFEST.toLowerCase(),
+        name: LABEL_HACKTOBERFEST,
+        color: LABEL_HACKTOBERFEST_COLOR,
+      },
+    });
   } else {
-    await context.github.issues.createLabel(
-      context.issue({ name: "Hacktoberfest", color: "ff5500" })
-    );
+    await context.github.issues.createLabel({
+      ...contextdata.issue,
+      ...{
+        name: LABEL_HACKTOBERFEST,
+        color: LABEL_HACKTOBERFEST_COLOR,
+      },
+    });
   }
 }

@@ -1,4 +1,5 @@
 import { Context } from "probot";
+import { contextData } from "../../../util/context";
 
 import { senderIsBot } from "../../../util/filter";
 import { extractOrgRepo } from "../../../util/extractOrgRepo";
@@ -21,11 +22,14 @@ export async function runOpenedActions(context: Context) {
   context.log(NAME, "Is bot?", senderIsBot(context));
 
   const tasks = extractTasks(context);
+  const contextdata = new contextData(context.issue());
+
   if (tasks.length === 0) {
     context.log(NAME, "Missing tasks");
-    await context.github.issues.addLabels(
-      context.issue({ labels: ["Not finished"] })
-    );
+    await context.github.issues.addLabels({
+      ...contextdata.issue,
+      ...{ labels: ["Not finished"] },
+    });
     await context.github.issues.createComment(
       context.issue({
         body: "Pull request template is deleted/not complete.",
@@ -35,19 +39,21 @@ export async function runOpenedActions(context: Context) {
   }
   if (tasks.filter((task) => task.check).length !== 4) {
     context.log(NAME, "Missing tasks");
-    await context.github.issues.addLabels(
-      context.issue({ labels: ["Not finished"] })
-    );
+    await context.github.issues.addLabels({
+      ...contextdata.issue,
+      ...{ labels: ["Not finished"] },
+    });
     return;
   }
   const CurrentLabels = await context.github.issues.listLabelsOnIssue(
-    context.issue()
+    contextdata.issue
   );
   CurrentLabels.data.forEach(async (element) => {
     if (element.name === "Not finished") {
-      await context.github.issues.removeLabel(
-        context.issue({ name: "Not finished" })
-      );
+      await context.github.issues.removeLabel({
+        ...contextdata.issue,
+        ...{ name: "Not finished" },
+      });
     }
   });
   let changedFiles = await getChangedFiles(context);

@@ -46,7 +46,7 @@ export async function IntegrationCheck(
     await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
   }
   // --------------------------------------------------------------------------------
-  context.log((cc as any).data[0].path);
+
   // Check if the integration manifest exist in the repository
   let manifest: any;
   let manifestValid!: boolean;
@@ -57,15 +57,12 @@ export async function IntegrationCheck(
       path: (cc as any).data[0].path + "/manifest.json",
     });
 
-    context.log(IntegrationManifest);
-
     manifest = JSON.parse(
       Buffer.from(
         (IntegrationManifest.data as any).content,
         "base64"
       ).toString()
     );
-    context.log(manifest);
 
     manifestValid = true;
   } catch (error) {
