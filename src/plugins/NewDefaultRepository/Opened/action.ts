@@ -132,12 +132,10 @@ async function getFileDiff(context: Context, file: string) {
   const { data: Pull } = await context.github.pulls.get(context.issue());
 
   const PullRef = Pull["head"]["sha"];
-  context.log(NAME, PullRef);
 
   const { data: ChangedContents } = await context.github.repos.getContents(
     context.issue({ path: file, ref: PullRef })
   );
-  context.log(NAME, ChangedContents);
 
   var ChangedDecoded: string[] = JSON.parse(
     Buffer.from((ChangedContents as any).content, "base64").toString()
@@ -147,7 +145,6 @@ async function getFileDiff(context: Context, file: string) {
   const { data: Contents } = await context.github.repos.getContents(
     context.issue({ path: file })
   );
-  context.log(NAME, Contents);
 
   var Decoded: string[] = JSON.parse(
     Buffer.from((Contents as any).content, "base64").toString()
@@ -157,11 +154,10 @@ async function getFileDiff(context: Context, file: string) {
   var NewItems: string[] = [];
 
   ChangedDecoded.forEach((element) => {
-    context.log(NAME, element);
     if (!Decoded.includes(element)) NewItems.push(element);
   });
 
-  context.log("NewItems: ", NewItems);
+  context.log(NAME, NewItems);
 
   return NewItems;
 }

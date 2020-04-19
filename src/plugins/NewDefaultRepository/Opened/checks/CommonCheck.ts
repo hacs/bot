@@ -96,6 +96,7 @@ export async function CommonCheck(
 
   // Check if the repository has a hacs.json file
   let manifest: any;
+  let manifestIsValid!: boolean;
   try {
     const { data: hacsManifest } = await context.github.repos.getContents({
       owner: owner,
@@ -106,16 +107,25 @@ export async function CommonCheck(
     manifest = JSON.parse(
       Buffer.from((hacsManifest as any).content, "base64").toString()
     );
+    manifestIsValid = true;
   } catch (error) {
     context.log(error);
+    manifestIsValid = false;
   }
 
   checks.push({
     description: "hacs.json file exist in the repository, and is valid JSON",
-    success: manifest !== undefined,
+    success: manifestIsValid,
     link: "https://hacs.xyz/docs/publish/start#hacsjson",
   });
 
+  if (manifestIsValid) {
+    await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks);
+  } else {
+    await updateCheck(context, PRSHA, CheckRun.id, TITLE, checks, "failure");
+  }
+
+  // Check manifest content
   checks.push({
     description: "hacs.json have required information (name)",
     success: manifest.includes("name"),
