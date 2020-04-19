@@ -11,6 +11,8 @@ Here is a few resources that can be useful:
 
 export const messageIntegrations = `- [Validate your integration with this GitHub Action][hassfestaction]`;
 
+export const messagePlugins = `- [Did you know you can add your card to the card-picker in Lovelace?][lovelace_custom_card]`;
+
 export const messageLinks = `
 <!-- Links -->
 [hacsdiscord]: https://discord.gg/apgchf8
@@ -18,4 +20,5 @@ export const messageLinks = `
 [hadevblog]: https://developers.home-assistant.io/blog
 [hadevtwitter]: https://twitter.com/hass_devs
 [hassfestaction]: https://github.com/home-assistant/actions#hassfest
+[lovelace_custom_card]: https://developers.home-assistant.io/docs/lovelace_custom_card#graphical-card-configuration
 `;
