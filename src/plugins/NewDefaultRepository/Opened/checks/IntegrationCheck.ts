@@ -54,7 +54,7 @@ export async function IntegrationCheck(
     });
 
     manifest = JSON.parse(
-      Base64.decode((IntegrationManifest as any).data["content"])
+      Buffer.from((IntegrationManifest as any).content, "base64").toString()
     );
 
     manifestValid = true;

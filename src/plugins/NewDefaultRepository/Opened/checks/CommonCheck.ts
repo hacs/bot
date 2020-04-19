@@ -103,7 +103,9 @@ export async function CommonCheck(
       path: "hacs.json",
     });
 
-    manifest = JSON.parse(Base64.decode((hacsManifest as any).content));
+    manifest = JSON.parse(
+      Buffer.from((hacsManifest as any).content, "base64").toString()
+    );
   } catch (error) {
     context.log(error);
   }
