@@ -7,6 +7,7 @@ Here is a few resources that can be useful:
 - [Home Assistant Developer Blog][hadevblog] Make sure you stay up to date.
 - [Home Assistant Devs @ twitter][hadevtwitter]
 - [HACS @ twitter][hacstwitter]
+- [Use this GitHub action to validate your repository with HACS](https://hacs.xyz/docs/publish/action)
 `;
 
 export const messageIntegrations = `- [Use hassfest to validate your integration with this GitHub Action][hassfestaction]`;
