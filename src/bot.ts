@@ -6,7 +6,6 @@ import { initGreeter } from "./plugins/Greeter/plugin";
 import { initHacktoberfest } from "./plugins/Hacktoberfest/plugin";
 import { initClearTempLabels } from "./plugins/ClearTempLabels/plugin";
 import { initNewDefaultRepository } from "./plugins/NewDefaultRepository/plugin";
-import { initClosedIssue } from "./plugins/ClosedIssue/plugin";
 import { initReleaseHelper } from "./plugins/ReleaseHelper/plugin";
 
 export = (app: Application) => {
@@ -15,7 +14,6 @@ export = (app: Application) => {
   initGreeter(app);
   initHacktoberfest(app);
 
-  initClosedIssue(app);
   initClearTempLabels(app);
   initNewDefaultRepository(app);
   initReleaseHelper(app);
