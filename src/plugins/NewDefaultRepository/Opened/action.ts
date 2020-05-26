@@ -5,13 +5,6 @@ import { senderIsBot } from "../../../util/filter";
 import { extractOrgRepo } from "../../../util/extractOrgRepo";
 import { extractTasks } from "../../../util/extractTasks";
 
-import { AppdaemonCheck } from "./checks/AppdaemonCheck";
-import { IntegrationCheck } from "./checks/IntegrationCheck";
-import { NetdaemonCheck } from "./checks/NetdaemonCheck";
-import { PluginCheck } from "./checks/PluginCheck";
-import { PythonScriptCheck } from "./checks/PythonScriptCheck";
-import { ThemeCheck } from "./checks/ThemeCheck";
-
 export const NAME = "NewDefaultRepositoryOpened";
 
 export async function runOpenedActions(context: Context) {
@@ -63,32 +56,12 @@ export async function runOpenedActions(context: Context) {
   context.log("changedFiles: ", changedFiles);
 
   if (changedFiles.length > 1) {
-    await context.github.issues.createComment(
-      context.issue({
-        body: "Only a single file change is allowed.",
-      })
-    );
     return;
   }
 
   let repoCategory = changedFiles.pop();
   const ChangedRepos = await getFileDiff(context, repoCategory || "");
 
-  if (ChangedRepos.length > 1) {
-    await context.github.issues.createComment(
-      context.issue({
-        body: "Only a single repository change is allowed.",
-      })
-    );
-    return;
-  } else if (ChangedRepos.length !== 1) {
-    await context.github.issues.createComment(
-      context.issue({
-        body: "Could not determine the change, try to rebase your branch.",
-      })
-    );
-    return;
-  }
   context.log("ChangedRepos: ", ChangedRepos);
 
   const newRepo = ChangedRepos.pop();
@@ -112,32 +85,7 @@ export async function runOpenedActions(context: Context) {
         body: `Running checks on [${owner}/${repo}](https://github.com/${owner}/${repo})`,
       })
     );
-    await CategoryChecks(repoCategory, owner, repo, context);
   }
-}
-
-async function CategoryChecks(
-  category: string,
-  owner: string,
-  repo: string,
-  context: Context
-) {
-  const validCategories = [
-    "integration",
-    "plugin",
-    "theme",
-    "appdaemon",
-    "netdaemon",
-    "python_script",
-  ];
-  if (!validCategories.includes(category)) return;
-  if (category == "integration") await IntegrationCheck(context, owner, repo);
-  if (category == "plugin") await PluginCheck(context, owner, repo);
-  if (category == "theme") await ThemeCheck(context, owner, repo);
-  if (category == "appdaemon") await AppdaemonCheck(context, owner, repo);
-  if (category == "netdaemon") await NetdaemonCheck(context, owner, repo);
-  if (category == "python_script")
-    await PythonScriptCheck(context, owner, repo);
 }
 
 async function getChangedFiles(context: Context) {
