@@ -5,7 +5,6 @@ import { senderIsBot } from "../../../util/filter";
 import { extractOrgRepo } from "../../../util/extractOrgRepo";
 import { extractTasks } from "../../../util/extractTasks";
 
-import { CommonCheck } from "./checks/CommonCheck";
 import { AppdaemonCheck } from "./checks/AppdaemonCheck";
 import { IntegrationCheck } from "./checks/IntegrationCheck";
 import { NetdaemonCheck } from "./checks/NetdaemonCheck";
@@ -113,7 +112,6 @@ export async function runOpenedActions(context: Context) {
         body: `Running checks on [${owner}/${repo}](https://github.com/${owner}/${repo})`,
       })
     );
-    await CommonCheck(context, owner, repo);
     await CategoryChecks(repoCategory, owner, repo, context);
   }
 }
