@@ -75,16 +75,21 @@ export async function runOpenedActions(context: Context) {
   );
 
   if (repoCategory) {
-    await context.github.issues.update(
-      context.issue({
-        title: `Adds new ${repoCategory} [${owner}/${repo}]`,
-      })
-    );
-    await context.github.issues.createComment(
-      context.issue({
-        body: `Running checks on [${owner}/${repo}](https://github.com/${owner}/${repo})`,
-      })
-    );
+    if (
+      context.payload.issue.title !==
+      `Adds new ${repoCategory} [${owner}/${repo}]`
+    ) {
+      await context.github.issues.update(
+        context.issue({
+          title: `Adds new ${repoCategory} [${owner}/${repo}]`,
+        })
+      );
+      await context.github.issues.createComment(
+        context.issue({
+          body: `Running checks on [${owner}/${repo}](https://github.com/${owner}/${repo})`,
+        })
+      );
+    }
   }
 }
 
