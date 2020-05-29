@@ -76,7 +76,7 @@ export async function runOpenedActions(context: Context) {
 
   if (repoCategory) {
     if (
-      context.payload.issue.title !==
+      context.payload.pull_request?.title !==
       `Adds new ${repoCategory} [${owner}/${repo}]`
     ) {
       await context.github.issues.update(
