@@ -3,7 +3,6 @@ import { contextData } from "../../../util/context";
 
 import { senderIsBot } from "../../../util/filter";
 import { extractOrgRepo } from "../../../util/extractOrgRepo";
-import { extractTasks } from "../../../util/extractTasks";
 
 export const NAME = "NewDefaultRepositoryOpened";
 
@@ -13,30 +12,8 @@ export async function runOpenedActions(context: Context) {
 
   context.log(NAME, "Is bot?", senderIsBot(context));
 
-  const tasks = extractTasks(context);
   const contextdata = new contextData(context.issue());
 
-  if (tasks.length === 0) {
-    context.log(NAME, "Missing tasks");
-    await context.github.issues.addLabels({
-      ...contextdata.issue,
-      ...{ labels: ["Not finished"] },
-    });
-    await context.github.issues.createComment(
-      context.issue({
-        body: "Pull request template is deleted/not complete.",
-      })
-    );
-    return;
-  }
-  if (tasks.filter((task) => task.check).length !== 4) {
-    context.log(NAME, "Missing tasks");
-    await context.github.issues.addLabels({
-      ...contextdata.issue,
-      ...{ labels: ["Not finished"] },
-    });
-    return;
-  }
   const CurrentLabels = await context.github.issues.listLabelsOnIssue(
     contextdata.issue
   );
