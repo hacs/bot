@@ -13,7 +13,7 @@ export = (app: Application) => {
   initDebug(app);
   initKnownIssues(app);
   initGreeter(app);
-  initHacktoberfest(app);
+  //initHacktoberfest(app);
   initCommands(app);
   initClearTempLabels(app);
   initNewDefaultRepository(app);
