@@ -11,6 +11,7 @@ import { initReleaseHelper } from "./plugins/ReleaseHelper/plugin";
 
 export = (app: Application) => {
   initDebug(app);
+  initBlankIssues(app);
   initKnownIssues(app);
   initGreeter(app);
   //initHacktoberfest(app);
