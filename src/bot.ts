@@ -8,6 +8,7 @@ import { initHacktoberfest } from "./plugins/Hacktoberfest/plugin";
 import { initClearTempLabels } from "./plugins/ClearTempLabels/plugin";
 import { initNewDefaultRepository } from "./plugins/NewDefaultRepository/plugin";
 import { initReleaseHelper } from "./plugins/ReleaseHelper/plugin";
+import { initBlankIssues } from "./plugins/BlankIssues/plugin";
 
 export = (app: Application) => {
   initDebug(app);
