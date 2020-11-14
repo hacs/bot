@@ -15,7 +15,6 @@ export async function runKnownIssues(context: Context) {
   if (senderIsBot(context)) return;
   if (senderIsAdmin(context)) return;
   const issueOrPr = context.payload.issue || context.payload.pull_request;
-  let found: number;
 
   if (TEMPLATES.includes(issueOrPr.body)) {
     await Promise.all([
