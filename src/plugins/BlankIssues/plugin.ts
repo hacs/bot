@@ -13,6 +13,7 @@ export const initBlankIssues = (app: Application) => {
 
 export async function runKnownIssues(context: Context) {
   if (senderIsBot(context)) return;
+  await context.github.issues.addLabels(context.issue({ labels: ["invalid2"] }))
   if (senderIsAdmin(context)) return;
   const issueOrPr = context.payload.issue || context.payload.pull_request;
 
@@ -23,6 +24,5 @@ export async function runKnownIssues(context: Context) {
       context.github.issues.removeAssignees(context.issue()),
       context.github.issues.update(context.issue({state: "closed"}))
     ]);
-    await context.github.issues.addLabels(context.issue({ labels: ["invalid2"] }))
   }
 }
