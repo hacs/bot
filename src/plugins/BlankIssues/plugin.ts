@@ -23,5 +23,6 @@ export async function runKnownIssues(context: Context) {
       context.github.issues.removeAssignees(context.issue()),
       context.github.issues.update(context.issue({state: "closed"}))
     ]);
+    await context.github.issues.addLabels(context.issue({ labels: ["invalid2"] }))
   }
 }
