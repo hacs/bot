@@ -6,7 +6,7 @@ import { extractOrgRepo } from "../utils/extractOrgRepo";
 import { senderIsBot } from "../utils/filter";
 
 export default async (app: App, payload: PullPayload): Promise<void> => {
-  if (senderIsBot(payload) || extractOrgRepo(payload).repo !== HacsRepositories.DEFAULT) return;
+  if (senderIsBot(payload) || extractOrgRepo(payload).repo !== HacsRepositories.DEFAULT || !["opened"].includes(payload.action)) return;
 
   const changedFiles = getChangedFiles(app, payload)
 

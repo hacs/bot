@@ -2,7 +2,7 @@ import { EmitterWebhookEvent } from "@octokit/webhooks";
 import { App } from "octokit";
 
 import DebugPlugin from "./plugins/debug"
-import newDefaultRepositoryOpenedPlugin from "./plugins/newDefaultRepositoryOpened"
+import newDefaultOpenedPlugin from "./plugins/newDefaultOpened"
 
 import {issuePull} from "./utils/issuePull"
 
@@ -36,7 +36,7 @@ async function handleWebhookEvent(event: EmitterWebhookEvent): Promise<void> {
   if ("pull_request" in payload) {
     await Promise.allSettled(
       [
-        newDefaultRepositoryOpenedPlugin(app, payload)
+        newDefaultOpenedPlugin(app, payload)
       ]
     )
   } else if ("issue" in payload) {
