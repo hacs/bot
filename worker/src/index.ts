@@ -5,6 +5,7 @@ declare global {
   const PRIVATE_KEY: string;
   const WEBHOOK_SECRET: string;
   const DISCORD_WEBHOOK: string
+  const INSTALLATION_ID: string;
 }
 
 addEventListener('fetch', (event) => {
