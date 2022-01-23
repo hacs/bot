@@ -30,15 +30,21 @@ export async function handleRequest(request: Request): Promise<Response> {
 
 async function handleWebhookEvent(event: EmitterWebhookEvent): Promise<void> {
   const payload = issuePull(event)
-  if (!payload) {
-    return
+  if (!payload) return
+
+  await DebugPlugin(app, payload)
+  if ("pull_request" in payload) {
+    await Promise.allSettled(
+      [
+        newDefaultRepositoryOpenedPlugin(app, payload)
+      ]
+    )
+  } else if ("issue" in payload) {
+    await Promise.allSettled(
+      [
+      ]
+    )
   }
 
-  await Promise.allSettled(
-    [
-      DebugPlugin(app, payload),
-      newDefaultRepositoryOpenedPlugin(app, payload)
-    ]
-  )
 
 }

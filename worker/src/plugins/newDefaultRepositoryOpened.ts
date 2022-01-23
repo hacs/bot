@@ -1,12 +1,11 @@
 import { App } from "octokit";
 import { HACS, HacsRepositories } from "../const";
-import { IssuePullPayload, PullPayload } from "../types";
+import { PullPayload } from "../types";
 
 import { extractOrgRepo } from "../utils/extractOrgRepo";
 import { senderIsBot } from "../utils/filter";
 
-export default async (app: App, payload: IssuePullPayload): Promise<void> => {
-  payload = payload as PullPayload
+export default async (app: App, payload: PullPayload): Promise<void> => {
   if (senderIsBot(payload) || extractOrgRepo(payload).repo !== HacsRepositories.DEFAULT) return;
 
   const changedFiles = getChangedFiles(app, payload)
