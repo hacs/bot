@@ -1,3 +1,5 @@
 import { WebhookEventMap } from "@octokit/webhooks-types";
 
-export type IssuePullPayload = WebhookEventMap["issues"] | WebhookEventMap["pull_request"]
+export type IssuePayload = WebhookEventMap["issues"]
+export type PullPayload = WebhookEventMap["pull_request"]
+export type IssuePullPayload = IssuePayload | PullPayload

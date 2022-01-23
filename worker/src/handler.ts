@@ -1,7 +1,7 @@
 import { EmitterWebhookEvent } from "@octokit/webhooks";
 import { App } from "octokit";
 
-import { DebugPlugin } from "./plugins/debug"
+import DebugPlugin from "./plugins/debug"
 import {issuePull} from "./utils/issuePull"
 
 const app = new App({
