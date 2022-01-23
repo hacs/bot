@@ -16,10 +16,13 @@
     "noImplicitAny": true,
     "esModuleInterop": true,
     "declaration": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "types": [
+      "@cloudflare/workers-types",
+      "@types/jest",
+      "@types/service-worker-mock"
+    ]
   },
-  "include": [
-    "src/**/*"
-  ],
+  "include": ["src/**/*"],
   "compileOnSave": false
 }
