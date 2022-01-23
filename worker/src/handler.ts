@@ -2,6 +2,8 @@ import { EmitterWebhookEvent } from "@octokit/webhooks";
 import { App } from "octokit";
 
 import DebugPlugin from "./plugins/debug"
+import newDefaultRepositoryOpenedPlugin from "./plugins/newDefaultRepositoryOpened"
+
 import {issuePull} from "./utils/issuePull"
 
 const app = new App({
@@ -35,6 +37,7 @@ async function handleWebhookEvent(event: EmitterWebhookEvent): Promise<void> {
   await Promise.allSettled(
     [
       DebugPlugin(app, payload),
+      newDefaultRepositoryOpenedPlugin(app, payload)
     ]
   )
 
