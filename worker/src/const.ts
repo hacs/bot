@@ -1,5 +1,3 @@
-export const HACS = "hacs"
-
-export enum HacsRepositories {
+export enum RepositoryName {
   DEFAULT = "default"
 }

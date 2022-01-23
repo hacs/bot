@@ -1,14 +1,14 @@
 import { IssuePullPayload } from "../types";
 
-export interface OrgRepo {
-  org: string;
+export interface OwnerRepo {
+  owner: string;
   repo: string;
 }
 
-export const extractOrgRepo = (payload: IssuePullPayload): OrgRepo  => {
+export const extractOwnerRepo = (payload: IssuePullPayload): OwnerRepo  => {
   const repository = payload.repository.full_name;
   return {
-    org: repository.split("/")[0],
+    owner: repository.split("/")[0],
     repo: repository.split("/")[1],
   }
 }
