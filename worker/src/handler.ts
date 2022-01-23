@@ -2,6 +2,7 @@ import { EmitterWebhookEvent } from "@octokit/webhooks";
 import { App } from "octokit";
 
 import { DebugPlugin } from "./plugins/debug"
+import {issuePull} from "./utils/issuePull"
 
 const app = new App({
   appId: APP_ID,
@@ -11,7 +12,8 @@ const app = new App({
     onAny: handleWebhookEvent,
   },
 });
-app.webhooks.onAny(handleWebhookEvent)
+app.webhooks.on("issues", handleWebhookEvent)
+app.webhooks.on("pull_request", handleWebhookEvent)
 
 export async function handleRequest(request: Request): Promise<Response> {
   await app.webhooks.receive({
@@ -25,9 +27,14 @@ export async function handleRequest(request: Request): Promise<Response> {
 }
 
 async function handleWebhookEvent(event: EmitterWebhookEvent): Promise<void> {
+  const payload = issuePull(event)
+  if (!payload) {
+    return
+  }
+
   await Promise.allSettled(
     [
-      DebugPlugin(app, event),
+      DebugPlugin(app, payload),
     ]
   )
 
