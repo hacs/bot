@@ -28,6 +28,19 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
   const owner = newRepo.split('/')[0]
   const repo = newRepo.split('/')[1]
 
+  if (
+    repo.toLowerCase().includes('hacs') &&
+    payload.pull_request.review_comments === 0
+  ) {
+    await app.octokit.rest.pulls.createReview({
+      ...extractOwnerRepo(payload),
+      pull_number: payload.pull_request.number,
+      event: 'REQUEST_CHANGES',
+      body: "Do not use 'HACS' as a part of your repository name.",
+    })
+    return
+  }
+
   await app.octokit.rest.issues.addLabels({
     ...extractOwnerRepo(payload),
     issue_number: payload.pull_request.number,
