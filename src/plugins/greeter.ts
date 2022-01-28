@@ -18,10 +18,8 @@ export default async (app: App, payload: IssuePayload): Promise<void> => {
   await app.octokit.rest.issues.createComment({
     ...extractOwnerRepo(payload),
     issue_number: payload.issue.number,
-    body: `
-    Make sure you have read the [issue guidelines](https://hacs.xyz/docs/issues) and that you filled out the **entire** template.\n\n
+    body: `Make sure you have read the [issue guidelines](https://hacs.xyz/docs/issues) and that you filled out the **entire** template.\n
 
-    If you have an issue identical to this, do **not** add comments like "same here", "i have this too", instead add a :+1: reaction to the issue description. Thanks :+1:
-    `,
+If you have an issue identical to this, do **not** add comments like "same here", "i have this too", instead add a :+1: reaction to the issue description. Thanks! :+1:`,
   })
 }
