@@ -1,0 +1,25 @@
+name: wrangler
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+jobs:
+  wrangler:
+    runs-on: ubuntu-latest
+    name: Wrangler
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14.2.0
+
+      - name: Build/Publish worker
+        uses: cloudflare/wrangler-action@1.3.0
+        with:
+          publish: ${{ github.event_name == 'push' }}
+          apiToken: ${{ secrets.CF_API_TOKEN }}
