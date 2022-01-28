@@ -2,8 +2,8 @@ name = "bot"
 type = "javascript"
 zone_id = "2e43be6db95acabf68db9c9d8c669a52"
 account_id = "4ef0e0b43b821a981b4173298e18bf53"
-route = ""
-workers_dev = true
+route = "https://github-bot.hacs.xyz/*"
+workers_dev = false
 compatibility_date = "2022-01-23"
 
 [build]

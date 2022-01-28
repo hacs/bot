@@ -1,18 +1,10 @@
 import { App } from "octokit";
-import { RepositoryName } from "../const";
+import { defaultCategories, RepositoryName } from "../const";
 import { PullPayload } from "../types";
 
 import { extractOwnerRepo } from "../utils/extractOwnerRepo";
 import { senderIsBot } from "../utils/filter";
 
-const categories: string[] = [
-  "appdaemon",
-  "integration",
-  "netdaemon",
-  "plugin",
-  "python_script",
-  "theme"
-]
 
 export default async (app: App, payload: PullPayload): Promise<void> => {
   if (senderIsBot(payload) || extractOwnerRepo(payload).repo !== RepositoryName.DEFAULT || !["opened"].includes(payload.action)) return;
@@ -52,7 +44,7 @@ async function getChangedFiles(app: App, payload: PullPayload): Promise<string[]
   const { data: listFilesResponse } = await app.octokit.rest.pulls.listFiles(
     {...extractOwnerRepo(payload), pull_number: payload.pull_request.number}
   );
-  return listFilesResponse.filter(file => categories.includes(file.filename)).map((file) => file.filename);
+  return listFilesResponse.filter(file => defaultCategories.includes(file.filename)).map((file) => file.filename);
 }
 
 async function getFileDiff(app: App, payload: PullPayload, file: string) {
