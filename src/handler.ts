@@ -1,7 +1,7 @@
 import { EmitterWebhookEvent } from '@octokit/webhooks'
 import { App } from 'octokit'
 
-import DebugPlugin from './plugins/debug'
+//import DebugPlugin from './plugins/debug'
 import newDefaultOpenedPlugin from './plugins/newDefaultOpened'
 import newDefaultMergedPlugin from './plugins/newDefaultMerged'
 import clearTempLabelsPlugin from './plugins/clearTempLabels'
@@ -43,7 +43,7 @@ async function handleWebhookEvent(event: EmitterWebhookEvent): Promise<void> {
   const payload = issuePull(event)
   if (!payload) return
 
-  await DebugPlugin(app, payload)
+  //await DebugPlugin(app, payload)
 
   if ('pull_request' in payload) {
     await Promise.all([
