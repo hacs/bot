@@ -44,17 +44,17 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
     pull_number: payload.pull_request.number,
   })
 
+  if (!pull.merged) {
+    console.debug('Did not merge')
+    return
+  }
+
   const titleElements = pull.title.split(' ')
   const owner_repo = titleElements[3].replace('[', '').replace(']', '')
   const category = titleElements[2].toLowerCase()
 
   if (!defaultCategories.includes(category)) {
     console.debug(`${category} not in ${defaultCategories.join(', ')}`)
-    return
-  }
-
-  if (!pull.merged) {
-    console.debug('Did not merge')
     return
   }
 

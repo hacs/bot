@@ -19,6 +19,7 @@ const app = new App({
 })
 app.webhooks.on('issues', handleWebhookEvent)
 app.webhooks.on('pull_request', handleWebhookEvent)
+app.webhooks.on('issue_comment', handleWebhookEvent)
 
 export async function handleRequest(request: Request): Promise<Response> {
   if (request.method !== 'POST') return new Response(null, { status: 403 })
@@ -52,8 +53,8 @@ async function handleWebhookEvent(event: EmitterWebhookEvent): Promise<void> {
       clearTempLabelsPlugin(app, payload),
     ])
   } else if ('issue' in payload && payload.action === 'opened') {
-    await greeterPlugin(app, payload)
-  } else if ('issue_comment' in payload) {
+    await Promise.all([greeterPlugin(app, payload)])
+  } else if ('comment' in payload) {
     await Promise.all([issueCommandsPlugin(app, payload)])
   }
 }

@@ -11,8 +11,9 @@ export default async (
     senderIsBot(payload) ||
     !['created'].includes(payload.action) ||
     !payload.comment.body.startsWith('/')
-  )
+  ) {
     return
+  }
 
   const commentid = payload.comment.id
   const command = payload.comment.body
