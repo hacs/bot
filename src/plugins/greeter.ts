@@ -7,6 +7,24 @@ import { senderIsBot } from '../utils/filter'
 export default async (app: App, payload: IssuePayload): Promise<void> => {
   if (senderIsBot(payload)) return
 
+  if (extractOwnerRepo(payload).repo !== 'integration') {
+    await app.octokit.rest.issues.createComment({
+      ...extractOwnerRepo(payload),
+      issue_number: payload.issue.number,
+      body: `Issues should be opened in [hacs/integration](https://github.com/hacs/integration/issues) see [docs](https://hacs.xyz/docs/issues) for more info.`,
+    })
+    await app.octokit.rest.issues.update({
+      ...extractOwnerRepo(payload),
+      issue_number: payload.issue.number,
+      state: 'closed',
+    })
+    await app.octokit.rest.issues.lock({
+      ...extractOwnerRepo(payload),
+      issue_number: payload.issue.number,
+    })
+    return
+  }
+
   const isInvalid: boolean = extractLabels(payload)
     .map((label) => label.name)
     .includes('invalid' || 'Issue not in HACS')
