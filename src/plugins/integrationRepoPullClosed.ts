@@ -32,9 +32,4 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
       milestone: nextMilestone.number,
     })
   }
-
-  await app.octokit.rest.issues.lock({
-    ...extractOwnerRepo(payload),
-    issue_number: payload.pull_request.number,
-  })
 }
