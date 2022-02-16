@@ -29,7 +29,7 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
     await app.octokit.rest.issues.update({
       ...extractOwnerRepo(payload),
       issue_number: payload.pull_request.number,
-      milestone: nextMilestone.number,
+      milestone: nextMilestone.title,
     })
   }
 
