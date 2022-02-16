@@ -1,12 +1,13 @@
 export enum RepositoryName {
-  DEFAULT = "default"
+  DEFAULT = 'default',
+  INTEGRATION = 'integration',
 }
 
 export const defaultCategories: string[] = [
-  "appdaemon",
-  "integration",
-  "netdaemon",
-  "plugin",
-  "python_script",
-  "theme"
+  'appdaemon',
+  'integration',
+  'netdaemon',
+  'plugin',
+  'python_script',
+  'theme',
 ]

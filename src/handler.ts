@@ -2,11 +2,13 @@ import { EmitterWebhookEvent } from '@octokit/webhooks'
 import { App } from 'octokit'
 
 //import DebugPlugin from './plugins/debug'
-import newDefaultOpenedPlugin from './plugins/newDefaultOpened'
-import newDefaultMergedPlugin from './plugins/newDefaultMerged'
 import clearTempLabelsPlugin from './plugins/clearTempLabels'
-import issueCommandsPlugin from './plugins/issueCommands'
 import greeterPlugin from './plugins/greeter'
+import integrationRepoIssueClosedPlugin from './plugins/integrationRepoIssueClosed'
+import integrationRepoPullClosedPlugin from './plugins/integrationRepoPullClosed'
+import issueCommandsPlugin from './plugins/issueCommands'
+import newDefaultMergedPlugin from './plugins/newDefaultMerged'
+import newDefaultOpenedPlugin from './plugins/newDefaultOpened'
 
 import { issuePull } from './utils/issuePull'
 
@@ -51,9 +53,12 @@ async function handleWebhookEvent(event: EmitterWebhookEvent): Promise<void> {
       newDefaultOpenedPlugin(app, payload),
       newDefaultMergedPlugin(app, payload),
       clearTempLabelsPlugin(app, payload),
+      integrationRepoPullClosedPlugin(app, payload),
     ])
   } else if ('issue' in payload && payload.action === 'opened') {
     await Promise.all([greeterPlugin(app, payload)])
+  } else if ('issue' in payload && payload.action === 'closed') {
+    await Promise.all([integrationRepoIssueClosedPlugin(app, payload)])
   } else if ('comment' in payload) {
     await Promise.all([issueCommandsPlugin(app, payload)])
   }
