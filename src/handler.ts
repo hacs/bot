@@ -9,8 +9,9 @@ import integrationRepoPullClosedPlugin from './plugins/integrationRepoPullClosed
 import issueCommandsPlugin from './plugins/issueCommands'
 import newDefaultMergedPlugin from './plugins/newDefaultMerged'
 import newDefaultOpenedPlugin from './plugins/newDefaultOpened'
+import integrationReleaseCreatedPlugin from './plugins/integrationReleaseCreated'
 
-import { issuePull } from './utils/issuePull'
+import { issuePull, release } from './utils/eventPayloads'
 
 const app = new App({
   appId: Number(APP_ID),
@@ -43,7 +44,7 @@ export async function handleRequest(request: Request): Promise<Response> {
 }
 
 async function handleWebhookEvent(event: EmitterWebhookEvent): Promise<void> {
-  const payload = issuePull(event)
+  const payload = issuePull(event) || release(event)
   if (!payload) return
 
   //await DebugPlugin(app, payload)
@@ -61,5 +62,7 @@ async function handleWebhookEvent(event: EmitterWebhookEvent): Promise<void> {
     await Promise.all([integrationRepoIssueClosedPlugin(app, payload)])
   } else if ('comment' in payload) {
     await Promise.all([issueCommandsPlugin(app, payload)])
+  } else if ('release' in payload) {
+    await Promise.all([integrationReleaseCreatedPlugin(app, payload)])
   }
 }

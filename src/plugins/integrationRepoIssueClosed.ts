@@ -3,6 +3,7 @@ import { RepositoryName } from '../const'
 import { IssuePayload } from '../types'
 import { extractOwnerRepo } from '../utils/extractOwnerRepo'
 import { senderIsBot } from '../utils/filter'
+import { getNextMilestone } from '../utils/nextMilestone'
 
 export default async (app: App, payload: IssuePayload): Promise<void> => {
   if (
@@ -23,9 +24,12 @@ export default async (app: App, payload: IssuePayload): Promise<void> => {
     return
   }
 
-  await app.octokit.rest.issues.update({
-    ...extractOwnerRepo(payload),
-    issue_number: payload.issue.number,
-    milestone: 'next',
-  })
+  const nextMilestone = await getNextMilestone(app)
+  if (nextMilestone) {
+    await app.octokit.rest.issues.update({
+      ...extractOwnerRepo(payload),
+      issue_number: payload.issue.number,
+      milestone: nextMilestone.number,
+    })
+  }
 }
