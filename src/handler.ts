@@ -1,17 +1,16 @@
 import { EmitterWebhookEvent } from '@octokit/webhooks'
 import { App } from 'octokit'
-
 //import DebugPlugin from './plugins/debug'
 import clearTempLabelsPlugin from './plugins/clearTempLabels'
 import greeterPlugin from './plugins/greeter'
+import integrationReleaseCreatedPlugin from './plugins/integrationReleaseCreated'
 import integrationRepoIssueClosedPlugin from './plugins/integrationRepoIssueClosed'
 import integrationRepoPullClosedPlugin from './plugins/integrationRepoPullClosed'
 import issueCommandsPlugin from './plugins/issueCommands'
+import newDefaultFailedCheckPlugin from './plugins/newDefaultFailedCheck'
 import newDefaultMergedPlugin from './plugins/newDefaultMerged'
 import newDefaultOpenedPlugin from './plugins/newDefaultOpened'
-import integrationReleaseCreatedPlugin from './plugins/integrationReleaseCreated'
-
-import { issuePull, release } from './utils/eventPayloads'
+import { checkSuite, issuePull, release } from './utils/eventPayloads'
 
 const app = new App({
   appId: Number(APP_ID),
@@ -44,7 +43,7 @@ export async function handleRequest(request: Request): Promise<Response> {
 }
 
 async function handleWebhookEvent(event: EmitterWebhookEvent): Promise<void> {
-  const payload = issuePull(event) || release(event)
+  const payload = issuePull(event) || release(event) || checkSuite(event)
   if (!payload) return
 
   //await DebugPlugin(app, payload)
@@ -64,5 +63,7 @@ async function handleWebhookEvent(event: EmitterWebhookEvent): Promise<void> {
     await Promise.all([issueCommandsPlugin(app, payload)])
   } else if ('release' in payload) {
     await Promise.all([integrationReleaseCreatedPlugin(app, payload)])
+  } else if ('check_suite' in payload) {
+    await Promise.all([newDefaultFailedCheckPlugin(app, payload)])
   }
 }
