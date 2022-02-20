@@ -13,6 +13,7 @@ export default async (app: App, payload: ReleasePayload): Promise<void> => {
   }
 
   const nextMilestone = await getNextMilestone(app)
+  console.error(nextMilestone)
   if (nextMilestone) {
     await app.octokit.rest.issues.updateMilestone({
       owner: payload.repository.owner.login,
