@@ -23,6 +23,7 @@ const app = new App({
 app.webhooks.on('issues', handleWebhookEvent)
 app.webhooks.on('pull_request', handleWebhookEvent)
 app.webhooks.on('issue_comment', handleWebhookEvent)
+app.webhooks.on('release', handleWebhookEvent)
 
 export async function handleRequest(request: Request): Promise<Response> {
   if (request.method !== 'POST') return new Response(null, { status: 403 })
@@ -45,7 +46,6 @@ export async function handleRequest(request: Request): Promise<Response> {
 
 async function handleWebhookEvent(event: EmitterWebhookEvent): Promise<void> {
   const payload = issuePull(event) || release(event)
-  console.error(payload)
   if (!payload) return
 
   //await DebugPlugin(app, payload)

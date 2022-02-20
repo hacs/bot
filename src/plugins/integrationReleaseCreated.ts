@@ -5,7 +5,6 @@ import { ReleasePayload } from '../types'
 import { getNextMilestone } from '../utils/nextMilestone'
 
 export default async (app: App, payload: ReleasePayload): Promise<void> => {
-  console.error(payload)
   if (
     payload.action !== 'published' ||
     payload.repository.name !== RepositoryName.INTEGRATION
@@ -14,7 +13,6 @@ export default async (app: App, payload: ReleasePayload): Promise<void> => {
   }
 
   const nextMilestone = await getNextMilestone(app)
-  console.error(nextMilestone)
   if (nextMilestone) {
     await app.octokit.rest.issues.updateMilestone({
       owner: payload.repository.owner.login,
