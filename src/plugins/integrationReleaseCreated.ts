@@ -5,6 +5,7 @@ import { ReleasePayload } from '../types'
 import { getNextMilestone } from '../utils/nextMilestone'
 
 export default async (app: App, payload: ReleasePayload): Promise<void> => {
+  console.error(payload)
   if (
     payload.action !== 'published' ||
     payload.repository.name !== RepositoryName.INTEGRATION
