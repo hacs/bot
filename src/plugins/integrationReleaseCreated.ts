@@ -20,6 +20,7 @@ export default async (app: App, payload: ReleasePayload): Promise<void> => {
       milestone_number: nextMilestone.number,
       title: payload.release.tag_name,
       description: `Issues and PR's attached to this milestone where a part of the ${payload.release.tag_name} version of HACS.`,
+      state: 'closed',
     })
   }
 
