@@ -46,7 +46,7 @@ export async function handleRequest(request: Request): Promise<Response> {
 
 async function handleWebhookEvent(event: EmitterWebhookEvent): Promise<void> {
   const payload = issuePull(event) || release(event)
-  if (!payload) return
+  return
 
   //await DebugPlugin(app, payload)
 
