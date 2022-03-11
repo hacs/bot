@@ -26,6 +26,7 @@ app.webhooks.on('issue_comment', handleWebhookEvent)
 app.webhooks.on('release', handleWebhookEvent)
 
 export async function handleRequest(request: Request): Promise<Response> {
+  return
   if (request.method !== 'POST') return new Response(null, { status: 403 })
 
   app.octokit = await app.getInstallationOctokit(Number(INSTALLATION_ID))
@@ -46,7 +47,7 @@ export async function handleRequest(request: Request): Promise<Response> {
 
 async function handleWebhookEvent(event: EmitterWebhookEvent): Promise<void> {
   const payload = issuePull(event) || release(event)
-  return
+  if (!payload) return
 
   //await DebugPlugin(app, payload)
 
