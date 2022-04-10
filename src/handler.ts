@@ -26,9 +26,6 @@ app.webhooks.on('issue_comment', handleWebhookEvent)
 app.webhooks.on('release', handleWebhookEvent)
 
 export async function handleRequest(request: Request): Promise<Response> {
-  return new Response()
-  if (request.method !== 'POST') return new Response(null, { status: 403 })
-
   app.octokit = await app.getInstallationOctokit(Number(INSTALLATION_ID))
 
   try {

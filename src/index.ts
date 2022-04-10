@@ -6,8 +6,15 @@ declare global {
   const WEBHOOK_SECRET: string;
   const DISCORD_WEBHOOK: string
   const INSTALLATION_ID: string;
+  const ORGANIZATION: string
 }
 
 addEventListener('fetch', (event) => {
-  event.respondWith(handleRequest(event.request))
+  if (event.request.method === 'POST' && event.request.cf?.asOrganization === ORGANIZATION) {
+    event.respondWith(handleRequest(event.request))
+
+  } else {
+    event.respondWith(new Response(null, { status: 403 }))
+  }
+
 })
