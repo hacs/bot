@@ -31,6 +31,18 @@ const messageLinks = `
 [lovelace_custom_card]: https://developers.home-assistant.io/docs/lovelace_custom_card#graphical-card-configuration
 `
 
+const myLink = (owner: string, repository: string, category: string) => `
+
+You can generate a [my link](https://my.home-assistant.io/faq/) that will take the user directly to your ${category} inside HACS.
+
+Example:
+
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=${owner}&repository=${repository}&category=${category})
+
+[More variants can be found here](https://my.home-assistant.io/create-link?redirect=hacs_repository&owner=${owner}&repository=${repository}&category=${category})
+
+`
+
 export default async (app: App, payload: PullPayload): Promise<void> => {
   if (
     senderIsBot(payload) ||
@@ -99,6 +111,9 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
   await app.octokit.rest.issues.createComment({
     ...extractOwnerRepo(payload),
     issue_number: payload.pull_request.number,
-    body: body + messageLinks,
+    body:
+      body +
+      messageLinks +
+      myLink(owner_repo.split('/')[0], owner_repo.split('/')[1], category),
   })
 }
