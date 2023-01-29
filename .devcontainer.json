@@ -2,7 +2,7 @@
   "name": "hacs/bot",
   "image": "mcr.microsoft.com/vscode/devcontainers/typescript-node:18",
   "context": ".",
-  "postCreateCommand": "yarn install",
+  "postCreateCommand": "npm install",
   "remoteUser": "node",
   "remoteEnv": {
     "PATH": "${containerEnv:PATH}:${containerWorkspaceFolder}/node_modules/.bin:/home/vscode/.local/bin"
