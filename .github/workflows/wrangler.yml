@@ -24,7 +24,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           wranglerVersion: '2.8.1'
-          command: wrangler publish
+          command: publish
 
       - name: Build worker
         if: github.event_name == 'push'
@@ -32,4 +32,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           wranglerVersion: '2.8.1'
-          command: wrangler publish --dry-run true
+          command: publish --dry-run true
