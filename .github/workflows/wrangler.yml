@@ -8,16 +8,15 @@ on:
     branches:
       - main
 
+env:
+  WRANGLER_SEND_METRICS: "false"
+
 jobs:
   wrangler:
     runs-on: ubuntu-latest
     name: Wrangler
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 18
-          cache: "yarn"
 
       - name: Publish worker
         if: github.event_name == 'push'
@@ -26,6 +25,18 @@ jobs:
           publish: ${{ github.event_name == 'push' }}
           apiToken: ${{ secrets.CF_API_TOKEN }}
 
+      - name: Publish worker
+        if: github.event_name == 'push'
+        uses: cloudflare/wrangler-action@2.0.0
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          wranglerVersion: '2.8.1'
+          command: wrangler publish
+
       - name: Build worker
-        if: github.event_name != 'push'
-        run: yarn run build
+        if: github.event_name == 'push'
+        uses: cloudflare/wrangler-action@2.0.0
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          wranglerVersion: '2.8.1'
+          command: wrangler publish --dry-run true

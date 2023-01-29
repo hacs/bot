@@ -3,6 +3,10 @@
   "image": "mcr.microsoft.com/vscode/devcontainers/typescript-node:18",
   "context": ".",
   "postCreateCommand": "yarn install",
+  "remoteUser": "node",
+  "remoteEnv": {
+    "PATH": "${containerEnv:PATH}:${containerWorkspaceFolder}/node_modules/.bin:/home/vscode/.local/bin"
+  },
   "extensions": [
     "dbaeumer.vscode-eslint",
     "ms-vscode.vscode-typescript-tslint-plugin",
