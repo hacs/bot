@@ -19,7 +19,7 @@ jobs:
           node-version: 14.2.0
 
       - name: Build/Publish worker
-        uses: cloudflare/wrangler-action@1.3.0
+        uses: cloudflare/wrangler-action@2.0.0
         with:
           publish: ${{ github.event_name == 'push' }}
           apiToken: ${{ secrets.CF_API_TOKEN }}
