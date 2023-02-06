@@ -40,7 +40,7 @@
   "dependencies": {
     "@octokit/auth-app": "^4.0.9",
     "@octokit/webhooks": "^10.7.0",
-    "@types/node": "^18.11.18",
+    "@types/node": "^18.11.19",
     "octokit": "^2.0.14"
   }
 }
