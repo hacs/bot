@@ -4,6 +4,7 @@ import { PullPayload } from '../types'
 
 import { extractOwnerRepo } from '../utils/extractOwnerRepo'
 import { senderIsBot } from '../utils/filter'
+import { extractTasks } from '../utils/tasks'
 
 export default async (app: App, payload: PullPayload): Promise<void> => {
   if (
@@ -20,6 +21,20 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
   }
 
   const repoCategory = changedFiles.pop()
+  const completedTasks = extractTasks(payload.pull_request.body || '').filter(
+    (t) => t.checked,
+  )
+  if (
+    payload.action == 'opened' &&
+    completedTasks.length !== (repoCategory === 'integration' ? 6 : 5)
+  ) {
+    await app.octokit.rest.pulls.update({
+      ...extractOwnerRepo(payload),
+      pull_number: payload.pull_request.number,
+      state: 'closed',
+    })
+    return
+  }
   const changedRepos = await getFileDiff(app, payload, repoCategory || '')
 
   const newRepo = changedRepos.pop()
