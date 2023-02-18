@@ -28,6 +28,12 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
     payload.action == 'opened' &&
     completedTasks.length !== (repoCategory === 'integration' ? 6 : 5)
   ) {
+    await app.octokit.rest.pulls.createReview({
+      ...extractOwnerRepo(payload),
+      pull_number: payload.pull_request.number,
+      event: 'REQUEST_CHANGES',
+      body: "PR was not complete, recreate it when it's ready.",
+    })
     await app.octokit.rest.pulls.update({
       ...extractOwnerRepo(payload),
       pull_number: payload.pull_request.number,
