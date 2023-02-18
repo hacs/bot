@@ -22,6 +22,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
+          cache: "npm"
+
+      - name: Install
+        run: npm ci
 
       - name: Publish worker
         if: github.event_name == 'push'
