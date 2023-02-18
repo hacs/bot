@@ -13,20 +13,24 @@ import integrationReleaseCreatedPlugin from './plugins/integrationReleaseCreated
 
 import { issuePull, release } from './utils/eventPayloads'
 
-const app = new App({
-  appId: Number(APP_ID),
-  privateKey: PRIVATE_KEY,
-  webhooks: {
-    secret: WEBHOOK_SECRET,
-  },
-})
-app.webhooks.on('issues', handleWebhookEvent)
-app.webhooks.on('pull_request', handleWebhookEvent)
-app.webhooks.on('issue_comment', handleWebhookEvent)
-app.webhooks.on('release', handleWebhookEvent)
+const getApp = async () => {
+  const app = new App({
+    appId: Number(APP_ID),
+    privateKey: PRIVATE_KEY,
+    webhooks: {
+      secret: WEBHOOK_SECRET,
+    },
+  })
+  app.octokit = await app.getInstallationOctokit(Number(INSTALLATION_ID))
+  return app
+}
 
 export async function handleRequest(request: Request): Promise<Response> {
-  app.octokit = await app.getInstallationOctokit(Number(INSTALLATION_ID))
+  const app = await getApp()
+  app.webhooks.on('issues', handleWebhookEvent)
+  app.webhooks.on('pull_request', handleWebhookEvent)
+  app.webhooks.on('issue_comment', handleWebhookEvent)
+  app.webhooks.on('release', handleWebhookEvent)
 
   try {
     await app.webhooks.receive({
@@ -43,6 +47,7 @@ export async function handleRequest(request: Request): Promise<Response> {
 }
 
 async function handleWebhookEvent(event: EmitterWebhookEvent): Promise<void> {
+  const app = await getApp()
   const payload = issuePull(event) || release(event)
   if (!payload) return
 

@@ -18,6 +18,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
       - name: Publish worker
         if: github.event_name == 'push'
         uses: cloudflare/wrangler-action@2.0.0
