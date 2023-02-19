@@ -14,7 +14,7 @@ env:
 jobs:
   wrangler:
     runs-on: ubuntu-latest
-    name: ${{github.event_name == 'push' && 'build' || 'publish'}}
+    name: ${{github.event_name == 'push' && 'publish' || 'build'}}
     steps:
       - uses: actions/checkout@v3
 
@@ -32,13 +32,12 @@ jobs:
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          wranglerVersion: '2.8.1'
+          wranglerVersion: '2.10.0'
           command: publish
 
       - name: Build worker
         if: github.event_name != 'push'
         uses: cloudflare/wrangler-action@2.0.0
         with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          wranglerVersion: '2.8.1'
-          command: publish --dry-run true
+          wranglerVersion: '2.10.0'
+          command: build
