@@ -1,6 +1,6 @@
 {
   "name": "hacs/bot",
-  "image": "mcr.microsoft.com/vscode/devcontainers/typescript-node:16",
+  "image": "mcr.microsoft.com/vscode/devcontainers/typescript-node:18",
   "context": ".",
   "postCreateCommand": "npm install",
   "remoteUser": "node",
