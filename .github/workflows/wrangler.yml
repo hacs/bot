@@ -14,7 +14,7 @@ env:
 jobs:
   wrangler:
     runs-on: ubuntu-latest
-    name: github.event_name == 'push' && 'build' || 'publish'
+    name: ${{github.event_name == 'push' && 'build' || 'publish'}}
     steps:
       - uses: actions/checkout@v3
 
