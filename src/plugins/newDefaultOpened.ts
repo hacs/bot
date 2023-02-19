@@ -76,11 +76,6 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
       issue_number: payload.pull_request.number,
       title: newTitle,
     })
-    await app.octokit.rest.issues.createComment({
-      ...extractOwnerRepo(payload),
-      issue_number: payload.pull_request.number,
-      body: `Running checks on [${owner}/${repo}](https://github.com/${owner}/${repo})`,
-    })
   }
 }
 
