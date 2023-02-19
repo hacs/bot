@@ -6,7 +6,6 @@ import clearTempLabelsPlugin from './plugins/clearTempLabels'
 import greeterPlugin from './plugins/greeter'
 import integrationRepoIssueClosedPlugin from './plugins/integrationRepoIssueClosed'
 import integrationRepoPullClosedPlugin from './plugins/integrationRepoPullClosed'
-import issueCommandsPlugin from './plugins/issueCommands'
 import newDefaultMergedPlugin from './plugins/newDefaultMerged'
 import newDefaultOpenedPlugin from './plugins/newDefaultOpened'
 import integrationReleaseCreatedPlugin from './plugins/integrationReleaseCreated'
@@ -64,8 +63,6 @@ async function handleWebhookEvent(event: EmitterWebhookEvent): Promise<void> {
     await Promise.all([greeterPlugin(app, payload)])
   } else if ('issue' in payload && payload.action === 'closed') {
     await Promise.all([integrationRepoIssueClosedPlugin(app, payload)])
-  } else if ('comment' in payload) {
-    await Promise.all([issueCommandsPlugin(app, payload)])
   } else if ('release' in payload) {
     await Promise.all([integrationReleaseCreatedPlugin(app, payload)])
   }
