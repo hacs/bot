@@ -39,5 +39,15 @@ jobs:
         if: github.event_name != 'push'
         uses: cloudflare/wrangler-action@2.0.0
         with:
+          apiToken:  "pull_request"
           wranglerVersion: '2.10.0'
           command: build
+
+      - name: Publish worker (dry-run)
+        if: github.event_name != 'push'
+        uses: cloudflare/wrangler-action@2.0.0
+        with:
+          apiToken:  "pull_request"
+          wranglerVersion: '2.10.0'
+          command: publish --dry-run=true
+
