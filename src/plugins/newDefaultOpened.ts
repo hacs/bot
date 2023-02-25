@@ -21,6 +21,15 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
   }
 
   const repoCategory = changedFiles.pop()
+  if (
+    !repoCategory ||
+    !['integration', 'plugin', 'appdaemon', 'theme', 'python_script'].includes(
+      repoCategory,
+    )
+  ) {
+    return
+  }
+
   const completedTasks = extractTasks(payload.pull_request.body || '').filter(
     (t) => t.checked,
   )
