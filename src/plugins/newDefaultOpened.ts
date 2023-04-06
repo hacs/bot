@@ -23,9 +23,14 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
   const repoCategory = changedFiles.pop()
   if (
     !repoCategory ||
-    !['integration', 'plugin', 'appdaemon', 'theme', 'python_script'].includes(
-      repoCategory,
-    )
+    ![
+      'integration',
+      'plugin',
+      'appdaemon',
+      'template',
+      'theme',
+      'python_script',
+    ].includes(repoCategory)
   ) {
     return
   }

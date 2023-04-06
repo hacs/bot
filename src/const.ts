@@ -9,5 +9,6 @@ export const defaultCategories: string[] = [
   'netdaemon',
   'plugin',
   'python_script',
+  'template',
   'theme',
 ]
