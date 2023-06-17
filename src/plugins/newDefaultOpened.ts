@@ -20,7 +20,7 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
     return
   }
 
-  const repoCategory = changedFiles.pop()
+  const repoCategory = changedFiles.filter((filename) => defaultCategories.includes(filename)).pop()
   if (
     !repoCategory ||
     ![
@@ -102,7 +102,6 @@ async function getChangedFiles(
     pull_number: payload.pull_request.number,
   })
   return listFilesResponse
-    .filter((file) => defaultCategories.includes(file.filename))
     .map((file) => file.filename)
 }
 
