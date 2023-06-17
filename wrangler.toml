@@ -5,3 +5,4 @@ workers_dev = true
 compatibility_date = "2022-01-23"
 main = "./src/index.ts"
 node_compat = true
+zone_id = "34068a968bc2b024fa8121dfacf8951f"
