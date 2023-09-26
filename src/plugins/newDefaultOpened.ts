@@ -20,7 +20,9 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
     return
   }
 
-  const repoCategory = changedFiles.filter((filename) => defaultCategories.includes(filename)).pop()
+  const repoCategory = changedFiles
+    .filter((filename) => defaultCategories.includes(filename))
+    .pop()
   if (
     !repoCategory ||
     ![
@@ -63,6 +65,9 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
   const owner = newRepo.split('/')[0]
   const repo = newRepo.split('/')[1]
 
+  if (!owner || !repo) {
+    return
+  }
   if (
     repo.toLowerCase().includes('hacs') &&
     payload.pull_request.review_comments === 0
@@ -72,6 +77,18 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
       pull_number: payload.pull_request.number,
       event: 'REQUEST_CHANGES',
       body: "Do not use 'HACS' as a part of your repository name.",
+    })
+    return
+  }
+
+  const { data: repoInfo } = await app.octokit.rest.repos.get({ owner, repo })
+
+  if (repoInfo.full_name !== newRepo) {
+    await app.octokit.rest.pulls.createReview({
+      ...extractOwnerRepo(payload),
+      pull_number: payload.pull_request.number,
+      event: 'REQUEST_CHANGES',
+      body: `The submitted name \`${newRepo}\` does not match what GitHub returns for the repository (\`${repoInfo.full_name}\`).`,
     })
     return
   }
@@ -101,8 +118,7 @@ async function getChangedFiles(
     ...extractOwnerRepo(payload),
     pull_number: payload.pull_request.number,
   })
-  return listFilesResponse
-    .map((file) => file.filename)
+  return listFilesResponse.map((file) => file.filename)
 }
 
 async function getFileDiff(app: App, payload: PullPayload, file: string) {
