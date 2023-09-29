@@ -5,11 +5,7 @@ import { extractOwnerRepo } from '../utils/extractOwnerRepo'
 import { senderIsBot } from '../utils/filter'
 
 export default async (app: App, payload: IssuePayload): Promise<void> => {
-  if (
-    senderIsBot(payload) ||
-    payload.issue.title.startsWith('Request for removal')
-  )
-    return
+  if (senderIsBot(payload)) return
 
   if (extractOwnerRepo(payload).repo !== 'integration') {
     await app.octokit.rest.issues.createComment({
