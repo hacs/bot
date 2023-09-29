@@ -1,6 +1,5 @@
-name = "bot"
-account_id = "4ef0e0b43b821a981b4173298e18bf53"
-route = "https://github-bot.hacs.xyz/*"
+name = "github-bot"
+account_id = "354031eb286d3580768d168016cfaabf"
 workers_dev = true
 compatibility_date = "2022-01-23"
 main = "./src/index.ts"
