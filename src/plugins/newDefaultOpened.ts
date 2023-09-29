@@ -27,12 +27,13 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
   if (
     !repoCategory ||
     ![
+      'appdaemon',
+      'blueprint',
       'integration',
       'plugin',
-      'appdaemon',
+      'python_script',
       'template',
       'theme',
-      'python_script',
     ].includes(repoCategory)
   ) {
     return
