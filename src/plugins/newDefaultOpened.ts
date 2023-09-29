@@ -5,6 +5,7 @@ import { PullPayload } from '../types'
 import { extractOwnerRepo } from '../utils/extractOwnerRepo'
 import { senderIsBot } from '../utils/filter'
 import { extractTasks } from '../utils/tasks'
+import { convertPullRequestToDraft } from '../utils/convertToDraft'
 
 export default async (app: App, payload: PullPayload): Promise<void> => {
   if (
@@ -78,6 +79,7 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
       event: 'REQUEST_CHANGES',
       body: "Do not use 'HACS' as a part of your repository name.",
     })
+    await convertPullRequestToDraft(app, payload.pull_request.node_id)
     return
   }
 
@@ -90,6 +92,7 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
       event: 'REQUEST_CHANGES',
       body: `The submitted name \`${newRepo}\` does not match what GitHub returns for the repository (\`${repoInfo.full_name}\`).`,
     })
+    await convertPullRequestToDraft(app, payload.pull_request.node_id)
     return
   }
 
