@@ -2,7 +2,6 @@ import { EmitterWebhookEvent } from '@octokit/webhooks'
 import { App } from 'octokit'
 
 //import DebugPlugin from './plugins/debug'
-import clearTempLabelsPlugin from './plugins/clearTempLabels'
 import greeterPlugin from './plugins/greeter'
 import integrationRepoIssueClosedPlugin from './plugins/integrationRepoIssueClosed'
 import integrationRepoPullClosedPlugin from './plugins/integrationRepoPullClosed'
@@ -56,7 +55,6 @@ async function handleWebhookEvent(event: EmitterWebhookEvent): Promise<void> {
     await Promise.all([
       newDefaultOpenedPlugin(app, payload),
       newDefaultMergedPlugin(app, payload),
-      clearTempLabelsPlugin(app, payload),
       integrationRepoPullClosedPlugin(app, payload),
     ])
   } else if ('issue' in payload && payload.action === 'opened') {
