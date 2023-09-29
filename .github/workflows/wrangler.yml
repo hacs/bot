@@ -8,6 +8,10 @@ on:
     branches:
       - main
 
+concurrency:
+  group: lint-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   WRANGLER_SEND_METRICS: "false"
   WRANGLER_VERSION: "3.10.1"
