@@ -13,8 +13,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  WRANGLER_SEND_METRICS: "false"
-  WRANGLER_VERSION: "3.10.1"
+  WRANGLER_SEND_METRICS: 'false'
+  WRANGLER_VERSION: '3.10.1'
 
 jobs:
   wrangler:
@@ -27,7 +27,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: "npm"
+          cache: 'npm'
 
       - name: Install
         run: npm ci
@@ -44,7 +44,6 @@ jobs:
         if: github.event_name != 'push'
         uses: cloudflare/wrangler-action@2.0.0
         with:
-          apiToken:  "pull_request"
+          apiToken: 'pull_request'
           wranglerVersion: ${{ env.WRANGLER_VERSION }}
           command: deploy --dry-run=true
-

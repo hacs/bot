@@ -1,14 +1,14 @@
-import { IssuePullPayload } from "../types";
+import { IssuePullPayload } from '../types'
 
 export interface OwnerRepo {
-  owner: string;
-  repo: string;
+  owner: string
+  repo: string
 }
 
-export const extractOwnerRepo = (payload: IssuePullPayload): OwnerRepo  => {
-  const repository = payload.repository.full_name;
+export const extractOwnerRepo = (payload: IssuePullPayload): OwnerRepo => {
+  const repository = payload.repository.full_name
   return {
-    owner: repository.split("/")[0],
-    repo: repository.split("/")[1],
+    owner: repository.split('/')[0],
+    repo: repository.split('/')[1],
   }
 }
