@@ -19,28 +19,28 @@
     ]
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20230228.0",
-    "@types/jest": "^29.5.0",
-    "@types/service-worker-mock": "^2.0.1",
-    "@typescript-eslint/eslint-plugin": "^5.58.0",
-    "@typescript-eslint/parser": "^5.54.0",
-    "eslint": "^8.38.0",
-    "eslint-config-prettier": "^8.6.0",
+    "@cloudflare/workers-types": "^4.20230922.0",
+    "@types/jest": "^29.5.5",
+    "@types/service-worker-mock": "^2.0.2",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "eslint": "^8.50.0",
+    "eslint-config-prettier": "^8.10.0",
     "eslint-config-typescript": "^3.0.0",
-    "jest": "^29.5.0",
-    "prettier": "^2.8.4",
+    "jest": "^29.7.0",
+    "prettier": "^2.8.8",
     "service-worker-mock": "^2.0.5",
-    "ts-jest": "^29.0.5",
-    "ts-loader": "^9.4.2",
+    "ts-jest": "^29.1.1",
+    "ts-loader": "^9.4.4",
     "typescript": "^4.9.5",
-    "webpack": "^5.79.0",
-    "webpack-cli": "^5.0.1",
-    "wrangler": "^2.12.0"
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4",
+    "wrangler": "^3.10.1"
   },
   "dependencies": {
-    "@octokit/auth-app": "^4.0.9",
-    "@octokit/webhooks": "^10.7.0",
-    "@types/node": "^18.14.6",
-    "octokit": "^2.0.14"
+    "@octokit/auth-app": "^4.0.13",
+    "@octokit/webhooks": "^10.9.1",
+    "@types/node": "^18.18.1",
+    "octokit": "^2.1.0"
   }
 }

@@ -10,6 +10,7 @@ on:
 
 env:
   WRANGLER_SEND_METRICS: "false"
+  WRANGLER_VERSION: "3.10.1"
 
 jobs:
   wrangler:
@@ -32,22 +33,14 @@ jobs:
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          wranglerVersion: '2.10.0'
-          command: publish
-
-      - name: Build worker
-        if: github.event_name != 'push'
-        uses: cloudflare/wrangler-action@2.0.0
-        with:
-          apiToken:  "pull_request"
-          wranglerVersion: '2.10.0'
-          command: build
+          wranglerVersion: ${{ env.WRANGLER_VERSION }}
+          command: deploy
 
       - name: Publish worker (dry-run)
         if: github.event_name != 'push'
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken:  "pull_request"
-          wranglerVersion: '2.10.0'
-          command: publish --dry-run=true
+          wranglerVersion: ${{ env.WRANGLER_VERSION }}
+          command: deploy --dry-run=true
 
