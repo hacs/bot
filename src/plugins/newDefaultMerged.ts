@@ -13,21 +13,16 @@ Here is a few resources that can be useful:
 - [Home Assistant Developer Blog][hadevblog] Make sure you stay up to date.
 - [Home Assistant Devs @ twitter][hadevtwitter]
 - [HACS @ twitter][hacstwitter]
-- [Use this GitHub action to validate your repository with HACS][hacsaction]
 `
-
-const messageIntegrations = `- [Use hassfest to validate your integration with this GitHub Action][hassfestaction]`
 
 const messagePlugins = `- [Did you know you can add your card to the card-picker in Lovelace?][lovelace_custom_card]`
 
 const messageLinks = `
 <!-- Links -->
 [hacsdiscord]: https://discord.gg/apgchf8
-[hacsaction]: https://hacs.xyz/docs/publish/action
 [hacstwitter]: https://twitter.com/HACSIntegration
 [hadevblog]: https://developers.home-assistant.io/blog
 [hadevtwitter]: https://twitter.com/hass_devs
-[hassfestaction]: https://github.com/home-assistant/actions#hassfest
 [lovelace_custom_card]: https://developers.home-assistant.io/docs/lovelace_custom_card#graphical-card-configuration
 `
 
@@ -87,10 +82,6 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
   })
 
   let body: string = messageCommon
-
-  if (category === 'integration') {
-    body += messageIntegrations
-  }
 
   if (category === 'plugin') {
     body += messagePlugins
