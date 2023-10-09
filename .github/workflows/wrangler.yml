@@ -34,7 +34,7 @@ jobs:
 
       - name: Publish worker
         if: github.event_name == 'push'
-        uses: cloudflare/wrangler-action@v3.1.1
+        uses: cloudflare/wrangler-action@v3.2.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           wranglerVersion: ${{ env.WRANGLER_VERSION }}
@@ -42,7 +42,7 @@ jobs:
 
       - name: Publish worker (dry-run)
         if: github.event_name != 'push'
-        uses: cloudflare/wrangler-action@v3.1.1
+        uses: cloudflare/wrangler-action@v3.2.0
         with:
           apiToken: 'pull_request'
           wranglerVersion: ${{ env.WRANGLER_VERSION }}
