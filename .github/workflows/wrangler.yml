@@ -14,7 +14,6 @@ concurrency:
 
 env:
   WRANGLER_SEND_METRICS: 'false'
-  WRANGLER_VERSION: '3.10.1'
 
 jobs:
   wrangler:
@@ -23,8 +22,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4.1.0
 
+      - name: Set wrangler version
+        id: wrangler
+        run: echo "version=$(jq -r .devDependencies.wrangler package.json | cut -c2-)" >> "$GITHUB_OUTPUT"
+
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v3.8.1
         with:
           node-version: 18
           cache: 'npm'
@@ -37,7 +40,7 @@ jobs:
         uses: cloudflare/wrangler-action@v3.2.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          wranglerVersion: ${{ env.WRANGLER_VERSION }}
+          wranglerVersion: ${{ steps.wrangler.outputs.version }}
           command: deploy
 
       - name: Publish worker (dry-run)
@@ -45,5 +48,5 @@ jobs:
         uses: cloudflare/wrangler-action@v3.2.0
         with:
           apiToken: 'pull_request'
-          wranglerVersion: ${{ env.WRANGLER_VERSION }}
+          wranglerVersion: ${{ steps.wrangler.outputs.version }}
           command: deploy --dry-run=true
