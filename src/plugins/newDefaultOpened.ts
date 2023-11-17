@@ -28,7 +28,6 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
     !repoCategory ||
     ![
       'appdaemon',
-      'blueprint',
       'integration',
       'plugin',
       'python_script',
