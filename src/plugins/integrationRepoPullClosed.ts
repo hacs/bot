@@ -5,6 +5,8 @@ import { extractOwnerRepo } from '../utils/extractOwnerRepo'
 import { senderIsBot } from '../utils/filter'
 import { getNextMilestone } from '../utils/nextMilestone'
 
+const SKIP_LABELS = new Set(['pr: dependency-update'])
+
 export default async (app: App, payload: PullPayload): Promise<void> => {
   if (
     senderIsBot(payload) ||
@@ -21,6 +23,11 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
 
   if (!pull.merged) {
     console.debug('Did not merge')
+    return
+  }
+
+  if (pull.labels.some((label) => SKIP_LABELS.has(label.name))) {
+    console.debug('Skipping due to label')
     return
   }
 
