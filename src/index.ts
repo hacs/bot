@@ -7,6 +7,7 @@ declare global {
   const ORGANIZATION: string
   const PRIVATE_KEY: string
   const WEBHOOK_SECRET: string
+  const SENTRY_DSN: string
 }
 
 addEventListener('fetch', (event) => {
