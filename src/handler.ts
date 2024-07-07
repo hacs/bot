@@ -42,6 +42,7 @@ const sentryClient = (request: Request) => {
 export async function handleRequest(request: Request): Promise<Response> {
   const app = await getApp()
   const sentry = sentryClient(request)
+  sentry.startSession()
   app.webhooks.on('issues', handleWebhookEvent)
   app.webhooks.on('pull_request', handleWebhookEvent)
   app.webhooks.on('issue_comment', handleWebhookEvent)
@@ -59,6 +60,7 @@ export async function handleRequest(request: Request): Promise<Response> {
     sentry.captureException(err)
     throw new Error(String(err))
   }
+  sentry.endSession()
   return new Response()
 }
 
