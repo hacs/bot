@@ -1,3 +1,4 @@
+import { Toucan } from 'toucan-js'
 import { EmitterWebhookEvent } from '@octokit/webhooks'
 import { App } from 'octokit'
 
@@ -23,8 +24,24 @@ const getApp = async () => {
   return app
 }
 
+const sentryClient = (request: Request) => {
+  const client = new Toucan({
+    dsn: SENTRY_DSN,
+    requestDataOptions: {
+      allowedHeaders: ['user-agent', 'cf-ray'],
+    },
+    request,
+    initialScope: {
+      tags: {},
+    },
+  })
+
+  return client
+}
+
 export async function handleRequest(request: Request): Promise<Response> {
   const app = await getApp()
+  const sentry = sentryClient(request)
   app.webhooks.on('issues', handleWebhookEvent)
   app.webhooks.on('pull_request', handleWebhookEvent)
   app.webhooks.on('issue_comment', handleWebhookEvent)
@@ -39,6 +56,7 @@ export async function handleRequest(request: Request): Promise<Response> {
     })
   } catch (err) {
     console.error(err)
+    sentry.captureException(err)
     throw new Error(String(err))
   }
   return new Response()
