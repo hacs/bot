@@ -35,11 +35,12 @@ export class GitHubBot {
   ): Promise<void> {
     this.sentry.setTransactionName('processRequest')
     const rawBody = { payload: rawPayload } as EmitterWebhookEvent
+    const eventName = this.request.headers.get('x-github-event') as string
     const payload = issuePull(rawBody) || release(rawBody)
     if (!payload) {
       return
     }
-    for (const handler of [...plugins.base]) {
+    for (const handler of [...plugins.base, ...plugins[eventName]]) {
       await handler(this, payload as IssuePullPayload)
     }
   }
