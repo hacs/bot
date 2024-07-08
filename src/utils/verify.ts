@@ -36,4 +36,5 @@ export const verifyWebhookSignature = async (
       `Expected signature ${expectedSignature} does not match provided signature ${signature}`,
     )
   }
+  console.log(`Signature '${signature}' verified`)
 }
