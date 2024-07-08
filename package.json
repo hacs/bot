@@ -36,6 +36,6 @@
     "@octokit/auth-app": "^6.0.1",
     "@octokit/webhooks": "^13.2.7",
     "octokit": "^3.1.2",
-    "toucan-js": "^3.4.0"
+    "toucan-js": "^4.0.0"
   }
 }
