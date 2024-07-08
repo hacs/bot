@@ -3,6 +3,7 @@ import { plugins } from './plugins'
 import { issuePull, release } from './utils/eventPayloads'
 import { EmitterWebhookEvent } from '@octokit/webhooks'
 import { IssuePullPayload } from './types'
+import { verifyWebhookSignature } from './utils/verify'
 
 export class GitHubBot {
   private request: Request
@@ -34,7 +35,14 @@ export class GitHubBot {
     rawPayload: Record<string, unknown>,
   ): Promise<void> {
     this.sentry.setTransactionName('processRequest')
+    await verifyWebhookSignature(
+      JSON.stringify(rawPayload),
+      this.env.WEBHOOK_SECRET,
+      this.request.headers.get('x-hub-signature-256') ?? '',
+    )
+
     const rawBody = { payload: rawPayload } as EmitterWebhookEvent
+
     const eventName = this.request.headers.get('x-github-event') as string
     const payload = issuePull(rawBody) || release(rawBody)
     if (!payload) {
