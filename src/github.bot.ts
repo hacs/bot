@@ -30,7 +30,7 @@ export class GitHubBot {
     return this._sentry
   }
 
-  public async processRequest(
+  async internalProcessRequest(
     rawPayload: Record<string, unknown>,
   ): Promise<void> {
     this.sentry.setTransactionName('processRequest')
@@ -41,6 +41,17 @@ export class GitHubBot {
     }
     for (const handler of [...plugins.base]) {
       await handler(this, payload as IssuePullPayload)
+    }
+  }
+
+  public async processRequest(
+    rawPayload: Record<string, unknown>,
+  ): Promise<void> {
+    try {
+      await this.internalProcessRequest(rawPayload)
+    } catch (err) {
+      this.sentry.captureException(err)
+      throw err
     }
   }
 }
