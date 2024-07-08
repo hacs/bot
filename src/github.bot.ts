@@ -30,11 +30,11 @@ export class GitHubBot {
     return this._sentry
   }
 
-  public async processRequest(): Promise<void> {
+  public async processRequest(
+    rawPayload: Record<string, unknown>,
+  ): Promise<void> {
     this.sentry.setTransactionName('processRequest')
-    const rawBody = {
-      payload: await this.request.json<EmitterWebhookEvent['payload']>(),
-    } as EmitterWebhookEvent
+    const rawBody = { payload: rawPayload } as EmitterWebhookEvent
     const payload = issuePull(rawBody) || release(rawBody)
     if (!payload) {
       return

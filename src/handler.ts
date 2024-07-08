@@ -49,14 +49,16 @@ export async function handleRequest(request: Request): Promise<Response> {
   app.webhooks.on('release', handleWebhookEvent)
 
   const bot = new GitHubBot({ request, env: { SENTRY_DSN } })
-  await bot.processRequest()
+
+  const payload = await request.json<EmitterWebhookEvent['payload']>()
+  await bot.processRequest(payload)
 
   try {
     await app.webhooks.receive({
       id: request.headers.get('x-github-delivery') || '',
       // @ts-expect-error may be blank
       name: request.headers.get('x-github-event') || '',
-      payload: await request.json<EmitterWebhookEvent['payload']>(),
+      payload,
     })
   } catch (err) {
     console.error(err)
