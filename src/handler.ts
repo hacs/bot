@@ -11,6 +11,7 @@ import newDefaultOpenedPlugin from './plugins/newDefaultOpened'
 import integrationReleaseCreatedPlugin from './plugins/integrationReleaseCreated'
 
 import { issuePull, release } from './utils/eventPayloads'
+import { GitHubBot } from './github.bot'
 
 const getApp = async () => {
   const app = new App({
@@ -46,6 +47,9 @@ export async function handleRequest(request: Request): Promise<Response> {
   app.webhooks.on('pull_request', handleWebhookEvent)
   app.webhooks.on('issue_comment', handleWebhookEvent)
   app.webhooks.on('release', handleWebhookEvent)
+
+  const bot = new GitHubBot({ request, env: { SENTRY_DSN } })
+  await bot.processRequest()
 
   try {
     await app.webhooks.receive({

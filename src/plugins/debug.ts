@@ -1,11 +1,15 @@
-import { App } from 'octokit'
 import { IssuePullPayload } from '../types'
 
 import { extractOwnerRepo } from '../utils/extractOwnerRepo'
+import { GitHubBot } from '../github.bot'
 
-export default async (app: App, payload: IssuePullPayload): Promise<void> => {
+export default async (
+  bot: GitHubBot,
+  payload: IssuePullPayload,
+): Promise<void> => {
   console.debug('DebugPlugin', {
     extractOwnerRepo: extractOwnerRepo(payload),
     payload: payload,
   })
+  bot.sentry.captureMessage('DebugPlugin')
 }
