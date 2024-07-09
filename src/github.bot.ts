@@ -80,7 +80,10 @@ export class GitHubBot {
     if (!payload) {
       return
     }
-    for (const handler of [...plugins.base, ...(plugins[eventName] || [])]) {
+    for (const handler of [
+      ...plugins.base,
+      ...(plugins[`${eventName}.${payload.action}`] || []),
+    ]) {
       await handler(this, payload as IssuePullPayload)
     }
   }
