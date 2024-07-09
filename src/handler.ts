@@ -48,7 +48,19 @@ export async function handleRequest(request: Request): Promise<Response> {
   app.webhooks.on('issue_comment', handleWebhookEvent)
   app.webhooks.on('release', handleWebhookEvent)
 
-  const bot = new GitHubBot({ request, env: { SENTRY_DSN, WEBHOOK_SECRET } })
+  const bot = new GitHubBot({
+    request,
+    env: {
+      APP_ID,
+      CF_VERSION_METADATA,
+      DISCORD_WEBHOOK,
+      INSTALLATION_ID,
+      ORGANIZATION,
+      PRIVATE_KEY,
+      SENTRY_DSN,
+      WEBHOOK_SECRET,
+    },
+  })
 
   const payload = await request.json<EmitterWebhookEvent['payload']>()
   await bot.processRequest(payload)
