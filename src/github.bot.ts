@@ -1,4 +1,10 @@
-import { Toucan } from 'toucan-js'
+import {
+  Toucan,
+  extraErrorDataIntegration,
+  dedupeIntegration,
+  requestDataIntegration,
+  sessionTimingIntegration,
+} from 'toucan-js'
 import { plugins } from './plugins'
 import { issuePull, release } from './utils/eventPayloads'
 import { EmitterWebhookEvent } from '@octokit/webhooks'
@@ -22,6 +28,12 @@ export class GitHubBot {
         requestDataOptions: {
           allowedHeaders: ['user-agent', 'cf-ray'],
         },
+        integrations: [
+          extraErrorDataIntegration,
+          dedupeIntegration,
+          requestDataIntegration,
+          sessionTimingIntegration,
+        ],
         request: this.request,
         initialScope: {
           tags: {},
