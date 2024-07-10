@@ -2,8 +2,6 @@ import { Toucan } from 'toucan-js'
 import { EmitterWebhookEvent } from '@octokit/webhooks'
 import { App } from 'octokit'
 
-//import DebugPlugin from './plugins/debug'
-import greeterPlugin from './plugins/greeter'
 import integrationRepoIssueClosedPlugin from './plugins/integrationRepoIssueClosed'
 import integrationRepoPullClosedPlugin from './plugins/integrationRepoPullClosed'
 import newDefaultMergedPlugin from './plugins/newDefaultMerged'
