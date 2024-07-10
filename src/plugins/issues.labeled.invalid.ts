@@ -12,7 +12,7 @@ export default async (
     senderIsBot(payload) ||
     !PayloadIsIssue(payload) ||
     payload.action !== 'labeled' ||
-    payload.label?.name !== 'duplicate'
+    payload.label?.name !== 'invalid'
   ) {
     return
   }
@@ -22,6 +22,6 @@ export default async (
     issue_number: payload.issue.number,
     state: 'closed',
     state_reason: 'not_planned',
-    labels: ['duplicate'],
+    labels: ['invalid'],
   })
 }
