@@ -83,16 +83,12 @@ async function handleWebhookEvent(event: EmitterWebhookEvent): Promise<void> {
   const payload = issuePull(event) || release(event)
   if (!payload) return
 
-  //await DebugPlugin(app, payload)
-
   if ('pull_request' in payload) {
     await Promise.all([
       newDefaultOpenedPlugin(app, payload),
       newDefaultMergedPlugin(app, payload),
       integrationRepoPullClosedPlugin(app, payload),
     ])
-  } else if ('issue' in payload && payload.action === 'opened') {
-    await Promise.all([greeterPlugin(app, payload)])
   } else if ('issue' in payload && payload.action === 'closed') {
     await Promise.all([integrationRepoIssueClosedPlugin(app, payload)])
   } else if ('release' in payload) {
