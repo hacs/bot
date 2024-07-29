@@ -6,6 +6,7 @@ import { plugins } from './plugins'
 import { IssuePullPayload } from './types'
 import { issuePull, release, workflowRun } from './utils/eventPayloads'
 import { verifyWebhookSignature } from './utils/verify'
+import { makeFetchTransport } from 'toucan-js/dist/transports'
 
 type Env = {
   APP_ID: string
@@ -61,6 +62,7 @@ export class GitHubBot {
       replaysSessionSampleRate: 1.0,
       profilesSampleRate: 1.0,
       replaysOnErrorSampleRate: 1.0,
+      transport: makeFetchTransport,
       enabled: true,
       integrations: [
         Sentry.dedupeIntegration(),
