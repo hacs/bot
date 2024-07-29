@@ -117,6 +117,7 @@ export class GitHubBot {
     try {
       await this.internalProcessRequest(rawPayload)
     } catch (err) {
+      console.error(err)
       this.sentry.captureException(err)
       throw err
     }
