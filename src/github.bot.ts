@@ -6,6 +6,8 @@ import {
   extraErrorDataIntegration,
   requestDataIntegration,
   sessionTimingIntegration,
+  linkedErrorsIntegration,
+  rewriteFramesIntegration,
 } from 'toucan-js'
 import { plugins } from './plugins'
 import { IssuePullPayload } from './types'
@@ -44,7 +46,11 @@ export class GitHubBot {
         extraErrorDataIntegration,
         requestDataIntegration,
         sessionTimingIntegration,
+        linkedErrorsIntegration,
+        rewriteFramesIntegration,
       ],
+      sampleRate: 1,
+      tracesSampleRate: 1,
       request: this.request,
       initialScope: {
         tags: {},

@@ -7,9 +7,9 @@ export default async (
   bot: GitHubBot,
   payload: IssuePullPayload,
 ): Promise<void> => {
-  bot.sentry.captureMessage('DebugPlugin')
   console.debug('DebugPlugin', {
     extractOwnerRepo: extractOwnerRepo(payload),
     payload: payload,
   })
+  bot.sentry.captureMessage('DebugPlugin')
 }
