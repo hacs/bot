@@ -57,9 +57,17 @@ export class GitHubBot {
     Sentry.init({
       dsn: this.env.SENTRY_DSN,
       sampleRate: 1.0,
+      tracesSampleRate: 1.0,
+      replaysSessionSampleRate: 1.0,
+      profilesSampleRate: 1.0,
+      replaysOnErrorSampleRate: 1.0,
       integrations: [
         Sentry.dedupeIntegration(),
         Sentry.extraErrorDataIntegration(),
+        Sentry.sessionTimingIntegration(),
+        Sentry.debugIntegration(),
+        Sentry.replayIntegration(),
+        Sentry.captureConsoleIntegration(),
         Sentry.sessionTimingIntegration(),
       ],
       initialScope: {
