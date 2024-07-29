@@ -8,6 +8,30 @@ import { issuePull, release, workflowRun } from './utils/eventPayloads'
 import { verifyWebhookSignature } from './utils/verify'
 import { makeFetchTransport } from 'toucan-js/dist/transports'
 
+Sentry.init({
+  dsn: SENTRY_DSN,
+  sampleRate: 1.0,
+  tracesSampleRate: 1.0,
+  replaysSessionSampleRate: 1.0,
+  profilesSampleRate: 1.0,
+  replaysOnErrorSampleRate: 1.0,
+  transport: (options) => makeFetchTransport({ ...options }),
+  enabled: true,
+  integrations: [
+    Sentry.dedupeIntegration(),
+    Sentry.extraErrorDataIntegration(),
+    Sentry.sessionTimingIntegration(),
+    Sentry.debugIntegration(),
+    Sentry.replayIntegration(),
+    Sentry.sessionTimingIntegration(),
+  ],
+  initialScope: {
+    extra: {
+      request: {},
+    },
+  },
+})
+
 type Env = {
   APP_ID: string
   CF_VERSION_METADATA: { id: string; tag: string; timestamp: string }
@@ -47,29 +71,10 @@ export class GitHubBot {
     this.request = options.request
     this.env = options.env
 
-    Sentry.init({
-      dsn: this.env.SENTRY_DSN,
-      sampleRate: 1.0,
-      tracesSampleRate: 1.0,
-      replaysSessionSampleRate: 1.0,
-      profilesSampleRate: 1.0,
-      replaysOnErrorSampleRate: 1.0,
-      transport: (options) => makeFetchTransport({ ...options }),
-      enabled: true,
-      integrations: [
-        Sentry.dedupeIntegration(),
-        Sentry.extraErrorDataIntegration(),
-        Sentry.sessionTimingIntegration(),
-        Sentry.debugIntegration(),
-        Sentry.replayIntegration(),
-        Sentry.sessionTimingIntegration(),
-      ],
-      initialScope: {
-        extra: {
-          request: {},
-        },
-      },
-    })
+    if (Sentry.getClient()?.getOptions()?.dsn) {
+      Sentry.getClient()!.getOptions().dsn = this.env.SENTRY_DSN
+    }
+
     this.github = new App({
       appId: Number(this.env.APP_ID),
       privateKey: this.env.PRIVATE_KEY,
@@ -116,7 +121,6 @@ export class GitHubBot {
   public async processRequest(
     rawPayload: Record<string, unknown>,
   ): Promise<void> {
-    Sentry.startSession()
     try {
       await this.internalProcessRequest(rawPayload)
     } catch (err) {
@@ -125,7 +129,6 @@ export class GitHubBot {
       throw err
     }
 
-    Sentry.endSession()
     await Sentry.flush(6000)
     await Sentry.close()
   }
