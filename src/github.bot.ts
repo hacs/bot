@@ -36,18 +36,10 @@ export class GitHubBot {
       },
     },
     captureException: (exception: unknown, hint?: Sentry.EventHint): string => {
-      return Sentry.withScope((scope) => {
-        return scope.captureException(exception, hint)
-      })
+      return Sentry.captureException(exception, hint)
     },
-    captureMessage: (
-      message: string,
-      level?: Sentry.SeverityLevel,
-      hint?: Sentry.EventHint,
-    ): string => {
-      return Sentry.withScope((scope) => {
-        return scope.captureMessage(message, level, hint)
-      })
+    captureMessage: (message: string, level?: Sentry.SeverityLevel): string => {
+      return Sentry.captureMessage(message, level)
     },
   }
 
@@ -62,7 +54,7 @@ export class GitHubBot {
       replaysSessionSampleRate: 1.0,
       profilesSampleRate: 1.0,
       replaysOnErrorSampleRate: 1.0,
-      transport: makeFetchTransport,
+      transport: (options) => makeFetchTransport({ ...options }),
       enabled: true,
       integrations: [
         Sentry.dedupeIntegration(),
@@ -70,7 +62,6 @@ export class GitHubBot {
         Sentry.sessionTimingIntegration(),
         Sentry.debugIntegration(),
         Sentry.replayIntegration(),
-        Sentry.captureConsoleIntegration(),
         Sentry.sessionTimingIntegration(),
       ],
       initialScope: {
