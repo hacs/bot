@@ -60,10 +60,14 @@ export class GitHubBot {
       },
     },
     captureException: (exception: unknown, hint?: Sentry.EventHint): string => {
-      return Sentry.captureException(exception, hint)
+      const id = Sentry.captureException(exception, hint)
+      console.log(`Capturing exception (${id}): ${exception}`)
+      return id
     },
     captureMessage: (message: string, level?: Sentry.SeverityLevel): string => {
-      return Sentry.captureMessage(message, level)
+      const id = Sentry.captureMessage(message, level)
+      console.log(`Capturing message (${id}): ${message}`)
+      return id
     },
   }
 
