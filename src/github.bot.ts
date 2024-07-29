@@ -1,36 +1,16 @@
 import { EmitterWebhookEvent } from '@octokit/webhooks'
 import { App } from 'octokit'
-import * as Sentry from '@sentry/browser'
-import { MetricData } from '@sentry/types/types/metrics'
+import {
+  Toucan,
+  dedupeIntegration,
+  extraErrorDataIntegration,
+  requestDataIntegration,
+  sessionTimingIntegration,
+} from 'toucan-js'
 import { plugins } from './plugins'
 import { IssuePullPayload } from './types'
 import { issuePull, release, workflowRun } from './utils/eventPayloads'
 import { verifyWebhookSignature } from './utils/verify'
-import { makeFetchTransport } from 'toucan-js/dist/transports'
-
-Sentry.init({
-  dsn: SENTRY_DSN,
-  sampleRate: 1.0,
-  tracesSampleRate: 1.0,
-  replaysSessionSampleRate: 1.0,
-  profilesSampleRate: 1.0,
-  replaysOnErrorSampleRate: 1.0,
-  transport: (options) => makeFetchTransport({ ...options }),
-  enabled: true,
-  integrations: [
-    Sentry.dedupeIntegration(),
-    Sentry.extraErrorDataIntegration(),
-    Sentry.sessionTimingIntegration(),
-    Sentry.debugIntegration(),
-    Sentry.replayIntegration(),
-    Sentry.sessionTimingIntegration(),
-  ],
-  initialScope: {
-    extra: {
-      request: {},
-    },
-  },
-})
 
 type Env = {
   APP_ID: string
@@ -48,36 +28,28 @@ export class GitHubBot {
   private env: Env
   public github: App
 
-  public sentry = {
-    metrics: {
-      increment: (name: string, value?: number, data?: MetricData): void => {
-        Sentry.metrics.increment(
-          name,
-          value,
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          data as any,
-        )
-      },
-    },
-    captureException: (exception: unknown, hint?: Sentry.EventHint): string => {
-      const id = Sentry.captureException(exception, hint)
-      console.log(`Capturing exception (${id}): ${exception}`)
-      return id
-    },
-    captureMessage: (message: string, level?: Sentry.SeverityLevel): string => {
-      const id = Sentry.captureMessage(message, level)
-      console.log(`Capturing message (${id}): ${message}`)
-      return id
-    },
-  }
+  public sentry: Toucan
 
   constructor(options: { request: Request; env: Env }) {
     this.request = options.request
     this.env = options.env
 
-    if (Sentry.getClient()?.getOptions()?.dsn) {
-      Sentry.getClient()!.getOptions().dsn = this.env.SENTRY_DSN
-    }
+    this.sentry = new Toucan({
+      dsn: this.env.SENTRY_DSN,
+      requestDataOptions: {
+        allowedHeaders: ['user-agent', 'cf-ray'],
+      },
+      integrations: [
+        dedupeIntegration,
+        extraErrorDataIntegration,
+        requestDataIntegration,
+        sessionTimingIntegration,
+      ],
+      request: this.request,
+      initialScope: {
+        tags: {},
+      },
+    })
 
     this.github = new App({
       appId: Number(this.env.APP_ID),
@@ -132,8 +104,5 @@ export class GitHubBot {
       this.sentry.captureException(err)
       throw err
     }
-
-    await Sentry.flush(6000)
-    await Sentry.close()
   }
 }

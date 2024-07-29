@@ -1,6 +1,7 @@
 import { WorkflowRunPayload } from '../types'
 
 import { GitHubBot } from '../github.bot'
+import * as Sentry from '@sentry/browser'
 
 export default async (
   bot: GitHubBot,
@@ -10,7 +11,8 @@ export default async (
     return
   }
 
-  bot.sentry.metrics.increment('workflow_run.completed', 1, {
+  Sentry.metrics.increment('workflow_run.completed', 1, {
+    client: bot.sentry.getClient() as Sentry.BrowserClient,
     tags: {
       conclusion: payload.workflow_run.conclusion,
       name: payload.workflow_run.name,
