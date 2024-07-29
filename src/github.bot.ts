@@ -1,12 +1,6 @@
 import { EmitterWebhookEvent } from '@octokit/webhooks'
 import { App } from 'octokit'
-import {
-  Toucan,
-  dedupeIntegration,
-  extraErrorDataIntegration,
-  requestDataIntegration,
-  sessionTimingIntegration,
-} from 'toucan-js'
+import * as Sentry from '@sentry/browser'
 import { plugins } from './plugins'
 import { IssuePullPayload } from './types'
 import { issuePull, release } from './utils/eventPayloads'
@@ -26,30 +20,33 @@ type Env = {
 export class GitHubBot {
   private request: Request
   private env: Env
-  public sentry: Toucan
   public github: App
+
+  public sentry = {
+    metrics: {
+      increment: Sentry.metrics.increment,
+    },
+    captureException: Sentry.captureException,
+    captureMessage: Sentry.captureMessage,
+  }
 
   constructor(options: { request: Request; env: Env }) {
     this.request = options.request
     this.env = options.env
 
-    this.sentry = new Toucan({
+    Sentry.init({
       dsn: this.env.SENTRY_DSN,
-      requestDataOptions: {
-        allowedHeaders: ['user-agent', 'cf-ray'],
-      },
       integrations: [
-        dedupeIntegration,
-        extraErrorDataIntegration,
-        requestDataIntegration,
-        sessionTimingIntegration,
+        Sentry.dedupeIntegration(),
+        Sentry.extraErrorDataIntegration(),
+        Sentry.sessionTimingIntegration(),
       ],
-      request: this.request,
       initialScope: {
-        tags: {},
+        extra: {
+          request: {},
+        },
       },
     })
-
     this.github = new App({
       appId: Number(this.env.APP_ID),
       privateKey: this.env.PRIVATE_KEY,
@@ -80,6 +77,7 @@ export class GitHubBot {
     if (!payload) {
       return
     }
+
     for (const handler of [
       ...plugins.base,
       ...(plugins[`${eventName}.${payload.action}`] || []),
@@ -97,5 +95,7 @@ export class GitHubBot {
       this.sentry.captureException(err)
       throw err
     }
+
+    await Sentry.flush()
   }
 }
