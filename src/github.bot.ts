@@ -54,7 +54,7 @@ export class GitHubBot {
     this.request = options.request
     this.env = options.env
 
-    const client = Sentry.init({
+    Sentry.init({
       dsn: this.env.SENTRY_DSN,
       sampleRate: 1.0,
       integrations: [
@@ -68,9 +68,6 @@ export class GitHubBot {
         },
       },
     })
-
-    console.log('Sentry client initialized:', client?.getOptions())
-
     this.github = new App({
       appId: Number(this.env.APP_ID),
       privateKey: this.env.PRIVATE_KEY,
@@ -106,6 +103,9 @@ export class GitHubBot {
       ...plugins.base,
       ...(plugins[`${eventName}.${payload.action}`] || []),
     ]) {
+      console.log(
+        `Processing "${eventName}.${payload.action}" with ${handler.name}`,
+      )
       await handler(this, payload as IssuePullPayload)
     }
   }
