@@ -25,12 +25,7 @@ export class GitHubBot {
 
   public sentry = {
     metrics: {
-      increment: Sentry.metrics.increment,
-      captureException: (
-        name: string,
-        value?: number,
-        data?: MetricData,
-      ): void => {
+      increment: (name: string, value?: number, data?: MetricData): void => {
         Sentry.metrics.increment(
           name,
           value,
@@ -59,7 +54,7 @@ export class GitHubBot {
     this.request = options.request
     this.env = options.env
 
-    Sentry.init({
+    const client = Sentry.init({
       dsn: this.env.SENTRY_DSN,
       sampleRate: 1.0,
       integrations: [
@@ -73,6 +68,9 @@ export class GitHubBot {
         },
       },
     })
+
+    console.log('Sentry client initialized:', client)
+
     this.github = new App({
       appId: Number(this.env.APP_ID),
       privateKey: this.env.PRIVATE_KEY,
