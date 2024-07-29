@@ -69,7 +69,7 @@ export class GitHubBot {
       },
     })
 
-    console.log('Sentry client initialized:', client)
+    console.log('Sentry client initialized:', client?.getOptions())
 
     this.github = new App({
       appId: Number(this.env.APP_ID),
