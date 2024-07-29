@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240725.0",
-    "@types/node": "^20.14.11",
+    "@types/node": "^22.0.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^6.7.4",
     "eslint": "^8.57.0",
