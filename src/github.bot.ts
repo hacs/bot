@@ -113,6 +113,7 @@ export class GitHubBot {
   public async processRequest(
     rawPayload: Record<string, unknown>,
   ): Promise<void> {
+    Sentry.startSession()
     try {
       await this.internalProcessRequest(rawPayload)
     } catch (err) {
@@ -120,6 +121,8 @@ export class GitHubBot {
       throw err
     }
 
+    Sentry.endSession()
+    await Sentry.flush(6000)
     await Sentry.close()
   }
 }
