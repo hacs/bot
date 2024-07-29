@@ -1,6 +1,6 @@
 import { EmitterWebhookEvent } from '@octokit/webhooks'
 import { App } from 'octokit'
-import * as Sentry from '@sentry/node'
+import * as Sentry from '@sentry/browser'
 import { plugins } from './plugins'
 import { IssuePullPayload } from './types'
 import { issuePull, release } from './utils/eventPayloads'
@@ -39,7 +39,6 @@ export class GitHubBot {
       integrations: [
         Sentry.dedupeIntegration(),
         Sentry.extraErrorDataIntegration(),
-        Sentry.requestDataIntegration(),
         Sentry.sessionTimingIntegration(),
       ],
       initialScope: {
