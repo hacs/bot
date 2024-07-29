@@ -1,6 +1,7 @@
 import { EmitterWebhookEvent } from '@octokit/webhooks'
 import { App } from 'octokit'
 import * as Sentry from '@sentry/browser'
+import { MetricData } from '@sentry/types/types/metrics'
 import { plugins } from './plugins'
 import { IssuePullPayload } from './types'
 import { issuePull, release } from './utils/eventPayloads'
@@ -25,9 +26,33 @@ export class GitHubBot {
   public sentry = {
     metrics: {
       increment: Sentry.metrics.increment,
+      captureException: (
+        name: string,
+        value?: number,
+        data?: MetricData,
+      ): void => {
+        Sentry.metrics.increment(
+          name,
+          value,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          data as any,
+        )
+      },
     },
-    captureException: Sentry.captureException,
-    captureMessage: Sentry.captureMessage,
+    captureException: (exception: unknown, hint?: Sentry.EventHint): string => {
+      return Sentry.withScope((scope) => {
+        return scope.captureException(exception, hint)
+      })
+    },
+    captureMessage: (
+      message: string,
+      level?: Sentry.SeverityLevel,
+      hint?: Sentry.EventHint,
+    ): string => {
+      return Sentry.withScope((scope) => {
+        return scope.captureMessage(message, level, hint)
+      })
+    },
   }
 
   constructor(options: { request: Request; env: Env }) {
@@ -96,6 +121,6 @@ export class GitHubBot {
       throw err
     }
 
-    await Sentry.flush()
+    await Sentry.close()
   }
 }
