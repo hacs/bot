@@ -61,6 +61,7 @@ export class GitHubBot {
       replaysSessionSampleRate: 1.0,
       profilesSampleRate: 1.0,
       replaysOnErrorSampleRate: 1.0,
+      enabled: true,
       integrations: [
         Sentry.dedupeIntegration(),
         Sentry.extraErrorDataIntegration(),
