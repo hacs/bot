@@ -4,7 +4,7 @@ import * as Sentry from '@sentry/browser'
 import { MetricData } from '@sentry/types/types/metrics'
 import { plugins } from './plugins'
 import { IssuePullPayload } from './types'
-import { issuePull, release } from './utils/eventPayloads'
+import { issuePull, release, workflowRun } from './utils/eventPayloads'
 import { verifyWebhookSignature } from './utils/verify'
 
 type Env = {
@@ -94,7 +94,8 @@ export class GitHubBot {
     const rawBody = { payload: rawPayload } as EmitterWebhookEvent
 
     const eventName = this.request.headers.get('x-github-event') as string
-    const payload = issuePull(rawBody) || release(rawBody)
+    const payload =
+      issuePull(rawBody) || release(rawBody) || workflowRun(rawBody)
     if (!payload) {
       return
     }

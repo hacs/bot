@@ -1,6 +1,6 @@
 import { EmitterWebhookEvent } from '@octokit/webhooks'
 import { WebhookEventMap } from '@octokit/webhooks-types'
-import { IssuePullPayload, ReleasePayload } from '../types'
+import { IssuePullPayload, ReleasePayload, WorkflowRunPayload } from '../types'
 
 export const issuePull = (
   event: EmitterWebhookEvent,
@@ -18,6 +18,15 @@ export const release = (
 ): ReleasePayload | undefined => {
   if ('release' in event.payload) {
     return event.payload as WebhookEventMap['release']
+  }
+  return
+}
+
+export const workflowRun = (
+  event: EmitterWebhookEvent,
+): WorkflowRunPayload | undefined => {
+  if ('workflow_run' in event.payload) {
+    return event.payload as WebhookEventMap['workflow_run']
   }
   return
 }
