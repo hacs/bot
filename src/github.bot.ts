@@ -39,7 +39,12 @@ export class GitHubBot {
     this.sentry = new Toucan({
       dsn: this.env.SENTRY_DSN,
       requestDataOptions: {
-        allowedHeaders: ['user-agent', 'cf-ray'],
+        allowedHeaders: [
+          'cf-ray',
+          'user-agent',
+          'x-github-event',
+          'x-hub-signature-256',
+        ],
       },
       integrations: [
         dedupeIntegration,
