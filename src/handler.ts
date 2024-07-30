@@ -1,6 +1,7 @@
-import { Toucan } from 'toucan-js'
 import { EmitterWebhookEvent } from '@octokit/webhooks'
 import { App } from 'octokit'
+
+import * as Sentry from '@sentry/browser'
 
 import integrationRepoIssueClosedPlugin from './plugins/integrationRepoIssueClosed'
 import integrationRepoPullClosedPlugin from './plugins/integrationRepoPullClosed'
@@ -10,6 +11,7 @@ import integrationReleaseCreatedPlugin from './plugins/integrationReleaseCreated
 
 import { issuePull, release } from './utils/eventPayloads'
 import { GitHubBot } from './github.bot'
+import { initSentry } from './utils/sentry'
 
 const getApp = async () => {
   const app = new App({
@@ -23,24 +25,9 @@ const getApp = async () => {
   return app
 }
 
-const sentryClient = (request: Request) => {
-  const client = new Toucan({
-    dsn: SENTRY_DSN,
-    requestDataOptions: {
-      allowedHeaders: ['user-agent', 'cf-ray'],
-    },
-    request,
-    initialScope: {
-      tags: {},
-    },
-  })
-
-  return client
-}
-
 export async function handleRequest(request: Request): Promise<Response> {
   const app = await getApp()
-  const sentry = sentryClient(request)
+  initSentry({ dsn: SENTRY_DSN })
   app.webhooks.on('issues', handleWebhookEvent)
   app.webhooks.on('pull_request', handleWebhookEvent)
   app.webhooks.on('issue_comment', handleWebhookEvent)
@@ -72,9 +59,10 @@ export async function handleRequest(request: Request): Promise<Response> {
     })
   } catch (err) {
     console.error(err)
-    sentry.captureException(err)
+    Sentry.captureException(err)
     throw new Error(String(err))
   }
+  await Sentry.close()
   return new Response()
 }
 
