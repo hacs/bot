@@ -30,6 +30,8 @@ export const initSentry = async (options: Sentry.BrowserOptions) => {
       Sentry.linkedErrorsIntegration(),
       Sentry.rewriteFramesIntegration(),
       Sentry.sessionTimingIntegration(),
+      Sentry.replayIntegration(),
+      Sentry.breadcrumbsIntegration(),
     ],
     initialScope: { ...options.initialScope, tags: {} },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -38,8 +40,7 @@ export const initSentry = async (options: Sentry.BrowserOptions) => {
         body,
       }: TransportRequest): PromiseLike<TransportMakeRequestResponse> {
         try {
-          const fetchFn = options.fetcher ?? fetch
-          const request = fetchFn(options.url, {
+          const request = fetch(options.url, {
             method: 'POST',
             headers: options.headers,
             body,
