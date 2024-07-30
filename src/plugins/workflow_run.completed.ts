@@ -14,10 +14,6 @@ export default async (
   bot: GitHubBot,
   payload: WorkflowRunPayload,
 ): Promise<void> => {
-  if (payload.repository.owner.login !== 'hacs') {
-    return
-  }
-
   Sentry.init({
     dsn: bot.env.SENTRY_DSN,
     sampleRate: 1,
@@ -63,6 +59,15 @@ export default async (
     },
   })
 
+  Sentry.addBreadcrumb({
+    message: payload.repository.owner.login,
+    category: 'owner',
+  })
+
+  if (payload.repository.owner.login !== 'hacs') {
+    return
+  }
+
   Sentry.metrics.increment('workflow_run.completed', 1, {
     tags: {
       conclusion: payload.workflow_run.conclusion,
@@ -71,4 +76,6 @@ export default async (
       event: payload.workflow_run.event,
     },
   })
+
+  await Sentry.close()
 }
