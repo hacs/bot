@@ -9,6 +9,9 @@ export default async (
   bot: GitHubBot,
   payload: IssuePullPayload,
 ): Promise<void> => {
+  if (bot.env.DEBUG !== undefined) {
+    return
+  }
   console.debug('DebugPlugin', {
     extractOwnerRepo: extractOwnerRepo(payload),
     payload: payload,

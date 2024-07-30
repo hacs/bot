@@ -19,6 +19,7 @@ type Env = {
   DISCORD_WEBHOOK_BOT: string
   WEBHOOK_SECRET: string
   ORGANIZATION: string
+  DEBUG?: string
 }
 
 export class GitHubBot {
