@@ -1,7 +1,7 @@
 import { WorkflowRunPayload } from '../types'
 
-import { GitHubBot } from '../github.bot'
 import * as Sentry from '@sentry/browser'
+import { GitHubBot } from '../github.bot'
 
 export default async (
   bot: GitHubBot,
@@ -19,4 +19,11 @@ export default async (
       event: payload.workflow_run.event,
     },
   })
+
+  if (payload.workflow_run.conclusion === 'failure') {
+    await bot.discordMessage({
+      username: 'workflow_run',
+      content: `[GitHub action failed!](https://github.com/${payload.repository.full_name}/actions/runs/${payload.workflow_run.id})"}`,
+    })
+  }
 }

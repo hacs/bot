@@ -7,6 +7,8 @@ import { issuePull, release, workflowRun } from './utils/eventPayloads'
 import { initSentry } from './utils/sentry'
 import { verifyWebhookSignature } from './utils/verify'
 
+import type { WebhookMessageCreateOptions } from 'discord.js'
+
 type Env = {
   APP_ID: string
   CF_VERSION_METADATA: { id: string; tag: string; timestamp: string }
@@ -14,6 +16,7 @@ type Env = {
   PRIVATE_KEY: string
   SENTRY_DSN: string
   DISCORD_WEBHOOK: string
+  DISCORD_WEBHOOK_BOT: string
   WEBHOOK_SECRET: string
   ORGANIZATION: string
 }
@@ -117,5 +120,17 @@ export class GitHubBot {
 
     Sentry.endSession()
     await Sentry.close()
+  }
+
+  public async discordMessage(
+    options: WebhookMessageCreateOptions,
+  ): Promise<void> {
+    await fetch(this.env.DISCORD_WEBHOOK_BOT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(options),
+    })
   }
 }
