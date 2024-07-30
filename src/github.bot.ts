@@ -1,17 +1,19 @@
 import { EmitterWebhookEvent } from '@octokit/webhooks'
+import * as Sentry from '@sentry/browser'
 import { App } from 'octokit'
 import {
   Toucan,
   dedupeIntegration,
   extraErrorDataIntegration,
-  requestDataIntegration,
-  sessionTimingIntegration,
   linkedErrorsIntegration,
+  requestDataIntegration,
   rewriteFramesIntegration,
+  sessionTimingIntegration,
 } from 'toucan-js'
 import { plugins } from './plugins'
 import { IssuePullPayload } from './types'
 import { issuePull, release, workflowRun } from './utils/eventPayloads'
+import { initSentry } from './utils/sentry'
 import { verifyWebhookSignature } from './utils/verify'
 
 type Env = {
@@ -61,6 +63,15 @@ export class GitHubBot {
         tags: {},
       },
     })
+
+    initSentry({ dsn: this.env.SENTRY_DSN })
+    Sentry.setExtra(
+      'headers',
+      ['cf-ray', 'user-agent', 'x-github-event', 'x-hub-signature-256'].reduce(
+        (acc, key) => ({ ...acc, [key]: this.request.headers.get(key) }),
+        {},
+      ),
+    )
 
     this.github = new App({
       appId: Number(this.env.APP_ID),
@@ -115,7 +126,10 @@ export class GitHubBot {
     } catch (err) {
       console.error(err)
       this.sentry.captureException(err)
+      Sentry.captureException(err)
       throw err
     }
+
+    await Sentry.close()
   }
 }

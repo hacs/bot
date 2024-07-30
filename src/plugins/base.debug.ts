@@ -1,7 +1,9 @@
 import { IssuePullPayload } from '../types'
 
-import { extractOwnerRepo } from '../utils/extractOwnerRepo'
 import { GitHubBot } from '../github.bot'
+import { extractOwnerRepo } from '../utils/extractOwnerRepo'
+
+import * as Sentry from '@sentry/browser'
 
 export default async (
   bot: GitHubBot,
@@ -12,4 +14,5 @@ export default async (
     payload: payload,
   })
   bot.sentry.captureMessage('DebugPlugin')
+  Sentry.captureMessage('DebugPlugin')
 }
