@@ -37,7 +37,6 @@
     "@octokit/auth-app": "^7.1.0",
     "@octokit/webhooks": "^13.3.0",
     "octokit": "^4.0.2",
-    "toucan-js": "^4.0.0",
     "@sentry/browser": "8.20.0"
   }
 }

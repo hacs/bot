@@ -1,15 +1,6 @@
 import { EmitterWebhookEvent } from '@octokit/webhooks'
 import * as Sentry from '@sentry/browser'
 import { App } from 'octokit'
-import {
-  Toucan,
-  dedupeIntegration,
-  extraErrorDataIntegration,
-  linkedErrorsIntegration,
-  requestDataIntegration,
-  rewriteFramesIntegration,
-  sessionTimingIntegration,
-} from 'toucan-js'
 import { plugins } from './plugins'
 import { IssuePullPayload } from './types'
 import { issuePull, release, workflowRun } from './utils/eventPayloads'
@@ -32,41 +23,13 @@ export class GitHubBot {
   public env: Env
   public github: App
 
-  public sentry: Toucan
-
   constructor(options: { request: Request; env: Env }) {
     this.request = options.request
     this.env = options.env
 
-    this.sentry = new Toucan({
-      dsn: this.env.SENTRY_DSN,
-      requestDataOptions: {
-        allowedHeaders: [
-          'cf-ray',
-          'user-agent',
-          'x-github-event',
-          'x-hub-signature-256',
-        ],
-      },
-      integrations: [
-        dedupeIntegration,
-        extraErrorDataIntegration,
-        requestDataIntegration,
-        sessionTimingIntegration,
-        linkedErrorsIntegration,
-        rewriteFramesIntegration,
-      ],
-      sampleRate: 1,
-      tracesSampleRate: 1,
-      request: this.request,
-      initialScope: {
-        tags: {},
-      },
-    })
-
     initSentry({ dsn: this.env.SENTRY_DSN })
-    Sentry.setExtra(
-      'headers',
+    Sentry.setContext(
+      'Headers',
       ['cf-ray', 'user-agent', 'x-github-event', 'x-hub-signature-256'].reduce(
         (acc, key) => ({ ...acc, [key]: this.request.headers.get(key) }),
         {},
@@ -85,7 +48,7 @@ export class GitHubBot {
   async internalProcessRequest(
     rawPayload: Record<string, unknown>,
   ): Promise<void> {
-    this.sentry.setExtras({ ...rawPayload })
+    Sentry.setExtras({ ...rawPayload })
 
     await verifyWebhookSignature(
       JSON.stringify(rawPayload),
@@ -125,7 +88,6 @@ export class GitHubBot {
       await this.internalProcessRequest(rawPayload)
     } catch (err) {
       console.error(err)
-      this.sentry.captureException(err)
       Sentry.captureException(err)
       throw err
     }

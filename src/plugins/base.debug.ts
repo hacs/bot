@@ -13,6 +13,5 @@ export default async (
     extractOwnerRepo: extractOwnerRepo(payload),
     payload: payload,
   })
-  bot.sentry.captureMessage('DebugPlugin')
   Sentry.captureMessage('DebugPlugin')
 }
