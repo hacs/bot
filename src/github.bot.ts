@@ -123,9 +123,9 @@ export class GitHubBot {
   }
 
   public async discordMessage(
-    options: WebhookMessageCreateOptions,
+    options: WebhookMessageCreateOptions & { webookUrl?: string },
   ): Promise<void> {
-    await fetch(this.env.DISCORD_WEBHOOK_BOT, {
+    await fetch(options.webookUrl || this.env.DISCORD_WEBHOOK_BOT, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
