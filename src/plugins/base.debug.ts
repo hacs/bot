@@ -11,6 +11,5 @@ export default async (
     extractOwnerRepo: extractOwnerRepo(payload),
     payload: payload,
   })
-  bot.sentry.setExtras({ payload, extractOwnerRepo: extractOwnerRepo(payload) })
   bot.sentry.captureMessage('DebugPlugin')
 }

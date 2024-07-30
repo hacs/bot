@@ -69,6 +69,8 @@ export class GitHubBot {
   async internalProcessRequest(
     rawPayload: Record<string, unknown>,
   ): Promise<void> {
+    this.sentry.setExtras({ rawPayload })
+
     await verifyWebhookSignature(
       JSON.stringify(rawPayload),
       this.env.WEBHOOK_SECRET,
