@@ -27,7 +27,11 @@ export class GitHubBot {
     this.request = options.request
     this.env = options.env
 
-    initSentry({ dsn: this.env.SENTRY_DSN })
+    initSentry({
+      dsn: this.env.SENTRY_DSN,
+      release:
+        this.env.CF_VERSION_METADATA.tag || this.env.CF_VERSION_METADATA.id,
+    })
     Sentry.setContext(
       'Headers',
       ['cf-ray', 'user-agent', 'x-github-event', 'x-hub-signature-256'].reduce(
