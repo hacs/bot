@@ -26,8 +26,8 @@ type Env = {
 }
 
 export class GitHubBot {
-  private request: Request
-  private env: Env
+  public request: Request
+  public env: Env
   public github: App
 
   public sentry: Toucan
@@ -74,7 +74,7 @@ export class GitHubBot {
   async internalProcessRequest(
     rawPayload: Record<string, unknown>,
   ): Promise<void> {
-    this.sentry.setExtras({ rawPayload })
+    this.sentry.setExtras({ ...rawPayload })
 
     await verifyWebhookSignature(
       JSON.stringify(rawPayload),
