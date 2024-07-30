@@ -35,6 +35,7 @@ export class GitHubBot {
         {},
       ),
     )
+    Sentry.setTags(this.env.CF_VERSION_METADATA)
 
     this.github = new App({
       appId: Number(this.env.APP_ID),
