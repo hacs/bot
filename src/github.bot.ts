@@ -130,6 +130,7 @@ export class GitHubBot {
       throw err
     }
 
+    Sentry.endSession()
     await Sentry.close()
   }
 }

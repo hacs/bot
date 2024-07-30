@@ -21,7 +21,9 @@ export const initSentry = async (options: Sentry.BrowserOptions) => {
     profilesSampleRate: 1,
     replaysOnErrorSampleRate: 1,
     integrations: [
-      Sentry.captureConsoleIntegration(),
+      Sentry.captureConsoleIntegration({
+        levels: ['warn', 'error'],
+      }),
       Sentry.debugIntegration(),
       Sentry.dedupeIntegration(),
       Sentry.extraErrorDataIntegration(),
@@ -67,4 +69,5 @@ export const initSentry = async (options: Sentry.BrowserOptions) => {
       return createTransport(options, makeRequest)
     },
   })
+  Sentry.startSession()
 }
