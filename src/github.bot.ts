@@ -126,12 +126,15 @@ export class GitHubBot {
   public async discordMessage(
     options: WebhookMessageCreateOptions & { webookUrl?: string },
   ): Promise<void> {
-    await fetch(options.webookUrl || this.env.DISCORD_WEBHOOK_BOT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    await fetch(
+      options.webookUrl || this.env.DISCORD_WEBHOOK_BOT || 'dev://null',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(options),
       },
-      body: JSON.stringify(options),
-    })
+    )
   }
 }
