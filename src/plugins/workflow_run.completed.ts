@@ -23,7 +23,7 @@ export default async (
   if (payload.workflow_run.conclusion === 'failure') {
     await bot.discordMessage({
       username: 'workflow_run',
-      content: `[GitHub action failed!](https://github.com/${payload.repository.full_name}/actions/runs/${payload.workflow_run.id})"}`,
+      content: `<#713492053484634172> [${payload.workflow_run.name} GitHub action failed!](<https://github.com/${payload.repository.full_name}/actions/runs/${payload.workflow_run.id}>)`,
     })
   }
 }
