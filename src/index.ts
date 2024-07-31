@@ -3,6 +3,7 @@ import { handleRequest } from './handler'
 declare global {
   const APP_ID: string
   const DISCORD_WEBHOOK: string
+  const DISCORD_WEBHOOK_BOT: string
   const INSTALLATION_ID: string
   const ORGANIZATION: string
   const PRIVATE_KEY: string

@@ -39,6 +39,7 @@ export async function handleRequest(request: Request): Promise<Response> {
       APP_ID,
       CF_VERSION_METADATA,
       DISCORD_WEBHOOK,
+      DISCORD_WEBHOOK_BOT,
       INSTALLATION_ID,
       ORGANIZATION,
       PRIVATE_KEY,
