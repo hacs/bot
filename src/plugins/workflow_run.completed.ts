@@ -7,7 +7,10 @@ export default async (
   bot: GitHubBot,
   payload: WorkflowRunPayload,
 ): Promise<void> => {
-  if (payload.repository.owner.login !== 'hacs') {
+  if (
+    payload.repository.owner.login !== 'hacs' ||
+    payload.workflow_run.event !== 'schedule'
+  ) {
     return
   }
 
