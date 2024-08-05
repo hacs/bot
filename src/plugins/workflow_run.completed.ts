@@ -3,6 +3,8 @@ import { WorkflowRunPayload } from '../types'
 import * as Sentry from '@sentry/browser'
 import { GitHubBot } from '../github.bot'
 
+const ignoreWorksflows = new Set(["Lock closed issues and PR's'"])
+
 export default async (
   bot: GitHubBot,
   payload: WorkflowRunPayload,
@@ -23,7 +25,10 @@ export default async (
     },
   })
 
-  if (payload.workflow_run.conclusion === 'failure') {
+  if (
+    payload.workflow_run.conclusion === 'failure' &&
+    !ignoreWorksflows.has(payload.workflow_run.name)
+  ) {
     await bot.discordMessage({
       username: 'Github webhook',
       content: `<@&713492053484634172> GitHub action '${payload.workflow_run.name}' with ID [${payload.workflow_run.id}](<https://github.com/${payload.repository.full_name}/actions/runs/${payload.workflow_run.id}>) failed!`,
