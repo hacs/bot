@@ -39,7 +39,7 @@
     "@octokit/auth-app": "^7.1.0",
     "@octokit/webhooks": "^13.3.0",
     "@sentry/browser": "8.20.0",
-    "@sentry/core": "8.20.0",
+    "@sentry/core": "8.22.0",
     "@sentry/utils": "8.20.0",
     "octokit": "^4.0.2"
   }
