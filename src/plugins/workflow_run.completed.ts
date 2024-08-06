@@ -3,7 +3,7 @@ import { WorkflowRunPayload } from '../types'
 import * as Sentry from '@sentry/browser'
 import { GitHubBot } from '../github.bot'
 
-const ignoreWorksflows = new Set(["Lock closed issues and PR's'"])
+const ignoreWorksflows = new Set(["Lock closed issues and PR's"])
 
 export default async (
   bot: GitHubBot,
