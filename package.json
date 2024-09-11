@@ -36,7 +36,7 @@
     "wrangler": "^3.72.2"
   },
   "dependencies": {
-    "@octokit/auth-app": "^7.1.0",
+    "@octokit/auth-app": "^7.1.1",
     "@octokit/webhooks": "^13.3.0",
     "@sentry/browser": "8.28.0",
     "@sentry/core": "8.28.0",
