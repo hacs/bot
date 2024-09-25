@@ -58,7 +58,11 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
     })
     return
   }
+
   const changedRepos = await getFileDiff(app, payload, repoCategory || '')
+  if (changedRepos.length > 1) {
+    throw Error('Multiple repositories changed')
+  }
 
   const newRepo = changedRepos.pop()
   if (newRepo === undefined) throw Error('No repo')
