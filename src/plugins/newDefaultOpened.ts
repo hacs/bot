@@ -120,18 +120,20 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
 
   const newTitle = `Adds new ${repoCategory} [${owner}/${repo}]`
 
-  if (payload.action === 'opened' || newTitle !== payload.pull_request.title) {
-    await app.octokit.rest.issues.update({
+  if (payload.action === 'opened') {
+    if (newTitle !== payload.pull_request.title) {
+      await app.octokit.rest.issues.update({
+        ...extractOwnerRepo(payload),
+        issue_number: payload.pull_request.number,
+        title: newTitle,
+      })
+    }
+    await app.octokit.rest.issues.createComment({
       ...extractOwnerRepo(payload),
       issue_number: payload.pull_request.number,
-      title: newTitle,
+      body: postedComment,
     })
   }
-  await app.octokit.rest.issues.createComment({
-    ...extractOwnerRepo(payload),
-    issue_number: payload.pull_request.number,
-    body: postedComment,
-  })
 }
 
 async function getChangedFiles(
