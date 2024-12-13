@@ -10,10 +10,9 @@ import { convertPullRequestToDraft } from '../utils/convertToDraft'
 const postedComment = `
 Your repository is now waiting to be included in HACS. Please be patient, this will take some time.
 
-[You can see the current queue here]<https://github.com/hacs/default/pulls?q=is%3Apr+is%3Aopen+draft%3Afalse+sort%3Acreated-asc> (this is the order that is being used).
+[You can see the current queue here](https://github.com/hacs/default/pulls?q=is%3Apr+is%3Aopen+draft%3Afalse+sort%3Acreated-asc) (this is the order that is being used).
 
 There is no need to:
-- Rebase the branch, the reviewer will do this.
 - Comment on the PR, the reviewer will get back to you.
 - Open a new PR, this will not speed up the process.
 - Ask your folowers to spam the PR, this will not speed up the process.
