@@ -7,17 +7,6 @@ import { senderIsBot } from '../utils/filter'
 import { extractTasks } from '../utils/tasks'
 import { convertPullRequestToDraft } from '../utils/convertToDraft'
 
-const postedComment = `
-Your repository is now waiting to be included in HACS. Please be patient, this will take some time.
-
-[You can see the current queue here](https://github.com/hacs/default/pulls?q=is%3Apr+is%3Aopen+draft%3Afalse+sort%3Acreated-asc) (this is the order that is being used).
-
-There is no need to:
-- Comment on the PR, the reviewer will get back to you.
-- Open a new PR, this will not speed up the process.
-- Ask your folowers to spam the PR, this will not speed up the process.
-`
-
 export default async (app: App, payload: PullPayload): Promise<void> => {
   if (
     senderIsBot(payload) ||
@@ -119,18 +108,11 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
 
   const newTitle = `Adds new ${repoCategory} [${owner}/${repo}]`
 
-  if (payload.action === 'opened') {
-    if (newTitle !== payload.pull_request.title) {
-      await app.octokit.rest.issues.update({
-        ...extractOwnerRepo(payload),
-        issue_number: payload.pull_request.number,
-        title: newTitle,
-      })
-    }
-    await app.octokit.rest.issues.createComment({
+  if (payload.action === 'opened' || newTitle !== payload.pull_request.title) {
+    await app.octokit.rest.issues.update({
       ...extractOwnerRepo(payload),
       issue_number: payload.pull_request.number,
-      body: postedComment,
+      title: newTitle,
     })
   }
 }
