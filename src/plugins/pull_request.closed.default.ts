@@ -1,9 +1,9 @@
-import { App } from 'octokit'
-import { defaultCategories, RepositoryName } from '../const'
-import { PullPayload } from '../types'
+import { IssuePullPayload, PayloadIsPull } from '../types'
 
+import { GitHubBot } from '../github.bot'
 import { extractOwnerRepo } from '../utils/extractOwnerRepo'
 import { senderIsBot } from '../utils/filter'
+import { defaultCategories, RepositoryName } from '../const'
 import { postDiscordMessage } from '../utils/postDiscordMessage'
 
 const messageCommon = `
@@ -26,15 +26,20 @@ const messageLinks = `
 [lovelace_custom_card]: https://developers.home-assistant.io/docs/lovelace_custom_card#graphical-card-configuration
 `
 
-export default async (app: App, payload: PullPayload): Promise<void> => {
+export default async (
+  bot: GitHubBot,
+  payload: IssuePullPayload,
+): Promise<void> => {
   if (
     senderIsBot(payload) ||
+    !PayloadIsPull(payload) ||
     extractOwnerRepo(payload).repo !== RepositoryName.DEFAULT ||
-    !['closed'].includes(payload.action)
-  )
+    payload.action !== 'closed'
+  ) {
     return
+  }
 
-  const { data: pull } = await app.octokit.rest.pulls.get({
+  const { data: pull } = await bot.github.octokit.rest.pulls.get({
     ...extractOwnerRepo(payload),
     pull_number: payload.pull_request.number,
   })
@@ -53,7 +58,7 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
     return
   }
 
-  const { data: repoAdded } = await app.octokit.rest.repos.get({
+  const { data: repoAdded } = await bot.github.octokit.rest.repos.get({
     owner: owner_repo.split('/')[0],
     repo: owner_repo.split('/')[1],
   })
@@ -87,7 +92,7 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
     body += messagePlugins
   }
 
-  await app.octokit.rest.issues.createComment({
+  await bot.github.octokit.rest.issues.createComment({
     ...extractOwnerRepo(payload),
     issue_number: payload.pull_request.number,
     body: body + messageLinks,

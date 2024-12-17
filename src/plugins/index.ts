@@ -4,6 +4,7 @@ import IssuesLabeledDuplicate from './issues.labeled.duplicate'
 import IssuesLabeledInvalid from './issues.labeled.invalid'
 import IssuesLabeledNewDefaultRepository from './issues.labeled.new_default_repository'
 import IssuesOpenedGreeter from './issues.opened.greeter'
+import PullRequestClosedDefault from './pull_request.closed.default'
 import WorkflowRunCompeted from './workflow_run.completed'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -17,5 +18,6 @@ export const plugins: Record<string, Plugin[]> = {
     IssuesLabeledNewDefaultRepository,
   ],
   'issues.opened': [IssuesOpenedGreeter],
+  'pull_request.closed': [PullRequestClosedDefault],
   'workflow_run.completed': [WorkflowRunCompeted],
 }
