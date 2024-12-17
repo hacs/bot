@@ -1,8 +1,9 @@
-import { IssuePullPayload, PayloadIsIssue } from '../types'
+import { IssuePullPayload, PayloadIsPull } from '../types'
 
 import { GitHubBot } from '../github.bot'
 import { extractOwnerRepo } from '../utils/extractOwnerRepo'
 import { senderIsBot } from '../utils/filter'
+import { RepositoryName } from '../const'
 
 const label = 'New default repository'
 const postedComment = `
@@ -22,8 +23,8 @@ export default async (
 ): Promise<void> => {
   if (
     senderIsBot(payload) ||
-    !PayloadIsIssue(payload) ||
-    payload.repository.name !== 'default' ||
+    !PayloadIsPull(payload) ||
+    extractOwnerRepo(payload).repo !== RepositoryName.DEFAULT ||
     payload.action !== 'labeled' ||
     payload.label?.name !== label
   ) {
@@ -32,7 +33,7 @@ export default async (
 
   await bot.github.octokit.rest.issues.createComment({
     ...extractOwnerRepo(payload),
-    issue_number: payload.issue.number,
+    issue_number: payload.pull_request.number,
     body: postedComment,
   })
 }
