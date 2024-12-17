@@ -20,6 +20,7 @@ export const plugins: Record<string, Plugin[]> = {
   ],
   'issues.opened': [IssuesOpenedGreeter],
   'pull_request.closed': [PullRequestClosedDefault],
+  'pull_request.labeled': [IssuesLabeledNewDefaultRepository],
   'pull_request.opened': [PullRequestOpenedDefault],
   'pull_request.synchronize': [PullRequestOpenedDefault],
   'workflow_run.completed': [WorkflowRunCompeted],
