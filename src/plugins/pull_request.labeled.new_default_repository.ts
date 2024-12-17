@@ -2,7 +2,6 @@ import { IssuePullPayload, PayloadIsPull } from '../types'
 
 import { GitHubBot } from '../github.bot'
 import { extractOwnerRepo } from '../utils/extractOwnerRepo'
-import { senderIsBot } from '../utils/filter'
 import { RepositoryName } from '../const'
 
 const label = 'New default repository'
@@ -22,7 +21,6 @@ export default async (
   payload: IssuePullPayload,
 ): Promise<void> => {
   if (
-    senderIsBot(payload) ||
     !PayloadIsPull(payload) ||
     extractOwnerRepo(payload).repo !== RepositoryName.DEFAULT ||
     payload.action !== 'labeled' ||
