@@ -5,7 +5,6 @@ import * as Sentry from '@sentry/browser'
 
 import integrationRepoIssueClosedPlugin from './plugins/integrationRepoIssueClosed'
 import integrationRepoPullClosedPlugin from './plugins/integrationRepoPullClosed'
-import newDefaultOpenedPlugin from './plugins/newDefaultOpened'
 import integrationReleaseCreatedPlugin from './plugins/integrationReleaseCreated'
 
 import { issuePull, release } from './utils/eventPayloads'
@@ -72,10 +71,7 @@ async function handleWebhookEvent(event: EmitterWebhookEvent): Promise<void> {
   if (!payload) return
 
   if ('pull_request' in payload) {
-    await Promise.all([
-      newDefaultOpenedPlugin(app, payload),
-      integrationRepoPullClosedPlugin(app, payload),
-    ])
+    await Promise.all([integrationRepoPullClosedPlugin(app, payload)])
   } else if ('issue' in payload && payload.action === 'closed') {
     await Promise.all([integrationRepoIssueClosedPlugin(app, payload)])
   } else if ('release' in payload) {

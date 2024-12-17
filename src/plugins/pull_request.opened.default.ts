@@ -1,21 +1,26 @@
-import { App } from 'octokit'
-import { defaultCategories, RepositoryName } from '../const'
-import { PullPayload } from '../types'
+import { IssuePullPayload, PayloadIsPull, PullPayload } from '../types'
 
+import { GitHubBot } from '../github.bot'
 import { extractOwnerRepo } from '../utils/extractOwnerRepo'
 import { senderIsBot } from '../utils/filter'
+import { defaultCategories, RepositoryName } from '../const'
 import { extractTasks } from '../utils/tasks'
 import { convertPullRequestToDraft } from '../utils/convertToDraft'
 
-export default async (app: App, payload: PullPayload): Promise<void> => {
+export default async (
+  bot: GitHubBot,
+  payload: IssuePullPayload,
+): Promise<void> => {
   if (
     senderIsBot(payload) ||
+    !PayloadIsPull(payload) ||
     extractOwnerRepo(payload).repo !== RepositoryName.DEFAULT ||
     !['opened', 'synchronize'].includes(payload.action)
-  )
+  ) {
     return
+  }
 
-  const changedFiles = await getChangedFiles(app, payload)
+  const changedFiles = await getChangedFiles(bot, payload)
 
   if (changedFiles.length > 1) {
     return
@@ -45,13 +50,13 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
     payload.action == 'opened' &&
     completedTasks.length !== (repoCategory === 'integration' ? 6 : 5)
   ) {
-    await app.octokit.rest.pulls.createReview({
+    await bot.github.octokit.rest.pulls.createReview({
       ...extractOwnerRepo(payload),
       pull_number: payload.pull_request.number,
       event: 'REQUEST_CHANGES',
       body: "PR was not complete, recreate it when it's ready.",
     })
-    await app.octokit.rest.pulls.update({
+    await bot.github.octokit.rest.pulls.update({
       ...extractOwnerRepo(payload),
       pull_number: payload.pull_request.number,
       state: 'closed',
@@ -59,7 +64,7 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
     return
   }
 
-  const changedRepos = await getFileDiff(app, payload, repoCategory || '')
+  const changedRepos = await getFileDiff(bot, payload, repoCategory || '')
   if (changedRepos.length > 1) {
     throw Error('Multiple repositories changed')
   }
@@ -77,30 +82,33 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
     repo.toLowerCase().includes('hacs') &&
     payload.pull_request.review_comments === 0
   ) {
-    await app.octokit.rest.pulls.createReview({
+    await bot.github.octokit.rest.pulls.createReview({
       ...extractOwnerRepo(payload),
       pull_number: payload.pull_request.number,
       event: 'REQUEST_CHANGES',
       body: "Do not use 'HACS' as a part of your repository name.",
     })
-    await convertPullRequestToDraft(app, payload.pull_request.node_id)
+    await convertPullRequestToDraft(bot.github, payload.pull_request.node_id)
     return
   }
 
-  const { data: repoInfo } = await app.octokit.rest.repos.get({ owner, repo })
+  const { data: repoInfo } = await bot.github.octokit.rest.repos.get({
+    owner,
+    repo,
+  })
 
   if (repoInfo.full_name !== newRepo) {
-    await app.octokit.rest.pulls.createReview({
+    await bot.github.octokit.rest.pulls.createReview({
       ...extractOwnerRepo(payload),
       pull_number: payload.pull_request.number,
       event: 'REQUEST_CHANGES',
       body: `The submitted name \`${newRepo}\` does not match what GitHub returns for the repository (\`${repoInfo.full_name}\`).`,
     })
-    await convertPullRequestToDraft(app, payload.pull_request.node_id)
+    await convertPullRequestToDraft(bot.github, payload.pull_request.node_id)
     return
   }
 
-  await app.octokit.rest.issues.addLabels({
+  await bot.github.octokit.rest.issues.addLabels({
     ...extractOwnerRepo(payload),
     issue_number: payload.pull_request.number,
     labels: ['New default repository'],
@@ -109,7 +117,7 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
   const newTitle = `Adds new ${repoCategory} [${owner}/${repo}]`
 
   if (payload.action === 'opened' || newTitle !== payload.pull_request.title) {
-    await app.octokit.rest.issues.update({
+    await bot.github.octokit.rest.issues.update({
       ...extractOwnerRepo(payload),
       issue_number: payload.pull_request.number,
       title: newTitle,
@@ -118,32 +126,35 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
 }
 
 async function getChangedFiles(
-  app: App,
+  bot: GitHubBot,
   payload: PullPayload,
 ): Promise<string[]> {
-  const { data: listFilesResponse } = await app.octokit.rest.pulls.listFiles({
-    ...extractOwnerRepo(payload),
-    pull_number: payload.pull_request.number,
-  })
+  const { data: listFilesResponse } =
+    await bot.github.octokit.rest.pulls.listFiles({
+      ...extractOwnerRepo(payload),
+      pull_number: payload.pull_request.number,
+    })
   return listFilesResponse.map((file) => file.filename)
 }
 
-async function getFileDiff(app: App, payload: PullPayload, file: string) {
-  const { data: currentContentData } = await app.octokit.rest.repos.getContent({
-    ...extractOwnerRepo(payload),
-    pull_number: payload.pull_request.number,
-    path: file,
-  })
+async function getFileDiff(bot: GitHubBot, payload: PullPayload, file: string) {
+  const { data: currentContentData } =
+    await bot.github.octokit.rest.repos.getContent({
+      ...extractOwnerRepo(payload),
+      pull_number: payload.pull_request.number,
+      path: file,
+    })
 
   if (!('content' in currentContentData)) throw Error('No content')
   const currentContent: string[] = JSON.parse(atob(currentContentData.content))
 
-  const { data: changedContentData } = await app.octokit.rest.repos.getContent({
-    ...extractOwnerRepo(payload),
-    issue_number: payload.pull_request.number,
-    path: file,
-    ref: payload.pull_request.head.sha,
-  })
+  const { data: changedContentData } =
+    await bot.github.octokit.rest.repos.getContent({
+      ...extractOwnerRepo(payload),
+      issue_number: payload.pull_request.number,
+      path: file,
+      ref: payload.pull_request.head.sha,
+    })
 
   if (!('content' in changedContentData)) throw Error('No content')
   const changedContent: string[] = JSON.parse(atob(changedContentData.content))
