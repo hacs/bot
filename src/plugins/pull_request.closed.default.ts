@@ -9,22 +9,15 @@ import { postDiscordMessage } from '../utils/postDiscordMessage'
 const messageCommon = `
 Your repository is now added to HACS :tada:
 Here is a few resources that can be useful:
-- [HACS Discord][hacsdiscord] If you have questions about HACS this is the best place for it.
-- [Home Assistant Developer Blog][hadevblog] Make sure you stay up to date.
-- [Home Assistant Devs @ twitter][hadevtwitter]
-- [HACS @ twitter][hacstwitter]
+- [HACS Discord](https://discord.gg/apgchf8) If you have questions about HACS this is the best place for it.
+- [Home Assistant Developer Blog](https://developers.home-assistant.io/blog) Make sure you stay up to date.
+- [Home Assistant Devs @ twitter](https://twitter.com/hass_devs)
+- [HACS @ twitter](https://twitter.com/HACSIntegration)
+
+_It might take up to 8 hours before it shows up._
 `
 
-const messagePlugins = `- [Did you know you can add your card to the card-picker in Lovelace?][lovelace_custom_card]`
-
-const messageLinks = `
-<!-- Links -->
-[hacsdiscord]: https://discord.gg/apgchf8
-[hacstwitter]: https://twitter.com/HACSIntegration
-[hadevblog]: https://developers.home-assistant.io/blog
-[hadevtwitter]: https://twitter.com/hass_devs
-[lovelace_custom_card]: https://developers.home-assistant.io/docs/lovelace_custom_card#graphical-card-configuration
-`
+const messagePlugins = `- [Did you know you can add your card to the card-picker in Lovelace?](https://developers.home-assistant.io/docs/lovelace_custom_card#graphical-card-configuration)`
 
 export default async (
   bot: GitHubBot,
@@ -86,15 +79,11 @@ export default async (
     ],
   })
 
-  let body: string = messageCommon
-
-  if (category === 'plugin') {
-    body += messagePlugins
-  }
-
   await bot.github.octokit.rest.issues.createComment({
     ...extractOwnerRepo(payload),
     issue_number: payload.pull_request.number,
-    body: body + messageLinks,
+    body: [messageCommon, category === 'plugin' ? messagePlugins : undefined]
+      .filter((entry) => entry !== undefined)
+      .join('\n'),
   })
 }
