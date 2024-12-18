@@ -15,12 +15,16 @@ export default async (bot: GitHubBot, payload: IssuePayload): Promise<void> => {
     return
   }
 
-  const { data: pull } = await bot.github.octokit.rest.pulls.get({
+  const { data: issue } = await bot.github.octokit.rest.issues.get({
     ...extractOwnerRepo(payload),
-    pull_number: payload.issue.number,
+    issue_number: payload.issue.number,
   })
 
-  if (!pull.labels.filter((label) => label.name === 'bug').length) {
+  if (
+    !issue.labels.filter((label) =>
+      typeof label === 'string' ? label === 'bug' : label.name === 'bug',
+    ).length
+  ) {
     console.debug('Not a bug')
     return
   }
