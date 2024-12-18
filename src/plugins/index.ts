@@ -5,6 +5,7 @@ import IssuesLabeledDuplicate from './issues.labeled.duplicate'
 import IssuesLabeledInvalid from './issues.labeled.invalid'
 import IssuesOpenedGreeter from './issues.opened.greeter'
 import PullRequestClosedDefault from './pull_request.closed.default'
+import PullRequestClosedIntegration from './pull_request.closed.integration'
 import PullRequestLabeledNewDefaultRepository from './pull_request.labeled.new_default_repository'
 import PullRequestOpenedDefault from './pull_request.opened.default'
 import ReleasePublishedIntegration from './release.published.integration'
@@ -18,7 +19,10 @@ export const plugins: Record<string, Plugin[]> = {
   'issues.closed': [issuesClosedIntegration],
   'issues.labeled': [IssuesLabeledDuplicate, IssuesLabeledInvalid],
   'issues.opened': [IssuesOpenedGreeter],
-  'pull_request.closed': [PullRequestClosedDefault],
+  'pull_request.closed': [
+    PullRequestClosedDefault,
+    PullRequestClosedIntegration,
+  ],
   'pull_request.labeled': [PullRequestLabeledNewDefaultRepository],
   'pull_request.opened': [PullRequestOpenedDefault],
   'pull_request.synchronize': [PullRequestOpenedDefault],

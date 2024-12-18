@@ -1,22 +1,27 @@
-import { App } from 'octokit'
+import { IssuePullPayload, PayloadIsPull } from '../types'
+
+import { GitHubBot } from '../github.bot'
 import { RepositoryName } from '../const'
-import { PullPayload } from '../types'
-import { extractOwnerRepo } from '../utils/extractOwnerRepo'
-import { senderIsBot } from '../utils/filter'
 import { getNextMilestone } from '../utils/nextMilestone'
+import { senderIsBot } from '../utils/filter'
+import { extractOwnerRepo } from '../utils/extractOwnerRepo'
 
 const SKIP_LABELS = new Set(['pr: dependency-update'])
 
-export default async (app: App, payload: PullPayload): Promise<void> => {
+export default async (
+  bot: GitHubBot,
+  payload: IssuePullPayload,
+): Promise<void> => {
   if (
     senderIsBot(payload) ||
-    extractOwnerRepo(payload).repo !== RepositoryName.INTEGRATION ||
-    !['closed'].includes(payload.action)
+    !PayloadIsPull(payload) ||
+    payload.action !== 'closed' ||
+    payload.repository.name !== RepositoryName.INTEGRATION
   ) {
     return
   }
 
-  const { data: pull } = await app.octokit.rest.pulls.get({
+  const { data: pull } = await bot.github.octokit.rest.pulls.get({
     ...extractOwnerRepo(payload),
     pull_number: payload.pull_request.number,
   })
@@ -31,9 +36,9 @@ export default async (app: App, payload: PullPayload): Promise<void> => {
     return
   }
 
-  const nextMilestone = await getNextMilestone(app)
+  const nextMilestone = await getNextMilestone(bot.github)
   if (nextMilestone) {
-    await app.octokit.rest.issues.update({
+    await bot.github.octokit.rest.issues.update({
       ...extractOwnerRepo(payload),
       issue_number: payload.pull_request.number,
       milestone: nextMilestone.number,

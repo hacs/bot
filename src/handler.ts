@@ -1,34 +1,10 @@
 import { EmitterWebhookEvent } from '@octokit/webhooks'
-import { App } from 'octokit'
 
 import * as Sentry from '@sentry/browser'
 
-import integrationRepoPullClosedPlugin from './plugins/integrationRepoPullClosed'
-
-import { issuePull } from './utils/eventPayloads'
 import { GitHubBot } from './github.bot'
-import { initSentry } from './utils/sentry'
-
-const getApp = async () => {
-  const app = new App({
-    appId: Number(APP_ID),
-    privateKey: PRIVATE_KEY,
-    webhooks: {
-      secret: WEBHOOK_SECRET,
-    },
-  })
-  app.octokit = await app.getInstallationOctokit(Number(INSTALLATION_ID))
-  return app
-}
 
 export async function handleRequest(request: Request): Promise<Response> {
-  const app = await getApp()
-  initSentry({ dsn: SENTRY_DSN })
-  app.webhooks.on('issues', handleWebhookEvent)
-  app.webhooks.on('pull_request', handleWebhookEvent)
-  app.webhooks.on('issue_comment', handleWebhookEvent)
-  app.webhooks.on('release', handleWebhookEvent)
-
   const bot = new GitHubBot({
     request,
     env: {
@@ -47,28 +23,8 @@ export async function handleRequest(request: Request): Promise<Response> {
   const payload = await request.json<EmitterWebhookEvent['payload']>()
   await bot.processRequest(payload)
 
-  try {
-    await app.webhooks.receive({
-      id: request.headers.get('x-github-delivery') || '',
-      // @ts-expect-error may be blank
-      name: request.headers.get('x-github-event') || '',
-      payload,
-    })
-  } catch (err) {
-    console.error(err)
-    Sentry.captureException(err)
-    throw new Error(String(err))
-  }
   await Sentry.close()
-  return new Response()
-}
-
-async function handleWebhookEvent(event: EmitterWebhookEvent): Promise<void> {
-  const app = await getApp()
-  const payload = issuePull(event)
-  if (!payload) return
-
-  if ('pull_request' in payload) {
-    await Promise.all([integrationRepoPullClosedPlugin(app, payload)])
-  }
+  return new Response(null, {
+    headers: { 'x-worker-tag': CF_VERSION_METADATA.tag },
+  })
 }
