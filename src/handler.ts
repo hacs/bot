@@ -25,6 +25,6 @@ export async function handleRequest(request: Request): Promise<Response> {
 
   await Sentry.close()
   return new Response(null, {
-    headers: { 'x-worker-tag': CF_VERSION_METADATA.tag },
+    headers: { 'x-worker-metadata-id': CF_VERSION_METADATA.id },
   })
 }
