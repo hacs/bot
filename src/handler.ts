@@ -1,7 +1,4 @@
 import { EmitterWebhookEvent } from '@octokit/webhooks'
-
-import * as Sentry from '@sentry/browser'
-
 import { GitHubBot } from './github.bot'
 
 export async function handleRequest(request: Request): Promise<Response> {
@@ -23,7 +20,6 @@ export async function handleRequest(request: Request): Promise<Response> {
   const payload = await request.json<EmitterWebhookEvent['payload']>()
   await bot.processRequest(payload)
 
-  await Sentry.close()
   return new Response(null, {
     headers: { 'x-worker-metadata-id': CF_VERSION_METADATA.id },
   })
