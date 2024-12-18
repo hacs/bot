@@ -2,7 +2,7 @@ import { EmitterWebhookEvent } from '@octokit/webhooks'
 import * as Sentry from '@sentry/browser'
 import { App } from 'octokit'
 import { plugins } from './plugins'
-import { IssuePullPayload } from './types'
+import { IssuePullPayload, ReleasePayload, WorkflowRunPayload } from './types'
 import { issuePull, release, workflowRun } from './utils/eventPayloads'
 import { initSentry } from './utils/sentry'
 import { verifyWebhookSignature } from './utils/verify'
@@ -104,7 +104,10 @@ export class GitHubBot {
       console.log(
         `Processing "${eventName}.${payload.action}" with ${handler.name}`,
       )
-      await handler(this, payload as IssuePullPayload)
+      await handler(
+        this,
+        payload as IssuePullPayload | ReleasePayload | WorkflowRunPayload,
+      )
     }
   }
 

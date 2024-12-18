@@ -6,6 +6,7 @@ import IssuesOpenedGreeter from './issues.opened.greeter'
 import PullRequestClosedDefault from './pull_request.closed.default'
 import PullRequestLabeledNewDefaultRepository from './pull_request.labeled.new_default_repository'
 import PullRequestOpenedDefault from './pull_request.opened.default'
+import ReleasePublishedIntegration from './release.published.integration'
 import WorkflowRunCompeted from './workflow_run.completed'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -19,5 +20,6 @@ export const plugins: Record<string, Plugin[]> = {
   'pull_request.labeled': [PullRequestLabeledNewDefaultRepository],
   'pull_request.opened': [PullRequestOpenedDefault],
   'pull_request.synchronize': [PullRequestOpenedDefault],
+  'release.published': [ReleasePublishedIntegration],
   'workflow_run.completed': [WorkflowRunCompeted],
 }

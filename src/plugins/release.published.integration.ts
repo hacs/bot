@@ -1,10 +1,13 @@
-import { App } from 'octokit'
-import { RepositoryName } from '../const'
 import { ReleasePayload } from '../types'
 
+import { GitHubBot } from '../github.bot'
+import { RepositoryName } from '../const'
 import { getNextMilestone } from '../utils/nextMilestone'
 
-export default async (app: App, payload: ReleasePayload): Promise<void> => {
+export default async (
+  bot: GitHubBot,
+  payload: ReleasePayload,
+): Promise<void> => {
   if (
     payload.action !== 'published' ||
     payload.repository.name !== RepositoryName.INTEGRATION
@@ -12,9 +15,9 @@ export default async (app: App, payload: ReleasePayload): Promise<void> => {
     return
   }
 
-  const nextMilestone = await getNextMilestone(app)
+  const nextMilestone = await getNextMilestone(bot.github)
   if (nextMilestone) {
-    await app.octokit.rest.issues.updateMilestone({
+    await bot.github.octokit.rest.issues.updateMilestone({
       owner: payload.repository.owner.login,
       repo: payload.repository.name,
       milestone_number: nextMilestone.number,
@@ -24,7 +27,7 @@ export default async (app: App, payload: ReleasePayload): Promise<void> => {
     })
   }
 
-  await app.octokit.rest.issues.createMilestone({
+  await bot.github.octokit.rest.issues.createMilestone({
     owner: payload.repository.owner.login,
     repo: payload.repository.name,
     title: 'next',
