@@ -3,7 +3,6 @@ import { App } from 'octokit'
 
 import * as Sentry from '@sentry/browser'
 
-import integrationRepoIssueClosedPlugin from './plugins/integrationRepoIssueClosed'
 import integrationRepoPullClosedPlugin from './plugins/integrationRepoPullClosed'
 
 import { issuePull } from './utils/eventPayloads'
@@ -71,7 +70,5 @@ async function handleWebhookEvent(event: EmitterWebhookEvent): Promise<void> {
 
   if ('pull_request' in payload) {
     await Promise.all([integrationRepoPullClosedPlugin(app, payload)])
-  } else if ('issue' in payload && payload.action === 'closed') {
-    await Promise.all([integrationRepoIssueClosedPlugin(app, payload)])
   }
 }
