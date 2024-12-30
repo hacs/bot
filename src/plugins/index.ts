@@ -3,6 +3,7 @@ import BaseMetrics from './base.metrics'
 import issuesClosedIntegration from './issues.closed.integration'
 import IssuesLabeledDuplicate from './issues.labeled.duplicate'
 import IssuesLabeledInvalid from './issues.labeled.invalid'
+import IssuesLabeledSpam from './issues.labeled.spam'
 import IssuesOpenedGreeter from './issues.opened.greeter'
 import PullRequestClosedDefault from './pull_request.closed.default'
 import PullRequestClosedIntegration from './pull_request.closed.integration'
@@ -17,7 +18,11 @@ type Plugin = (bot: GitHubBot, payload: any) => Promise<void>
 export const plugins: Record<string, Plugin[]> = {
   base: [BaseMetrics],
   'issues.closed': [issuesClosedIntegration],
-  'issues.labeled': [IssuesLabeledDuplicate, IssuesLabeledInvalid],
+  'issues.labeled': [
+    IssuesLabeledDuplicate,
+    IssuesLabeledInvalid,
+    IssuesLabeledSpam,
+  ],
   'issues.opened': [IssuesOpenedGreeter],
   'pull_request.closed': [
     PullRequestClosedDefault,
