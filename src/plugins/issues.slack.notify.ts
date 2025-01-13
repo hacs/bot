@@ -1,5 +1,6 @@
 import { IssuePayload } from '../types'
 import { GitHubBot } from '../github.bot'
+import { KnownBlock } from '@slack/types'
 
 export default async (bot: GitHubBot, payload: IssuePayload): Promise<void> => {
   try {
@@ -30,18 +31,22 @@ export default async (bot: GitHubBot, payload: IssuePayload): Promise<void> => {
         {
           type: 'divider',
         },
-        {
-          type: 'section',
-          fields: [
-            {
-              type: 'mrkdwn',
-              text: `${payload.issue.body?.substring(0, 300)}...`,
-            },
-          ],
-        },
-        {
-          type: 'divider',
-        },
+        ...(payload.action !== 'closed'
+          ? ([
+              {
+                type: 'section',
+                fields: [
+                  {
+                    type: 'mrkdwn',
+                    text: `${payload.issue.body?.substring(0, 600)}...`,
+                  },
+                ],
+              },
+              {
+                type: 'divider',
+              },
+            ] as KnownBlock[])
+          : []),
       ],
     })
   } catch (error) {
