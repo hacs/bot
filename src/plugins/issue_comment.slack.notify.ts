@@ -18,6 +18,15 @@ export default async (
           ],
         },
         {
+          type: 'context',
+          elements: [
+            {
+              type: 'mrkdwn',
+              text: `:bust_in_silhouette: ${payload.sender.login}`,
+            },
+          ],
+        },
+        {
           type: 'divider',
         },
         {
@@ -31,18 +40,6 @@ export default async (
         },
         {
           type: 'divider',
-        },
-        {
-          type: 'actions',
-          elements: (payload.issue.labels || [{ name: 'no label' }]).map(
-            (label) => ({
-              type: 'button',
-              text: {
-                type: 'plain_text',
-                text: label.name,
-              },
-            }),
-          ),
         },
       ],
     })

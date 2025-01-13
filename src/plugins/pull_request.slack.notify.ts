@@ -15,6 +15,19 @@ export default async (bot: GitHubBot, payload: PullPayload): Promise<void> => {
           ],
         },
         {
+          type: 'context',
+          elements: [
+            {
+              type: 'mrkdwn',
+              text: `:bust_in_silhouette: ${payload.sender.login} - ${(
+                payload.pull_request.labels || [{ name: 'no label' }]
+              )
+                .map((label) => `${label.name}`)
+                .join(' ')}`,
+            },
+          ],
+        },
+        {
           type: 'divider',
         },
         {
@@ -28,18 +41,6 @@ export default async (bot: GitHubBot, payload: PullPayload): Promise<void> => {
         },
         {
           type: 'divider',
-        },
-        {
-          type: 'actions',
-          elements: (payload.pull_request.labels || [{ name: 'no label' }]).map(
-            (label) => ({
-              type: 'button',
-              text: {
-                type: 'plain_text',
-                text: label.name,
-              },
-            }),
-          ),
         },
       ],
     })
