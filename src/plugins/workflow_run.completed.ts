@@ -33,28 +33,29 @@ export default async (
       username: 'Github webhook',
       content: `<@&713492053484634172> GitHub action '${payload.workflow_run.name}' with ID [${payload.workflow_run.id}](<https://github.com/${payload.repository.full_name}/actions/runs/${payload.workflow_run.id}>) failed!`,
     })
-  }
-  await bot.slackMessage({
-    blocks: [
-      {
-        type: 'header',
-        text: {
-          type: 'plain_text',
-          text: `GitHub action ${payload.workflow_run.name} failed!`,
-        },
-      },
-      {
-        type: 'divider',
-      },
-      {
-        type: 'context',
-        elements: [
-          {
-            type: 'mrkdwn',
-            text: `<@U078TE219SA> <https://github.com/${payload.repository.full_name}/actions/runs/${payload.workflow_run.id}|${payload.workflow_run.name}#${payload.workflow_run.id}>`,
+
+    await bot.slackMessage({
+      blocks: [
+        {
+          type: 'header',
+          text: {
+            type: 'plain_text',
+            text: `GitHub action ${payload.workflow_run.name} failed!`,
           },
-        ],
-      },
-    ],
-  })
+        },
+        {
+          type: 'divider',
+        },
+        {
+          type: 'context',
+          elements: [
+            {
+              type: 'mrkdwn',
+              text: `<@U078TE219SA> <https://github.com/${payload.repository.full_name}/actions/runs/${payload.workflow_run.id}|${payload.workflow_run.name}#${payload.workflow_run.id}>`,
+            },
+          ],
+        },
+      ],
+    })
+  }
 }
