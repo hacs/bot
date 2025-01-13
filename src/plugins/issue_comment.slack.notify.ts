@@ -1,10 +1,15 @@
 import { IssueCommentPayload } from '../types'
 import { GitHubBot } from '../github.bot'
+import { senderIsBot } from '../utils/filter'
 
 export default async (
   bot: GitHubBot,
   payload: IssueCommentPayload,
 ): Promise<void> => {
+  if (senderIsBot(payload)) {
+    return
+  }
+
   try {
     await bot.slackMessage({
       blocks: [

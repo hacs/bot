@@ -22,7 +22,7 @@ export default async (bot: GitHubBot, payload: IssuePayload): Promise<void> => {
               text: `:bust_in_silhouette: ${payload.sender.login} - ${(
                 payload.issue.labels || [{ name: 'no label' }]
               )
-                .map((label) => `${label.name}`)
+                .map((label) => `\`${label.name}\``)
                 .join(' ')}`,
             },
           ],
