@@ -22,7 +22,7 @@ export default async (
           elements: [
             {
               type: 'mrkdwn',
-              text: `:bust_in_silhouette: ${payload.sender.login}`,
+              text: `:speaking_head_in_silhouette: ${payload.sender.login}`,
             },
           ],
         },
