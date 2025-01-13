@@ -7,6 +7,7 @@ export async function handleRequest(request: Request): Promise<Response> {
     env: {
       APP_ID,
       CF_VERSION_METADATA,
+      SLACK_WEBHOOK,
       DISCORD_WEBHOOK,
       DISCORD_WEBHOOK_BOT,
       INSTALLATION_ID,

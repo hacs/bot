@@ -8,6 +8,7 @@ import { initSentry } from './utils/sentry'
 import { verifyWebhookSignature } from './utils/verify'
 
 import type { WebhookMessageCreateOptions } from 'discord.js'
+import type { KnownBlock } from '@slack/types'
 
 type Env = {
   APP_ID: string
@@ -15,6 +16,7 @@ type Env = {
   INSTALLATION_ID: string
   PRIVATE_KEY: string
   SENTRY_DSN: string
+  SLACK_WEBHOOK: string
   DISCORD_WEBHOOK: string
   DISCORD_WEBHOOK_BOT: string
   WEBHOOK_SECRET: string
@@ -139,5 +141,21 @@ export class GitHubBot {
         body: JSON.stringify(options),
       },
     )
+  }
+
+  public async slackMessage({
+    blocks,
+    webookUrl,
+  }: {
+    blocks: KnownBlock[]
+    webookUrl?: string
+  }): Promise<void> {
+    await fetch(webookUrl || this.env.SLACK_WEBHOOK || 'dev://null', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ blocks }),
+    })
   }
 }
