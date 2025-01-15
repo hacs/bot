@@ -42,6 +42,6 @@
     "@sentry/browser": "8.48.0",
     "@sentry/core": "8.48.0",
     "@sentry/utils": "8.48.0",
-    "octokit": "^4.0.3"
+    "octokit": "^4.1.0"
   }
 }
