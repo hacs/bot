@@ -79,7 +79,6 @@ export default async (
     ],
   })
 
-  /*
   await bot.github.octokit.rest.issues.createComment({
     ...extractOwnerRepo(payload),
     issue_number: payload.pull_request.number,
@@ -87,5 +86,4 @@ export default async (
       .filter((entry) => entry !== undefined)
       .join('\n'),
   })
-   */
 }
