@@ -46,6 +46,9 @@ export default async (
   const owner_repo = titleElements[3].replace('[', '').replace(']', '')
   const category = titleElements[2].toLowerCase()
 
+  console.log(owner_repo)
+  console.log(category)
+
   if (!defaultCategories.includes(category)) {
     console.debug(`${category} not in ${defaultCategories.join(', ')}`)
     return
@@ -55,6 +58,8 @@ export default async (
     owner: owner_repo.split('/')[0],
     repo: owner_repo.split('/')[1],
   })
+
+  console.log(JSON.stringify(repoAdded))
 
   await postDiscordMessage({
     embeds: [
@@ -79,6 +84,7 @@ export default async (
     ],
   })
 
+  /*
   await bot.github.octokit.rest.issues.createComment({
     ...extractOwnerRepo(payload),
     issue_number: payload.pull_request.number,
@@ -86,4 +92,5 @@ export default async (
       .filter((entry) => entry !== undefined)
       .join('\n'),
   })
+   */
 }
