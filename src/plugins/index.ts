@@ -13,6 +13,7 @@ import PullRequestLabeledNewDefaultRepository from './pull_request.labeled.new_d
 import PullRequestOpenedDefault from './pull_request.opened.default'
 import PullRequestSlackNotify from './pull_request.slack.notify'
 import ReleasePublishedIntegration from './release.published.integration'
+import WorkflowJobWaitingSlack from './workflow_job.waiting.slack'
 import WorkflowRunCompeted from './workflow_run.completed'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -37,5 +38,6 @@ export const plugins: Record<string, Plugin[]> = {
   'pull_request.opened': [PullRequestOpenedDefault, PullRequestSlackNotify],
   'pull_request.synchronize': [PullRequestOpenedDefault],
   'release.published': [ReleasePublishedIntegration],
+  'workflow_job.waiting': [WorkflowJobWaitingSlack],
   'workflow_run.completed': [WorkflowRunCompeted],
 }
