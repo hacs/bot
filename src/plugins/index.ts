@@ -1,12 +1,10 @@
 import type { GitHubBot } from '../github.bot'
 import BaseMetrics from './base.metrics'
-import IssueCommentSlackNotify from './issue_comment.slack.notify'
 import issuesClosedIntegration from './issues.closed.integration'
 import IssuesLabeledDuplicate from './issues.labeled.duplicate'
 import IssuesLabeledInvalid from './issues.labeled.invalid'
 import IssuesLabeledSpam from './issues.labeled.spam'
 import IssuesOpenedGreeter from './issues.opened.greeter'
-import IssuesSlackNotify from './issues.slack.notify'
 import PullRequestClosedDefault from './pull_request.closed.default'
 import PullRequestClosedIntegration from './pull_request.closed.integration'
 import PullRequestLabeledNewDefaultRepository from './pull_request.labeled.new_default_repository'
@@ -21,14 +19,13 @@ type Plugin = (bot: GitHubBot, payload: any) => Promise<void>
 
 export const plugins: Record<string, Plugin[]> = {
   base: [BaseMetrics],
-  'issue_comment.created': [IssueCommentSlackNotify],
-  'issues.closed': [issuesClosedIntegration, IssuesSlackNotify],
+  'issues.closed': [issuesClosedIntegration],
   'issues.labeled': [
     IssuesLabeledDuplicate,
     IssuesLabeledInvalid,
     IssuesLabeledSpam,
   ],
-  'issues.opened': [IssuesOpenedGreeter, IssuesSlackNotify],
+  'issues.opened': [IssuesOpenedGreeter],
   'pull_request.closed': [
     PullRequestClosedDefault,
     PullRequestClosedIntegration,
