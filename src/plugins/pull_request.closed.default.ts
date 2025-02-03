@@ -11,8 +11,6 @@ Your repository is now added to HACS :tada:
 Here is a few resources that can be useful:
 - [HACS Discord](https://discord.gg/apgchf8) If you have questions about HACS this is the best place for it.
 - [Home Assistant Developer Blog](https://developers.home-assistant.io/blog) Make sure you stay up to date.
-- [Home Assistant Devs @ twitter](https://twitter.com/hass_devs)
-- [HACS @ twitter](https://twitter.com/HACSIntegration)
 
 _It might take up to 8 hours before it shows up._
 `
