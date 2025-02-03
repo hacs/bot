@@ -9,7 +9,6 @@ import PullRequestClosedDefault from './pull_request.closed.default'
 import PullRequestClosedIntegration from './pull_request.closed.integration'
 import PullRequestLabeledNewDefaultRepository from './pull_request.labeled.new_default_repository'
 import PullRequestOpenedDefault from './pull_request.opened.default'
-import PullRequestSlackNotify from './pull_request.slack.notify'
 import ReleasePublishedIntegration from './release.published.integration'
 import WorkflowJobWaitingSlack from './workflow_job.waiting.slack'
 import WorkflowRunCompeted from './workflow_run.completed'
@@ -29,10 +28,9 @@ export const plugins: Record<string, Plugin[]> = {
   'pull_request.closed': [
     PullRequestClosedDefault,
     PullRequestClosedIntegration,
-    PullRequestSlackNotify,
   ],
   'pull_request.labeled': [PullRequestLabeledNewDefaultRepository],
-  'pull_request.opened': [PullRequestOpenedDefault, PullRequestSlackNotify],
+  'pull_request.opened': [PullRequestOpenedDefault],
   'pull_request.synchronize': [PullRequestOpenedDefault],
   'release.published': [ReleasePublishedIntegration],
   'workflow_job.waiting': [WorkflowJobWaitingSlack],
