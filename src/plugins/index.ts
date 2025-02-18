@@ -1,5 +1,4 @@
 import type { GitHubBot } from '../github.bot'
-import BaseMetrics from './base.metrics'
 import issuesClosedIntegration from './issues.closed.integration'
 import IssuesLabeledDuplicate from './issues.labeled.duplicate'
 import IssuesLabeledInvalid from './issues.labeled.invalid'
@@ -17,7 +16,7 @@ import WorkflowRunCompeted from './workflow_run.completed'
 type Plugin = (bot: GitHubBot, payload: any) => Promise<void>
 
 export const plugins: Record<string, Plugin[]> = {
-  base: [BaseMetrics],
+  base: [],
   'issues.closed': [issuesClosedIntegration],
   'issues.labeled': [
     IssuesLabeledDuplicate,
