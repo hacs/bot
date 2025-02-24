@@ -8,7 +8,12 @@ import {
   WorkflowJobPayload,
   WorkflowRunPayload,
 } from './types'
-import { issuePull, release, workflowRun } from './utils/eventPayloads'
+import {
+  issuePull,
+  release,
+  workflowJob,
+  workflowRun,
+} from './utils/eventPayloads'
 import { initSentry } from './utils/sentry'
 import { verifyWebhookSignature } from './utils/verify'
 
@@ -99,7 +104,11 @@ export class GitHubBot {
 
     const eventName = this.request.headers.get('x-github-event') as string
     const payload =
-      issuePull(rawBody) || release(rawBody) || workflowRun(rawBody)
+      issuePull(rawBody) ||
+      release(rawBody) ||
+      workflowRun(rawBody) ||
+      workflowJob(rawBody)
+
     if (!payload) {
       return
     }
