@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@octokit/auth-app": "^7.1.4",
-    "@octokit/webhooks": "^13.4.1",
+    "@octokit/webhooks": "^13.7.4",
     "@sentry/browser": "9.3.0",
     "@sentry/core": "9.3.0",
     "@sentry/utils": "8.55.0",
