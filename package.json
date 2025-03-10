@@ -20,7 +20,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250224.0",
     "@octokit/webhooks-types": "^7.6.1",
-    "@sentry/types": "9.3.0",
+    "@sentry/types": "9.5.0",
     "@slack/types": "^2.14.0",
     "@types/node": "^22.13.8",
     "@typescript-eslint/eslint-plugin": "^8.25.0",
@@ -39,8 +39,8 @@
   "dependencies": {
     "@octokit/auth-app": "^7.1.4",
     "@octokit/webhooks": "^13.7.4",
-    "@sentry/browser": "9.3.0",
-    "@sentry/core": "9.3.0",
+    "@sentry/browser": "9.5.0",
+    "@sentry/core": "9.5.0",
     "@sentry/utils": "8.55.0",
     "octokit": "^4.1.2"
   }
