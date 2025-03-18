@@ -13,7 +13,7 @@ Your repository is now waiting to be included in HACS. Please be patient, this w
 There is no need to:
 - Comment on the PR, the reviewer will get back to you.
 - Open a new PR, this will not speed up the process.
-- Ask your folowers to spam the PR, this will not speed up the process.
+- Ask your followers to spam the PR, this will not speed up the process.
 `
 
 export default async (
