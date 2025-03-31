@@ -18,7 +18,7 @@
     ]
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250303.0",
+    "@cloudflare/workers-types": "^4.20250327.0",
     "@octokit/webhooks-types": "^7.6.1",
     "@sentry/types": "9.5.0",
     "@slack/types": "^2.14.0",
