@@ -12,6 +12,8 @@ concurrency:
   group: lint-${{ github.ref }}
   cancel-in-progress: true
 
+permissions: {}
+
 env:
   WRANGLER_SEND_METRICS: 'false'
 
