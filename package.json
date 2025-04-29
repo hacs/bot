@@ -18,7 +18,7 @@
     ]
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250421.0",
+    "@cloudflare/workers-types": "^4.20250429.0",
     "@octokit/webhooks-types": "^7.6.1",
     "@sentry/types": "9.14.0",
     "@slack/types": "^2.14.0",
@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@octokit/auth-app": "^7.2.0",
-    "@octokit/webhooks": "^13.8.0",
+    "@octokit/webhooks": "^13.8.2",
     "@sentry/browser": "9.14.0",
     "@sentry/core": "9.14.0",
     "@sentry/utils": "8.55.0",
