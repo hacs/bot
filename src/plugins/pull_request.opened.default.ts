@@ -20,12 +20,23 @@ export default async (
     return
   }
 
+  if (payload.pull_request.head.ref === 'master') {
+    await bot.github.octokit.rest.pulls.createReview({
+      ...extractOwnerRepo(payload),
+      pull_number: payload.pull_request.number,
+      event: 'REQUEST_CHANGES',
+      body: '[Do not submit PRs from your `master` branch.](https://hacs.xyz/docs/publish/include/#additional-information)',
+    })
+    await convertPullRequestToDraft(bot.github, payload.pull_request.node_id)
+    return
+  }
+
   if (!payload.pull_request.maintainer_can_modify) {
     await bot.github.octokit.rest.pulls.createReview({
       ...extractOwnerRepo(payload),
       pull_number: payload.pull_request.number,
       event: 'REQUEST_CHANGES',
-      body: '[Your PR is not editable for maintiainers](https://hacs.xyz/docs/publish/include/#additional-information)',
+      body: '[Your PR is not editable for maintainers](https://hacs.xyz/docs/publish/include/#additional-information)',
     })
     await convertPullRequestToDraft(bot.github, payload.pull_request.node_id)
     return
@@ -89,6 +100,7 @@ export default async (
   if (!owner || !repo) {
     return
   }
+
   if (
     repo.toLowerCase().includes('hacs') &&
     payload.pull_request.review_comments === 0
