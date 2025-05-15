@@ -31,6 +31,17 @@ export default async (
     return
   }
 
+  if (!payload.pull_request.maintainer_can_modify) {
+    await bot.github.octokit.rest.pulls.createReview({
+      ...extractOwnerRepo(payload),
+      pull_number: payload.pull_request.number,
+      event: 'REQUEST_CHANGES',
+      body: '[Your PR is not editable for maintainers](https://hacs.xyz/docs/publish/include/#additional-information)',
+    })
+    await convertPullRequestToDraft(bot.github, payload.pull_request.node_id)
+    return
+  }
+
   const changedFiles = await getChangedFiles(bot, payload)
 
   if (changedFiles.length > 1) {
