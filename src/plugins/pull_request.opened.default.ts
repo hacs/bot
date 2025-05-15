@@ -20,7 +20,10 @@ export default async (
     return
   }
 
-  if (payload.pull_request.head.ref === 'master') {
+  if (
+    payload.pull_request.head.ref === 'master' &&
+    payload.action === 'opened'
+  ) {
     await bot.github.octokit.rest.pulls.createReview({
       ...extractOwnerRepo(payload),
       pull_number: payload.pull_request.number,
