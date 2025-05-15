@@ -30,7 +30,11 @@ export default async (
       event: 'REQUEST_CHANGES',
       body: '[Do not submit PRs from your `master` branch.](https://hacs.xyz/docs/publish/include/#additional-information)',
     })
-    await convertPullRequestToDraft(bot.github, payload.pull_request.node_id)
+    await bot.github.octokit.rest.pulls.update({
+      ...extractOwnerRepo(payload),
+      pull_number: payload.pull_request.number,
+      state: 'closed',
+    })
     return
   }
 
