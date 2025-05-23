@@ -15,7 +15,8 @@ export default async (
     senderIsBot(payload) ||
     !PayloadIsPull(payload) ||
     extractOwnerRepo(payload).repo !== RepositoryName.DEFAULT ||
-    !['opened', 'synchronize'].includes(payload.action)
+    !['opened', 'synchronize'].includes(payload.action) ||
+    payload.pull_request.state !== 'open'
   ) {
     return
   }
