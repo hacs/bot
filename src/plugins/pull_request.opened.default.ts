@@ -38,7 +38,11 @@ export default async (
     return
   }
 
-  if (!payload.pull_request.maintainer_can_modify) {
+  if (
+    payload.pull_request.head.repo?.full_name !==
+      payload.pull_request.base.repo?.full_name &&
+    !payload.pull_request.maintainer_can_modify
+  ) {
     await bot.github.octokit.rest.pulls.createReview({
       ...extractOwnerRepo(payload),
       pull_number: payload.pull_request.number,
