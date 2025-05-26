@@ -22,7 +22,7 @@
     "@octokit/webhooks-types": "^7.6.1",
     "@sentry/types": "9.22.0",
     "@slack/types": "^2.14.0",
-    "@types/node": "^22.15.19",
+    "@types/node": "^22.15.21",
     "@typescript-eslint/eslint-plugin": "^8.32.1",
     "@typescript-eslint/parser": "^8.32.1",
     "discord.js": "^14.19.3",
