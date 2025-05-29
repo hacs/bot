@@ -113,10 +113,7 @@ export default async (
     return
   }
 
-  if (
-    repo.toLowerCase().includes('hacs') &&
-    payload.pull_request.review_comments === 0
-  ) {
+  if (repo.toLowerCase().includes('hacs')) {
     await bot.github.octokit.rest.pulls.createReview({
       ...extractOwnerRepo(payload),
       pull_number: payload.pull_request.number,
