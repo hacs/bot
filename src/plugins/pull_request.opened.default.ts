@@ -16,7 +16,9 @@ export default async (
     !PayloadIsPull(payload) ||
     extractOwnerRepo(payload).repo !== RepositoryName.DEFAULT ||
     !['opened', 'synchronize'].includes(payload.action) ||
-    payload.pull_request.state !== 'open'
+    payload.pull_request.state !== 'open' ||
+    (payload.action === 'opened' &&
+      payload.pull_request.author_association === 'MEMBER')
   ) {
     return
   }
