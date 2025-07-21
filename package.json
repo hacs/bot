@@ -27,7 +27,7 @@
     "@typescript-eslint/parser": "^8.35.1",
     "discord.js": "^14.21.0",
     "eslint": "^9.31.0",
-    "eslint-config-prettier": "^10.1.5",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-config-typescript": "^3.0.0",
     "prettier": "^3.6.2",
     "ts-loader": "^9.5.2",
