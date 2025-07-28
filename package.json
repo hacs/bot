@@ -24,7 +24,7 @@
     "@slack/types": "^2.15.0",
     "@types/node": "^24.0.15",
     "@typescript-eslint/eslint-plugin": "^8.37.0",
-    "@typescript-eslint/parser": "^8.37.0",
+    "@typescript-eslint/parser": "^8.38.0",
     "discord.js": "^14.21.0",
     "eslint": "^9.31.0",
     "eslint-config-prettier": "^10.1.8",
