@@ -1,11 +1,12 @@
 import { IssuePullPayload, PayloadIsPull, PullPayload } from '../types'
 
+import { defaultCategories, RepositoryName } from '../const'
 import { GitHubBot } from '../github.bot'
+import { isBlockedAuthor, isBlockedRepository } from '../utils/blocked'
+import { convertPullRequestToDraft } from '../utils/convertToDraft'
 import { extractOwnerRepo } from '../utils/extractOwnerRepo'
 import { senderIsBot } from '../utils/filter'
-import { defaultCategories, RepositoryName } from '../const'
 import { extractTasks } from '../utils/tasks'
-import { convertPullRequestToDraft } from '../utils/convertToDraft'
 
 export default async (
   bot: GitHubBot,
@@ -130,6 +131,34 @@ export default async (
     owner,
     repo,
   })
+
+  if (isBlockedAuthor(repoInfo.owner.id)) {
+    await bot.github.octokit.rest.issues.createComment({
+      ...extractOwnerRepo(payload),
+      issue_number: payload.pull_request.number,
+      body: 'The repository belongs to an author that are no longer allowed to publish to HACS.',
+    })
+    await bot.github.octokit.rest.pulls.update({
+      ...extractOwnerRepo(payload),
+      pull_number: payload.pull_request.number,
+      state: 'closed',
+    })
+    return
+  }
+
+  if (isBlockedRepository(repoInfo.owner.id)) {
+    await bot.github.octokit.rest.issues.createComment({
+      ...extractOwnerRepo(payload),
+      issue_number: payload.pull_request.number,
+      body: 'The repository is blocked from being added to HACS.',
+    })
+    await bot.github.octokit.rest.pulls.update({
+      ...extractOwnerRepo(payload),
+      pull_number: payload.pull_request.number,
+      state: 'closed',
+    })
+    return
+  }
 
   if (repoInfo.full_name !== newRepo) {
     await bot.github.octokit.rest.pulls.createReview({
