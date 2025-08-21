@@ -146,7 +146,7 @@ export default async (
     return
   }
 
-  if (isBlockedRepository(repoInfo.owner.id)) {
+  if (isBlockedRepository(repoInfo.id)) {
     await bot.github.octokit.rest.issues.createComment({
       ...extractOwnerRepo(payload),
       issue_number: payload.pull_request.number,
