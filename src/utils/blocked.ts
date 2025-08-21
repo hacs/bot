@@ -5,6 +5,8 @@ const blockedAuthors: Record<number, string> = {}
 const blockedRepositories: Record<number, string> = {
   149443194:
     'The repository was removed because it was causing issues with HACS and conflicting with other repositories.',
+  1040046512:
+    'The repository was removed because it was causing issues with HACS and conflicting with other repositories.',
 }
 
 export function isBlockedAuthor(authorId: number): boolean {
