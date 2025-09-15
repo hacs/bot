@@ -1,5 +1,9 @@
 // author.id: reason
-const blockedAuthors: Record<number, string> = {}
+const blockedAuthors: Record<number, string> = {
+  1080226: 'The author deletes repositories.',
+  18568434: 'The author deletes repositories.',
+  38878996: 'The author deletes repositories.',
+}
 
 // repository.id: reason
 const blockedRepositories: Record<number, string> = {
