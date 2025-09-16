@@ -3,6 +3,7 @@ const blockedAuthors: Record<number, string> = {
   1080226: 'The author deletes repositories.',
   18568434: 'The author deletes repositories.',
   38878996: 'The author deletes repositories.',
+  54717994: 'Rewrites git tags',
 }
 
 // repository.id: reason
