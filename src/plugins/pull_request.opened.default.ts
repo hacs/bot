@@ -136,7 +136,7 @@ export default async (
     await bot.github.octokit.rest.issues.createComment({
       ...extractOwnerRepo(payload),
       issue_number: payload.pull_request.number,
-      body: 'The repository belongs to an author that are no longer allowed to publish to HACS.',
+      body: 'The repository belongs to an author that are no longer allowed to publish to HACS, the repository can still be used as a custom repository.',
     })
     await bot.github.octokit.rest.pulls.update({
       ...extractOwnerRepo(payload),
@@ -150,7 +150,7 @@ export default async (
     await bot.github.octokit.rest.issues.createComment({
       ...extractOwnerRepo(payload),
       issue_number: payload.pull_request.number,
-      body: 'The repository is blocked from being added to HACS.',
+      body: 'The repository is blocked from being added to HACS, the repository can still be used as a custom repository.',
     })
     await bot.github.octokit.rest.pulls.update({
       ...extractOwnerRepo(payload),
