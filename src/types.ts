@@ -4,6 +4,7 @@ export type IssuePayload = WebhookEventMap['issues']
 export type IssueCommentPayload = WebhookEventMap['issue_comment']
 export type WorkflowJobPayload = WebhookEventMap['workflow_job']
 export type PullPayload = WebhookEventMap['pull_request']
+export type PullReviewPayload = WebhookEventMap['pull_request_review']
 export type ReleasePayload = WebhookEventMap['release']
 export type IssuePullPayload = IssuePayload | PullPayload | IssueCommentPayload
 export type WorkflowRunPayload = WebhookEventMap['workflow_run']

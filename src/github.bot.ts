@@ -4,6 +4,7 @@ import { App } from 'octokit'
 import { plugins } from './plugins'
 import {
   IssuePullPayload,
+  PullReviewPayload,
   ReleasePayload,
   WorkflowJobPayload,
   WorkflowRunPayload,
@@ -124,6 +125,7 @@ export class GitHubBot {
         this,
         payload as
           | IssuePullPayload
+          | PullReviewPayload
           | ReleasePayload
           | WorkflowRunPayload
           | WorkflowJobPayload,

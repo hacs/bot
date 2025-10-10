@@ -4,6 +4,7 @@ import IssuesLabeledDuplicate from './issues.labeled.duplicate'
 import IssuesLabeledInvalid from './issues.labeled.invalid'
 import IssuesLabeledSpam from './issues.labeled.spam'
 import IssuesOpenedGreeter from './issues.opened.greeter'
+import PullRequestReviewSubmittedChangesRequested from './pull_request_review.submitted.changes_requested'
 import PullRequestClosedDefault from './pull_request.closed.default'
 import PullRequestClosedIntegration from './pull_request.closed.integration'
 import PullRequestLabeledNewDefaultRepository from './pull_request.labeled.new_default_repository'
@@ -24,6 +25,7 @@ export const plugins: Record<string, Plugin[]> = {
     IssuesLabeledSpam,
   ],
   'issues.opened': [IssuesOpenedGreeter],
+  'pull_request_review.submitted': [PullRequestReviewSubmittedChangesRequested],
   'pull_request.closed': [
     PullRequestClosedDefault,
     PullRequestClosedIntegration,
