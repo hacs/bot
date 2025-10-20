@@ -34,7 +34,7 @@
     "typescript": "^5.9.3",
     "webpack": "^5.102.1",
     "webpack-cli": "^6.0.1",
-    "wrangler": "^4.42.2"
+    "wrangler": "^4.43.0"
   },
   "dependencies": {
     "@octokit/auth-app": "^8.1.1",
