@@ -19,7 +19,7 @@ To help reviewers work efficiently, don't do the following:
 - **Comment on the pull request** - The reviewer will contact you when they have feedback or questions.
 - **Open a new pull request** - This won't speed up the process and creates duplicate work.
 - **Ask followers to comment on the pull request** - This won't speed up the process and may delay your review.
-- **Merge in the main or master branch** - Only do this if a maintainer asks you to resolve a merge conflict.
+- **Merge in the default branch** - Only do this if a maintainer asks you to resolve a merge conflict.
 
 **If you need to make changes:**
 You can continue updating your repository while waiting for review. Changes to your repository will be reflected when the reviewer examines it. Only comment on the pull request if you need to withdraw your submission or have critical information for reviewers.
