@@ -3,6 +3,11 @@ interface Task {
   description: string
 }
 
+interface Link {
+  url: string
+  repository?: string
+}
+
 export const extractTasks = (body: string): Task[] =>
   body
     .split('\n')
@@ -18,3 +23,25 @@ export const extractTasks = (body: string): Task[] =>
       // @ts-expect-error its wrong
       description: groups.description,
     }))
+
+export const extractLinks = (body: string): Link[] => {
+  const urlRegex = /https?:\/\/[^\s\)]+/g
+  const matches = body.match(urlRegex) || []
+
+  return matches.map((url) => {
+    let repository: string | undefined
+
+    // Check if it's a GitHub URL
+    const githubMatch = /https?:\/\/github\.com\/([^\/]+)\/([^\/]+)/.exec(url)
+    if (githubMatch) {
+      const owner = githubMatch[1]
+      const repo = githubMatch[2]
+      repository = `${owner}/${repo}`
+    }
+
+    return {
+      url,
+      repository,
+    }
+  })
+}

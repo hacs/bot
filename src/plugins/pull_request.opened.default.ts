@@ -6,7 +6,7 @@ import { isBlockedAuthor, isBlockedRepository } from '../utils/blocked'
 import { convertPullRequestToDraft } from '../utils/convertToDraft'
 import { extractOwnerRepo } from '../utils/extractOwnerRepo'
 import { senderIsBot } from '../utils/filter'
-import { extractTasks } from '../utils/tasks'
+import { extractLinks, extractTasks } from '../utils/tasks'
 
 export default async (
   bot: GitHubBot,
@@ -151,6 +151,25 @@ export default async (
       ...extractOwnerRepo(payload),
       issue_number: payload.pull_request.number,
       body: 'The repository is blocked from being added to HACS, the repository can still be used as a custom repository.',
+    })
+    await bot.github.octokit.rest.pulls.update({
+      ...extractOwnerRepo(payload),
+      pull_number: payload.pull_request.number,
+      state: 'closed',
+    })
+    return
+  }
+
+  const pullRequestLinks = extractLinks(payload.pull_request.body || '').filter(
+    (link) => link.repository === `${owner}/${repo}`,
+  )
+
+  if (pullRequestLinks.length < (repoCategory >= 'integration' ? 3 : 2)) {
+    await bot.github.octokit.rest.pulls.createReview({
+      ...extractOwnerRepo(payload),
+      pull_number: payload.pull_request.number,
+      event: 'REQUEST_CHANGES',
+      body: `You did not supply the expected links`,
     })
     await bot.github.octokit.rest.pulls.update({
       ...extractOwnerRepo(payload),
