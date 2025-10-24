@@ -7,15 +7,27 @@ import { defaultCategories, RepositoryName } from '../const'
 import { postDiscordMessage } from '../utils/postDiscordMessage'
 
 const messageCommon = `
-Your repository is now added to HACS :tada:
-Here is a few resources that can be useful:
-- [HACS Discord](https://discord.gg/apgchf8) If you have questions about HACS this is the best place for it.
-- [Home Assistant Developer Blog](https://developers.home-assistant.io/blog) Make sure you stay up to date.
+Congratulations! Your repository has been added to HACS :tada:
 
-_It might take up to 8 hours before it shows up._
+**Your repository has been approved:**
+Your repository has been successfully merged into the HACS default repository list.
+It might take up to **8 hours** before your repository appears in HACS for users.
+
+**Resources:**
+- [HACS Discord](https://discord.gg/apgchf8)
+- [Home Assistant Developer Blog](https://developers.home-assistant.io/blog)
+
 `
 
-const messagePlugins = `- [Did you know you can add your card to the card-picker in Lovelace?](https://developers.home-assistant.io/docs/lovelace_custom_card#graphical-card-configuration)`
+const messagePlugins = `
+**For dashboard card developers:**
+Did you know you can add your card to the card-picker in Lovelace? This makes it easier for users to discover and add your card through the UI.
+
+- [Learn how to add your card to the card-picker](https://developers.home-assistant.io/docs/lovelace_custom_card#graphical-card-configuration)
+- Adding a card picker entry improves the user experience significantly
+- Users can configure your card visually instead of editing YAML
+
+`
 
 export default async (
   bot: GitHubBot,
@@ -80,7 +92,11 @@ export default async (
   await bot.github.octokit.rest.issues.createComment({
     ...extractOwnerRepo(payload),
     issue_number: payload.pull_request.number,
-    body: [messageCommon, category === 'plugin' ? messagePlugins : undefined]
+    body: [
+      messageCommon,
+      category === 'plugin' ? messagePlugins : undefined,
+      'Thank you for contributing to the Home Assistant community! :tada:',
+    ]
       .filter((entry) => entry !== undefined)
       .join('\n'),
   })
