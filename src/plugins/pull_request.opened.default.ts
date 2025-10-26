@@ -18,7 +18,7 @@ export default async (
     extractOwnerRepo(payload).repo !== RepositoryName.DEFAULT ||
     !['opened', 'synchronize', 'ready_for_review'].includes(payload.action) ||
     payload.pull_request.state !== 'open' ||
-    payload.pull_request.draft ||
+    (payload.pull_request.draft && payload.action !== 'opened') ||
     (payload.action === 'opened' &&
       payload.pull_request.author_association === 'MEMBER')
   ) {
@@ -91,9 +91,9 @@ export default async (
     completedTasks.length !== (repoCategory === 'integration' ? 6 : 5)
   ) {
     issues.push(
-      '**Complete all checklist items before submitting.** Please check all the required boxes and create a new PR when ready.',
+      '**Complete all checklist items before submitting.** Please check all the required boxes and submit a new PR when ready.',
     )
-    shouldDraft = true
+    shouldClose = true
   }
 
   const changedRepos = await getFileDiff(bot, payload, repoCategory || '')
@@ -149,9 +149,9 @@ export default async (
   const expectedNumberOfLinks = repoCategory === 'integration' ? 3 : 2
   if (pullRequestLinks.length < expectedNumberOfLinks) {
     issues.push(
-      `**Add required repository links to the PR description.** Found ${pullRequestLinks.length} link(s), but ${expectedNumberOfLinks} are required for ${repoCategory} repositories. Please add links to the repository's latest release and CI action runs.`,
+      `**Add required repository links to the PR description.** Found ${pullRequestLinks.length} link(s), but ${expectedNumberOfLinks} are required for ${repoCategory} repositories. Please add links to the repository's latest release and CI action runs, then submit a new PR.`,
     )
-    shouldDraft = true
+    shouldClose = true
   }
 
   if (repoInfo.full_name !== newRepo) {
