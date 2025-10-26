@@ -95,11 +95,6 @@ export default async (
     shouldDraft = true
   }
 
-  if (issues.length > 0) {
-    await handleIssues(bot, payload, issues, shouldClose, shouldDraft)
-    return
-  }
-
   const changedRepos = await getFileDiff(bot, payload, repoCategory || '')
   if (changedRepos.length > 1) {
     issues.push(
