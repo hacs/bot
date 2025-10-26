@@ -1,6 +1,5 @@
 import { WorkflowRunPayload } from '../types'
 
-import * as Sentry from '@sentry/browser'
 import { GitHubBot } from '../github.bot'
 
 const ignoreWorksflows = new Set(["Lock closed issues and PR's"])
@@ -15,15 +14,6 @@ export default async (
   ) {
     return
   }
-
-  Sentry.metrics.increment('workflow_run.completed', 1, {
-    tags: {
-      conclusion: payload.workflow_run.conclusion,
-      name: payload.workflow_run.name,
-      repository: payload.repository.full_name,
-      event: payload.workflow_run.event,
-    },
-  })
 
   if (
     payload.workflow_run.conclusion === 'failure' &&
