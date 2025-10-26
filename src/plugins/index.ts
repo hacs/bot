@@ -31,6 +31,7 @@ export const plugins: Record<string, Plugin[]> = {
     PullRequestClosedIntegration,
   ],
   'pull_request.labeled': [PullRequestLabeledNewDefaultRepository],
+  'pull_request.ready_for_review': [PullRequestOpenedDefault],
   'pull_request.opened': [PullRequestOpenedDefault],
   'pull_request.synchronize': [PullRequestOpenedDefault],
   'release.published': [ReleasePublishedIntegration],
