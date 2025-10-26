@@ -192,7 +192,7 @@ async function handleIssues(
 ): Promise<void> {
   const body =
     issues.length > 1
-      ? issues.map((issue, index) => `${index + 1}. ${issue}`).join('\n')
+      ? `**This PR has the following issues that need to be addressed:**\n\n${issues.map((issue, index) => `${index + 1}. ${issue}`).join('\n\n')}`
       : issues[0]
 
   await bot.github.octokit.rest.pulls.createReview({
