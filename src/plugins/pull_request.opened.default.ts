@@ -95,6 +95,15 @@ export default async (
     shouldClose = true
   }
 
+  const { data: comparison } =
+    await bot.github.octokit.rest.repos.compareCommitsWithBasehead({
+      ...extractOwnerRepo(payload),
+      basehead: `${payload.pull_request.head.sha}...${payload.pull_request.base.sha}`,
+    })
+  if (comparison.behind_by > 0) {
+    await handleIssues(bot, payload, issues, shouldClose, shouldDraft)
+  }
+
   const changedRepos = await getFileDiff(bot, payload, repoCategory || '')
   if (changedRepos.length > 1) {
     issues.push(
