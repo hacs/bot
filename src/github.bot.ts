@@ -27,8 +27,8 @@ type Env = {
   PRIVATE_KEY: string
   SENTRY_DSN: string
   SLACK_WEBHOOK: string
-  DISCORD_WEBHOOK: string
-  DISCORD_WEBHOOK_BOT: string
+  DISCORD_WEBHOOK: string // "new-repositories" channel
+  DISCORD_WEBHOOK_BOT: string // "bot" channel
   WEBHOOK_SECRET: string
   ORGANIZATION: string
   DEBUG?: string

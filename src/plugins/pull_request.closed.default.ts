@@ -66,6 +66,7 @@ export default async (
   })
 
   await bot.discordMessage({
+    webhookUrl: bot.env.DISCORD_WEBHOOK,
     embeds: [
       {
         title: 'New repository added to HACS :tada:',
