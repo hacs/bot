@@ -41,23 +41,21 @@ export class GitHubBot {
     this.env = options.env
 
     Sentry.setTags(
-      Object.keys(this.env.CF_VERSION_METADATA)
-        .filter(
-          (entry) =>
-            this.env.CF_VERSION_METADATA[
-              entry as keyof Env['CF_VERSION_METADATA']
-            ],
-        )
-        .reduce(
-          (acc, key) => ({
-            ...acc,
-            [key]:
+      Object.fromEntries(
+        Object.keys(this.env.CF_VERSION_METADATA)
+          .filter(
+            (entry) =>
               this.env.CF_VERSION_METADATA[
-                key as keyof Env['CF_VERSION_METADATA']
+                entry as keyof Env['CF_VERSION_METADATA']
               ],
-          }),
-          {},
-        ),
+          )
+          .map((key) => [
+            key,
+            this.env.CF_VERSION_METADATA[
+              key as keyof Env['CF_VERSION_METADATA']
+            ],
+          ]),
+      ),
     )
 
     this.github = new App({

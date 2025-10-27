@@ -18,9 +18,10 @@ export async function handleRequest(
 
   Sentry.setContext(
     'Headers',
-    ['cf-ray', 'user-agent', 'x-github-event', 'x-hub-signature-256'].reduce(
-      (acc, key) => ({ ...acc, [key]: request.headers.get(key) }),
-      {},
+    Object.fromEntries(
+      ['cf-ray', 'user-agent', 'x-github-event', 'x-hub-signature-256'].map(
+        (key) => [key, request.headers.get(key)],
+      ),
     ),
   )
 
