@@ -3,7 +3,7 @@ import { IssuePullPayload } from '../types'
 import { GitHubBot } from '../github.bot'
 import { extractOwnerRepo } from '../utils/extractOwnerRepo'
 
-import * as Sentry from '@sentry/browser'
+import * as Sentry from '@sentry/cloudflare'
 
 export default async (
   bot: GitHubBot,
