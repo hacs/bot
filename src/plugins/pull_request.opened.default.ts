@@ -101,7 +101,12 @@ export default async (
       basehead: `${payload.pull_request.head.sha}...${payload.pull_request.base.sha}`,
     })
   if (comparison.behind_by > 0) {
+    issues.push(
+      `**Your branch is out of date.** Please update your branch with the latest changes from the base branch.`,
+    )
+    shouldDraft = true
     await handleIssues(bot, payload, issues, shouldClose, shouldDraft)
+    return
   }
 
   const changedRepos = await getFileDiff(bot, payload, repoCategory || '')
