@@ -15,7 +15,6 @@ import {
   workflowJob,
   workflowRun,
 } from './utils/eventPayloads'
-import { verifyWebhookSignature } from './utils/verify'
 
 import type { WebhookMessageCreateOptions } from 'discord.js'
 import type { KnownBlock } from '@slack/types'
@@ -84,25 +83,19 @@ export class GitHubBot {
   ): Promise<void> {
     Sentry.setExtras({ ...rawPayload })
 
-    await verifyWebhookSignature(
-      JSON.stringify(rawPayload),
-      this.env.WEBHOOK_SECRET,
-      this.request.headers.get('x-hub-signature-256') ?? '',
-    )
-
     // Init the octoclient so handler can use it
     this.github.octokit = await this.github.getInstallationOctokit(
       Number(this.env.INSTALLATION_ID),
     )
 
-    const rawBody = { payload: rawPayload } as EmitterWebhookEvent
+    const webhookEvent = { payload: rawPayload } as EmitterWebhookEvent
 
     const eventName = this.request.headers.get('x-github-event') as string
     const payload =
-      issuePull(rawBody) ||
-      release(rawBody) ||
-      workflowRun(rawBody) ||
-      workflowJob(rawBody)
+      issuePull(webhookEvent) ||
+      release(webhookEvent) ||
+      workflowRun(webhookEvent) ||
+      workflowJob(webhookEvent)
 
     if (!payload) {
       return
