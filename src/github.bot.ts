@@ -34,39 +34,28 @@ type Env = {
 }
 
 export class GitHubBot {
-  public request: Request
   public env: Env
   public github: App
 
-  constructor(options: { request: Request; env: Env }) {
-    this.request = options.request
+  constructor(options: { env: Env }) {
     this.env = options.env
 
-    Sentry.setContext(
-      'Headers',
-      ['cf-ray', 'user-agent', 'x-github-event', 'x-hub-signature-256'].reduce(
-        (acc, key) => ({ ...acc, [key]: this.request.headers.get(key) }),
-        {},
-      ),
-    )
     Sentry.setTags(
-      Object.keys(this.env.CF_VERSION_METADATA)
-        .filter(
-          (entry) =>
-            this.env.CF_VERSION_METADATA[
-              entry as keyof Env['CF_VERSION_METADATA']
-            ],
-        )
-        .reduce(
-          (acc, key) => ({
-            ...acc,
-            [key]:
+      Object.fromEntries(
+        Object.keys(this.env.CF_VERSION_METADATA)
+          .filter(
+            (entry) =>
               this.env.CF_VERSION_METADATA[
-                key as keyof Env['CF_VERSION_METADATA']
+                entry as keyof Env['CF_VERSION_METADATA']
               ],
-          }),
-          {},
-        ),
+          )
+          .map((key) => [
+            key,
+            this.env.CF_VERSION_METADATA[
+              key as keyof Env['CF_VERSION_METADATA']
+            ],
+          ]),
+      ),
     )
 
     this.github = new App({
@@ -80,6 +69,7 @@ export class GitHubBot {
 
   async internalProcessRequest(
     rawPayload: Record<string, unknown>,
+    githubEventName: string,
   ): Promise<void> {
     Sentry.setExtras({ ...rawPayload })
 
@@ -90,7 +80,6 @@ export class GitHubBot {
 
     const webhookEvent = { payload: rawPayload } as EmitterWebhookEvent
 
-    const eventName = this.request.headers.get('x-github-event') as string
     const payload =
       issuePull(webhookEvent) ||
       release(webhookEvent) ||
@@ -101,12 +90,19 @@ export class GitHubBot {
       return
     }
 
-    for (const handler of [
+    const activeHandlers = [
       ...plugins.base,
-      ...(plugins[`${eventName}.${payload.action}`] || []),
-    ]) {
+      ...(plugins[`${githubEventName}.${payload.action}`] || []),
+    ]
+
+    Sentry.setExtra(
+      'activeHandlers',
+      activeHandlers.map((h) => h.name),
+    )
+
+    for (const handler of activeHandlers) {
       console.log(
-        `Processing "${eventName}.${payload.action}" with ${handler.name}`,
+        `Processing "${githubEventName}.${payload.action}" with ${handler.name}`,
       )
       await handler(
         this,
@@ -122,9 +118,10 @@ export class GitHubBot {
 
   public async processRequest(
     rawPayload: Record<string, unknown>,
+    githubEventName: string,
   ): Promise<void> {
     try {
-      await this.internalProcessRequest(rawPayload)
+      await this.internalProcessRequest(rawPayload, githubEventName)
     } catch (err) {
       console.error(err)
       Sentry.captureException(err)

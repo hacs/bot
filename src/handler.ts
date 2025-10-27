@@ -1,4 +1,5 @@
 import { EmitterWebhookEvent } from '@octokit/webhooks'
+import * as Sentry from '@sentry/cloudflare'
 import { GitHubBot } from './github.bot'
 import { verifyWebhookSignature } from './utils/verify'
 import type { Env } from './index'
@@ -15,10 +16,32 @@ export async function handleRequest(
     request.headers.get('x-hub-signature-256') ?? '',
   )
 
-  const payload = JSON.parse(rawBody) as EmitterWebhookEvent['payload']
+  Sentry.setContext(
+    'Headers',
+    Object.fromEntries(
+      ['cf-ray', 'user-agent', 'x-github-event', 'x-hub-signature-256'].map(
+        (key) => [key, request.headers.get(key)],
+      ),
+    ),
+  )
 
-  const bot = new GitHubBot({ request, env })
-  await bot.processRequest(payload)
+  let payload: EmitterWebhookEvent['payload']
+  try {
+    payload = JSON.parse(rawBody)
+  } catch (err) {
+    throw new Error(
+      `Failed to parse webhook payload: ${err instanceof Error ? err.message : String(err)}`,
+    )
+  }
+
+  const githubEventName = request.headers.get('x-github-event')
+
+  if (!githubEventName) {
+    throw new Error('Missing x-github-event header')
+  }
+
+  const bot = new GitHubBot({ env })
+  await bot.processRequest(payload, githubEventName)
 
   return new Response(null, {
     headers: { 'x-worker-metadata-id': env.CF_VERSION_METADATA.id },
