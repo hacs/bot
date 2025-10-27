@@ -98,9 +98,9 @@ export default async (
   const { data: comparison } =
     await bot.github.octokit.rest.repos.compareCommitsWithBasehead({
       ...extractOwnerRepo(payload),
-      basehead: `${payload.pull_request.head.sha}...${payload.pull_request.base.sha}`,
+      basehead: `${payload.pull_request.base.sha}...${payload.pull_request.head.sha}`,
     })
-  if (comparison.behind_by > 0) {
+  if (comparison.status === 'behind') {
     issues.push(
       `**Your branch is out of date.** Please update your branch with the latest changes from the base branch.`,
     )
