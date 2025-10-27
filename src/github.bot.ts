@@ -140,10 +140,10 @@ export class GitHubBot {
   }
 
   public async discordMessage(
-    options: WebhookMessageCreateOptions & { webookUrl?: string },
+    options: WebhookMessageCreateOptions & { webhookUrl?: string },
   ): Promise<void> {
     await fetch(
-      options.webookUrl || this.env.DISCORD_WEBHOOK_BOT || 'dev://null',
+      options.webhookUrl || this.env.DISCORD_WEBHOOK_BOT || 'dev://null',
       {
         method: 'POST',
         headers: {
@@ -156,12 +156,12 @@ export class GitHubBot {
 
   public async slackMessage({
     blocks,
-    webookUrl,
+    webhookUrl,
   }: {
     blocks: KnownBlock[]
-    webookUrl?: string
+    webhookUrl?: string
   }): Promise<void> {
-    await fetch(webookUrl || this.env.SLACK_WEBHOOK || 'dev://null', {
+    await fetch(webhookUrl || this.env.SLACK_WEBHOOK || 'dev://null', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
