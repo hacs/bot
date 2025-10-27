@@ -4,7 +4,6 @@ import { GitHubBot } from '../github.bot'
 import { extractOwnerRepo } from '../utils/extractOwnerRepo'
 import { senderIsBot } from '../utils/filter'
 import { defaultCategories, RepositoryName } from '../const'
-import { postDiscordMessage } from '../utils/postDiscordMessage'
 
 const messageCommon = `
 Congratulations! Your repository has been added to HACS :tada:
@@ -66,11 +65,11 @@ export default async (
     repo: owner_repo.split('/')[1],
   })
 
-  await postDiscordMessage({
+  await bot.discordMessage({
     embeds: [
       {
         title: 'New repository added to HACS :tada:',
-        color: '3066993',
+        color: 3066993,
         fields: [
           {
             name: 'Repository link',
@@ -82,7 +81,7 @@ export default async (
           },
           {
             name: 'Description',
-            value: repoAdded.description,
+            value: repoAdded.description ?? '',
           },
         ],
       },

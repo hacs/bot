@@ -1,5 +1,5 @@
 import { EmitterWebhookEvent } from '@octokit/webhooks'
-import * as Sentry from '@sentry/browser'
+import * as Sentry from '@sentry/cloudflare'
 import { App } from 'octokit'
 import { plugins } from './plugins'
 import {
@@ -15,7 +15,6 @@ import {
   workflowJob,
   workflowRun,
 } from './utils/eventPayloads'
-import { initSentry } from './utils/sentry'
 import { verifyWebhookSignature } from './utils/verify'
 
 import type { WebhookMessageCreateOptions } from 'discord.js'
@@ -44,11 +43,6 @@ export class GitHubBot {
     this.request = options.request
     this.env = options.env
 
-    initSentry({
-      dsn: this.env.SENTRY_DSN,
-      release:
-        this.env.CF_VERSION_METADATA.tag || this.env.CF_VERSION_METADATA.id,
-    })
     Sentry.setContext(
       'Headers',
       ['cf-ray', 'user-agent', 'x-github-event', 'x-hub-signature-256'].reduce(
@@ -143,9 +137,6 @@ export class GitHubBot {
       Sentry.captureException(err)
       throw err
     }
-
-    Sentry.endSession()
-    await Sentry.close()
   }
 
   public async discordMessage(
