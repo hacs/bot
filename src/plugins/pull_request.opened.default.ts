@@ -111,9 +111,16 @@ export default async (
 
   const changedRepos = await getFileDiff(bot, payload, repoCategory || '')
   if (changedRepos.length > 1) {
-    issues.push(
-      '**Limit your PR to a single repository change.** This PR changes multiple repositories to the same file. Please create separate PRs for each repository.',
-    )
+    if (payload.pull_request.additions > 1) {
+      issues.push(
+        '**Limit your PR to a single repository change.** This PR changes multiple repositories to the same file. Please create separate PRs for each repository.',
+      )
+    } else {
+      issues.push(
+        `**Your branch seems out of date.** Please update your branch with the latest changes from the base branch.`,
+      )
+    }
+
     shouldDraft = true
     await handleIssues(bot, payload, issues, shouldClose, shouldDraft)
     return
