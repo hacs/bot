@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     name: ${{github.event_name == 'push' && 'publish' || 'build'}}
     steps:
-      - uses: actions/checkout@v5.0.0
+      - uses: actions/checkout@v6.0.0
 
       - name: Set wrangler version
         id: wrangler
