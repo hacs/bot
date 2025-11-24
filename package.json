@@ -25,7 +25,7 @@
     "@types/node": "^24.10.1",
     "@typescript-eslint/eslint-plugin": "^8.46.4",
     "@typescript-eslint/parser": "^8.46.3",
-    "discord.js": "^14.24.2",
+    "discord.js": "^14.25.1",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-config-typescript": "^3.0.0",
