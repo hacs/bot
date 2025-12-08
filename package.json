@@ -23,7 +23,7 @@
     "@sentry/types": "10.29.0",
     "@slack/types": "^2.19.0",
     "@types/node": "^24.10.1",
-    "@typescript-eslint/eslint-plugin": "^8.48.0",
+    "@typescript-eslint/eslint-plugin": "^8.48.1",
     "@typescript-eslint/parser": "^8.48.1",
     "discord.js": "^14.25.1",
     "eslint": "^9.39.1",
