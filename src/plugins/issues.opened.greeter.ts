@@ -11,50 +11,9 @@ export default async (
   if (
     senderIsBot(payload) ||
     !PayloadIsIssue(payload) ||
-    payload.action !== 'opened'
+    payload.action !== 'opened' ||
+    extractOwnerRepo(payload).repo !== 'integration'
   ) {
-    return
-  }
-
-  if (extractOwnerRepo(payload).repo !== 'integration') {
-    await bot.github.octokit.rest.issues.createComment({
-      ...extractOwnerRepo(payload),
-      issue_number: payload.issue.number,
-      body: `Thank you for your interest in HACS.
-
-**This issue was opened in the wrong repository:**
-Issues should be opened in the [hacs/integration](https://github.com/hacs/integration/issues) repository, not here.
-
-**Why this repository is incorrect:**
-This repository is not where HACS issues are tracked. The main HACS integration repository is the correct place for bug reports.
-
-**What you need to do:**
-
-**If you have a bug report:**
-1. **Open a new issue** in the [hacs/integration](https://github.com/hacs/integration/issues) repository
-2. **Use the issue template** - Fill out the entire template to help maintainers and community members understand and address your issue
-3. **Include relevant details** - The more information you provide, the faster you'll get help
-
-**If you have questions or need help:**
-- [HACS Discord](https://discord.gg/apgchf8) - Get help from the community for questions, installation, or configuration issues
-- [HACS Documentation](https://hacs.xyz) - Find answers to common questions
-
-**Important resources:**
-
-- [Issue Guidelines](https://hacs.xyz/docs/issues) - Read this before creating bug reports
-
-**What happens to this issue:**
-This issue will be closed and locked automatically since it was opened in the wrong repository. Please don't reopen it here.`,
-    })
-    await bot.github.octokit.rest.issues.update({
-      ...extractOwnerRepo(payload),
-      issue_number: payload.issue.number,
-      state: 'closed',
-    })
-    await bot.github.octokit.rest.issues.lock({
-      ...extractOwnerRepo(payload),
-      issue_number: payload.issue.number,
-    })
     return
   }
 
