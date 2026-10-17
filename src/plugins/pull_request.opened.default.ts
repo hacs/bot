@@ -109,7 +109,12 @@ export default async (
     return
   }
 
-  const changedRepos = await getFileDiff(bot, payload, repoCategory || '')
+  const changedRepos = await getFileDiff(
+    bot,
+    payload,
+    repoCategory || '',
+    comparison.merge_base_commit.sha,
+  )
   if (changedRepos.length > 1) {
     if (payload.pull_request.additions > 1) {
       issues.push(
@@ -245,12 +250,19 @@ async function getChangedFiles(
   return listFilesResponse.map((file) => file.filename)
 }
 
-async function getFileDiff(bot: GitHubBot, payload: PullPayload, file: string) {
+async function getFileDiff(
+  bot: GitHubBot,
+  payload: PullPayload,
+  file: string,
+  mergeBase: string,
+) {
+  // Compared with where the branch started, not with master right now, which
+  // can already hold the entries of other pull requests merged since
   const { data: currentContentData } =
     await bot.github.octokit.rest.repos.getContent({
       ...extractOwnerRepo(payload),
-      pull_number: payload.pull_request.number,
       path: file,
+      ref: mergeBase,
     })
 
   if (!('content' in currentContentData)) throw Error('No content')
