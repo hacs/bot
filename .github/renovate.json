@@ -25,6 +25,14 @@
       "matchDatasources": ["npm"],
       "matchUpdateTypes": ["major", "minor", "patch"],
       "minimumReleaseAge": "7 days"
+    },
+    {
+      "matchManagers": ["devcontainer"],
+      "pinDigests": true
+    },
+    {
+      "matchDatasources": ["docker"],
+      "minimumReleaseAgeBehaviour": "timestamp-optional"
     }
   ]
 }
