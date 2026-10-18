@@ -19,5 +19,12 @@
   "lockFileMaintenance": {
     "enabled": true,
     "schedule": ["before 6am on monday"]
-  }
+  },
+  "packageRules": [
+    {
+      "matchDatasources": ["npm"],
+      "matchUpdateTypes": ["major", "minor", "patch"],
+      "minimumReleaseAge": "7 days"
+    }
+  ]
 }
