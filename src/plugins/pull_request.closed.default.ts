@@ -14,7 +14,7 @@ It might take up to **8 hours** before your repository appears in HACS for users
 
 **Resources:**
 - [HACS Discord](https://discord.gg/apgchf8)
-- [Home Assistant Developer Blog](https://developers.home-assistant.io/blog)
+- [Home Assistant Contributor Blog](https://contributors.home-assistant.io/blog/)
 
 `
 
@@ -22,7 +22,7 @@ const messagePlugins = `
 **For dashboard card developers:**
 Did you know you can add your card to the card-picker in Lovelace? This makes it easier for users to discover and add your card through the UI.
 
-- [Learn how to add your card to the card-picker](https://developers.home-assistant.io/docs/lovelace_custom_card#graphical-card-configuration)
+- [Learn how to add your card to the card-picker](https://contributors.home-assistant.io/frontend/custom-ui/card-editor)
 - Adding a card picker entry improves the user experience significantly
 - Users can configure your card visually instead of editing YAML
 
