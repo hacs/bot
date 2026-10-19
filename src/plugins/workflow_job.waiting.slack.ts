@@ -9,6 +9,13 @@ export default async (
     return
   }
 
+  if (
+    payload.workflow_job.workflow_name === 'Generate HACS Data' &&
+    !payload.workflow_job.name.startsWith('Publish ')
+  ) {
+    return
+  }
+
   try {
     await bot.slackMessage({
       blocks: [
