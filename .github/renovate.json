@@ -6,7 +6,6 @@
   "dependencyDashboardOSVVulnerabilitySummary": "all",
   "timezone": "Europe/Amsterdam",
   "labels": ["dependencies"],
-  "schedule": ["before 6am on monday"],
   "prConcurrentLimit": 10,
   "rangeStrategy": "pin",
   "vulnerabilityAlerts": {
@@ -18,7 +17,6 @@
   },
   "lockFileMaintenance": {
     "enabled": true,
-    "schedule": ["before 6am on monday"]
   },
   "packageRules": [
     {
