@@ -26,7 +26,7 @@ jobs:
 
       - name: Set wrangler version
         id: wrangler
-        run: echo "version=$(jq -r .devDependencies.wrangler package.json | cut -c2-)" >> "$GITHUB_OUTPUT"
+        run: echo "version=$(jq -r '.devDependencies.wrangler | ltrimstr("^")' package.json)" >> "$GITHUB_OUTPUT"
 
       - name: Setup Node.js
         uses: actions/setup-node@v6.2.0
